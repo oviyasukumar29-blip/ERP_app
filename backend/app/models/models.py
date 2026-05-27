@@ -1,56 +1,23 @@
-from datetime import datetime
-from uuid import uuid4
+from sqlalchemy import Column, String, Integer, Text
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.core.database import Base
-
-
-class Role(Base):
-    __tablename__ = "pinesphere_roles"
-
-    id: Mapped[str] = mapped_column(String(64), primary_key=True)
-    name: Mapped[str] = mapped_column(String(120), unique=True, index=True)
-    description: Mapped[str] = mapped_column(Text, default="")
-    users: Mapped[list["User"]] = relationship(back_populates="role")
-    modules: Mapped[list["Module"]] = relationship(back_populates="role", cascade="all, delete-orphan")
+from app.db.database import Base
 
 
 class User(Base):
-    __tablename__ = "pinesphere_users"
+    __tablename__ = "users"
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-    full_name: Mapped[str] = mapped_column(String(160))
-    hashed_password: Mapped[str] = mapped_column(String(255))
-    role_id: Mapped[str] = mapped_column(ForeignKey("pinesphere_roles.id"))
-    branch_id: Mapped[str] = mapped_column(String(36), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    role: Mapped[Role] = relationship(back_populates="users")
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
+    name = Column(String(100), nullable=False)
 
-class Module(Base):
-    __tablename__ = "pinesphere_modules"
+    email = Column(String(150), unique=True, nullable=False)
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    role_id: Mapped[str] = mapped_column(
-        ForeignKey("pinesphere_roles.id"), index=True
-    )
-    title: Mapped[str] = mapped_column(String(160), index=True)
-    phase: Mapped[int] = mapped_column(Integer, default=1)
-    features: Mapped[str] = mapped_column(Text, default="")
-    role: Mapped[Role] = relationship(back_populates="modules")
+    password_hash = Column(Text, nullable=False)
 
+    total_xp = Column(Integer, default=0)
 
-class ErpRecord(Base):
-    __tablename__ = "pinesphere_erp_records"
+    level = Column(Integer, default=1)
 
-    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid4()))
-    module: Mapped[str] = mapped_column(String(160), index=True)
-    feature: Mapped[str] = mapped_column(String(160), index=True)
-    title: Mapped[str] = mapped_column(String(255))
-    status: Mapped[str] = mapped_column(String(40), default="Active")
-    notes: Mapped[str] = mapped_column(Text, default="")
-    owner_role: Mapped[str] = mapped_column(String(64), index=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    streak = Column(Integer, default=0)
