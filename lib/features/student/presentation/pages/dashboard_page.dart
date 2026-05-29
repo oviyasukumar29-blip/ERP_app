@@ -6,21 +6,32 @@ import '../widgets/shared/soft_card.dart';
 import '../widgets/dashboard/stats_grid.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final Map<String, dynamic>? dashboardData;
+
+  const DashboardPage({super.key, this.dashboardData});
 
   @override
   Widget build(BuildContext context) {
+    if (dashboardData == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     final textTheme = Theme.of(context).textTheme;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(18, 56, 18, 120), // top: status bar, bottom: nav bar
+      padding: const EdgeInsets.fromLTRB(18, 56, 18, 120),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
           Text("Good Morning,", style: textTheme.bodyMedium),
           const SizedBox(height: 4),
-          Text("Arjun Kumar", style: textTheme.displayLarge),
+          Text(
+            dashboardData!["student_name"] ?? "Student",
+            style: textTheme.displayLarge,
+          ),
           const SizedBox(height: 24),
 
           // ── Streak Card ──────────────────────────────────────────
@@ -40,7 +51,7 @@ class DashboardPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        "5 DAYS",
+                        "${dashboardData!["weekly_streak"] ?? 0} DAYS",
                         style: textTheme.labelSmall?.copyWith(
                           color: AppColors.successText,
                         ),
@@ -51,7 +62,8 @@ class DashboardPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: List.generate(7, (index) {
-                    final active = index < 5;
+                    final streak = dashboardData!["weekly_streak"] ?? 0;
+                    final active = index < streak;
                     return Expanded(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 3),

@@ -4,49 +4,66 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class WeeklyProgressChart extends StatelessWidget {
-
   const WeeklyProgressChart({super.key});
 
   static const _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  static const _values = [40, 80, 55, 90, 60, 35, 20];
 
   @override
   Widget build(BuildContext context) {
-
-    final values = [40, 80, 55, 90, 60, 70, 100];
-    final maxVal = values.reduce((a, b) => a > b ? a : b);
+    final maxVal = _values.reduce((a, b) => a > b ? a : b);
 
     return Container(
       padding: const EdgeInsets.all(18),
-
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: AppColors.border, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(.06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
+          // ── Header ──────────────────────────────────────────
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
+              const Text('📊', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
               const Text(
-                "Weekly Progress",
+                'Weekly Progress',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Nunito',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
                   color: AppColors.textDark,
+                  letterSpacing: -.2,
                 ),
               ),
-
-              Text(
-                "This week",
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textGrey,
+              const SizedBox(height: 6),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: AppColors.primary.withOpacity(.25)),
+                ),
+                child: const Text(
+                  'This week',
+                  style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.successText,
+                    letterSpacing: .2,
+                  ),
                 ),
               ),
             ],
@@ -54,15 +71,14 @@ class WeeklyProgressChart extends StatelessWidget {
 
           const SizedBox(height: 18),
 
+          // ── Bar chart ───────────────────────────────────────
           SizedBox(
-            height: 100,
+            height: 120,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(values.length, (index) {
-
-                final isMax = values[index] == maxVal;
-                final barHeight = (values[index] / maxVal) * 100;
+              children: List.generate(_values.length, (i) {
+                final isMax = _values[i] == maxVal;
+                final barH = (_values[i] / maxVal) * 110;
 
                 return Expanded(
                   child: Padding(
@@ -70,27 +86,54 @@ class WeeklyProgressChart extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        // Trophy for max
+                        if (isMax)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            child: const Text('🏆',
+                                style: TextStyle(fontSize: 12)),
+                          )
+                        else
+                          const SizedBox(height: 20),
 
+                        // Bar
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeOut,
-                          height: barHeight,
+                          duration:
+                              Duration(milliseconds: 350 + i * 60),
+                          curve: Curves.easeOutCubic,
+                          height: barH,
                           decoration: BoxDecoration(
                             color: isMax
                                 ? AppColors.primary
                                 : AppColors.primaryLight,
-                            borderRadius: BorderRadius.circular(7),
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(9),
+                            ),
+                            boxShadow: isMax
+                                ? [
+                                    BoxShadow(
+                                      color: AppColors.primary
+                                          .withOpacity(.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, -3),
+                                    )
+                                  ]
+                                : [],
                           ),
                         ),
 
-                        const SizedBox(height: 6),
+                        const SizedBox(height: 7),
 
+                        // Day label
                         Text(
-                          _days[index],
-                          style: const TextStyle(
+                          _days[i],
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
                             fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textLight,
+                            fontWeight: FontWeight.w700,
+                            color: isMax
+                                ? AppColors.primary
+                                : AppColors.textLight,
                           ),
                         ),
                       ],

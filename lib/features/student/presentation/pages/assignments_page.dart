@@ -1,6 +1,8 @@
 // features/student/presentation/pages/assignments_page.dart
 
+import '../../data/services/assignment_service.dart';
 import 'package:flutter/material.dart';
+import 'submission_success_page.dart';
 
 // ─── Palette ────────────────────────────────────────────────────────────────
 const _bg = Color(0xFFF7F8F5);
@@ -512,7 +514,7 @@ class _AssignmentCard extends StatelessWidget {
                 icon: Icons.attach_file_rounded,
                 label: a.filesLabel,
               ),
-              const Spacer(),
+              const SizedBox(height: 6),
               _SubmitButton(
                 label: a.submitLabel,
                 color: a.submitColor ?? _green,
@@ -555,24 +557,113 @@ class _Chip extends StatelessWidget {
   }
 }
 
-class _SubmitButton extends StatelessWidget {
+class _SubmitButton extends StatefulWidget {
   final String label;
   final Color color;
 
-  const _SubmitButton({required this.label, required this.color});
+  const _SubmitButton({
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  State<_SubmitButton> createState() =>
+      _SubmitButtonState();
+}
+
+class _SubmitButtonState
+    extends State<_SubmitButton> {
+
+  bool isSubmitted = false;
 
   @override
   Widget build(BuildContext context) {
+
     return GestureDetector(
-      onTap: () {},
+
+      onTap: () async {
+
+        if (isSubmitted) return;
+
+        final success =
+            await AssignmentService()
+                .submitAssignment(1);
+
+if (success) {
+
+  setState(() {
+    isSubmitted = true;
+  });
+
+  Navigator.push(
+    context,
+    PageRouteBuilder(
+      transitionDuration: const Duration(milliseconds: 900),
+
+      pageBuilder: (_, animation, __) {
+        return const SubmissionSuccessPage();
+      },
+
+      transitionsBuilder: (_, animation, __, child) {
+
+        return FadeTransition(
+          opacity: animation,
+
+          child: ScaleTransition(
+            scale: Tween<double>(
+              begin: 0.9,
+              end: 1,
+            ).animate(
+              CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeOutBack,
+              ),
+            ),
+
+            child: child,
+          ),
+        );
+      },
+    ),
+  );
+}
+
+        if (context.mounted) {
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                success
+                    ? "Assignment submitted"
+                    : "Submission failed",
+              ),
+            ),
+          );
+        }
+      },
+
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 6,
+        ),
+
         decoration: BoxDecoration(
-          color: color,
+
+          color: isSubmitted
+              ? Colors.grey
+              : widget.color,
+
           borderRadius: BorderRadius.circular(10),
         ),
+
         child: Text(
-          label,
+
+          isSubmitted
+              ? "Submitted"
+              : widget.label,
+
           style: const TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w700,
@@ -583,7 +674,6 @@ class _SubmitButton extends StatelessWidget {
     );
   }
 }
-
 // ─── Completed banner ─────────────────────────────────────────────────────────
 class _CompletedBanner extends StatelessWidget {
   @override

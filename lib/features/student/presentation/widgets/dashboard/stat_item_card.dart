@@ -4,62 +4,114 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class StatItemCard extends StatelessWidget {
-  final IconData icon;
+  final String emoji;
   final String title;
   final String value;
+  final String sub;
+  final double progress;
+  final Color accentColor;
+  final Color accentBg;
 
   const StatItemCard({
     super.key,
-    required this.icon,
+    required this.emoji,
     required this.title,
     required this.value,
+    this.sub = '',
+    this.progress = 0.5,
+    this.accentColor = AppColors.primary,
+    this.accentBg = AppColors.primaryLight,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Container(
-      padding: const EdgeInsets.all(13), // was 16
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.border, width: 0.5),
+        border: Border.all(color: AppColors.border, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withOpacity(.06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,   // ← KEY FIX: stops overflow
+        mainAxisSize: MainAxisSize.min,
         children: [
+          // ── Emoji badge ─────────────────────────────────────
           Container(
-            padding: const EdgeInsets.all(10), // was 14
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(14), // was 18
+              color: accentBg,
+              borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(
-              icon,
-              color: AppColors.primary,
-              size: 22, // was 28
+            child: Center(
+              child: Text(emoji, style: const TextStyle(fontSize: 20)),
             ),
           ),
-          const SizedBox(height: 10), // was 16
-          Text(
-            title,
-            style: textTheme.bodyMedium?.copyWith(
-              fontSize: 12, // was 15
-              color: AppColors.textGrey,
-            ),
-          ),
-          const SizedBox(height: 3), // was 6
+
+          const SizedBox(height: 10),
+
+          // ── Big value ───────────────────────────────────────
           Text(
             value,
-            style: textTheme.displayLarge?.copyWith(
-              fontSize: 22, // was 28
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 24,
               fontWeight: FontWeight.w800,
               color: AppColors.textDark,
-              letterSpacing: -0.5,
+              letterSpacing: -.5,
+              height: 1.1,
             ),
           ),
+
+          const SizedBox(height: 3),
+
+          // ── Label ───────────────────────────────────────────
+          Text(
+            title,
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textGrey,
+              height: 1.3,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          // ── Progress bar ────────────────────────────────────
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 5,
+              backgroundColor: accentBg,
+              valueColor: AlwaysStoppedAnimation(accentColor),
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          // ── Sub label ───────────────────────────────────────
+          if (sub.isNotEmpty)
+            Text(
+              sub,
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                color: accentColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 10,
+                letterSpacing: .2,
+              ),
+            ),
         ],
       ),
     );

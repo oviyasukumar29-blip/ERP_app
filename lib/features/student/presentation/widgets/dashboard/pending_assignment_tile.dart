@@ -1,91 +1,126 @@
 // features/student/presentation/widgets/dashboard/pending_assignment_tile.dart
 
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class PendingAssignmentTile extends StatelessWidget {
-
   final String title;
-  final String subtitle;
-  final bool danger;
+  final String subject;
+  final String badge;
+  final String emoji;
+  final Color badgeBg;
+  final Color badgeColor;
+  final Color accentBg;
+  final bool isLast;
 
   const PendingAssignmentTile({
     super.key,
     required this.title,
-    required this.subtitle,
-    required this.danger,
+    required this.subject,
+    required this.badge,
+    this.emoji = '📝',
+    this.badgeBg = const Color(0xFFFCEBEB),
+    this.badgeColor = const Color(0xFF791F1F),
+    this.accentBg = const Color(0xFFFCEBEB),
+    this.isLast = false,
   });
+
+  /// Convenience constructor for danger (due today) state
+  factory PendingAssignmentTile.danger({
+    required String title,
+    required String subject,
+    String emoji = '⚠️',
+    bool isLast = false,
+  }) {
+    return PendingAssignmentTile(
+      title: title,
+      subject: subject,
+      badge: 'Due today',
+      emoji: emoji,
+      badgeBg: const Color(0xFFFCEBEB),
+      badgeColor: const Color(0xFF791F1F),
+      accentBg: const Color(0xFFFCEBEB),
+      isLast: isLast,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
-      padding: const EdgeInsets.all(18),
-
+      padding: const EdgeInsets.symmetric(vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        border: isLast
+            ? null
+            : const Border(
+                bottom: BorderSide(color: AppColors.border, width: .8)),
       ),
-
       child: Row(
         children: [
-
+          // ── Emoji icon ──────────────────────────────────────
           Container(
-            height: 50,
-            width: 50,
-
+            width: 46,
+            height: 46,
             decoration: BoxDecoration(
-              color: danger
-                  ? Colors.red.shade50
-                  : Colors.green.shade50,
-
-              borderRadius:
-                  BorderRadius.circular(12),
+              color: accentBg,
+              borderRadius: BorderRadius.circular(15),
             ),
-
-            child: Icon(
-              danger
-                  ? Icons.error
-                  : Icons.history,
-
-              color: danger
-                  ? Colors.red
-                  : Colors.green,
+            child: Center(
+              child: Text(emoji, style: const TextStyle(fontSize: 22)),
             ),
           ),
 
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
 
+          // ── Text ────────────────────────────────────────────
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 Text(
                   title,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+                    fontFamily: 'Nunito',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textDark,
+                    letterSpacing: -.1,
                   ),
                 ),
-
-                const SizedBox(height: 6),
-
+                const SizedBox(height: 3),
                 Text(
-                  subtitle,
-                  style: TextStyle(
-                    color: danger
-                        ? Colors.red
-                        : Colors.grey,
+                  subject,
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textGrey,
                   ),
                 ),
               ],
             ),
           ),
 
-          const Icon(Icons.arrow_forward_ios,
-              size: 18),
+          const SizedBox(width: 8),
+
+          // ── Badge ───────────────────────────────────────────
+          Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+              color: badgeBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              badge,
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                color: badgeColor,
+                fontWeight: FontWeight.w700,
+                fontSize: 10,
+                letterSpacing: .2,
+              ),
+            ),
+          ),
         ],
       ),
     );

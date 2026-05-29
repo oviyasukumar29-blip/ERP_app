@@ -204,7 +204,7 @@ class _SectionHeader extends StatelessWidget {
             letterSpacing: -.2,
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 6),
         if (action != null)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),

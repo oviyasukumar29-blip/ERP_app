@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/stats_grid.dart
 
 import 'package:flutter/material.dart';
+import '../../../../../core/theme/app_colors.dart';
 import 'stat_item_card.dart';
 
 class StatsGrid extends StatelessWidget {
@@ -14,27 +15,43 @@ class StatsGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
-      childAspectRatio: 1.18, // was 1.08 — gives cards breathing room
+      childAspectRatio: 0.95,
       children: const [
         StatItemCard(
-          icon: Icons.menu_book_rounded,
-          title: "Courses",
-          value: "8",
+          emoji: '📚',
+          title: 'Courses\nEnrolled',
+          value: '4',
+          sub: '3 in progress',
+          progress: .60,
+          accentColor: Color(0xFF378ADD),
+          accentBg: Color(0xFFE6F1FB),
         ),
         StatItemCard(
-          icon: Icons.timer_rounded,
-          title: "Hours Studied",
-          value: "124",
+          emoji: '⏱️',
+          title: 'Studied\nThis Week',
+          value: '12.5h',
+          sub: 'Goal: 16h',
+          progress: .75,
+          accentColor: AppColors.primary,
+          accentBg: AppColors.primaryLight,
         ),
         StatItemCard(
-          icon: Icons.assignment_rounded,
-          title: "Assignments",
-          value: "42",
+          emoji: '📝',
+          title: 'Assignments\nDone',
+          value: '8/11',
+          sub: '3 pending',
+          progress: .73,
+          accentColor: Color(0xFF7F77DD),
+          accentBg: Color(0xFFEEEDFE),
         ),
         StatItemCard(
-          icon: Icons.percent_rounded,
-          title: "Attendance",
-          value: "94%",
+          emoji: '🎯',
+          title: 'Attendance\nThis Month',
+          value: '92%',
+          sub: 'Excellent!',
+          progress: .92,
+          accentColor: Color(0xFF1D9E75),
+          accentBg: Color(0xFFE1F5EE),
         ),
       ],
     );
