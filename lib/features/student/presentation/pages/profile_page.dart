@@ -2,34 +2,35 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-// ─── Palette (mirrors _T tokens) ─────────────────────────────────────────────
-const _primary      = Color(0xFF45960A);
-const _primaryDark  = Color(0xFF2E6A06);
-const _primaryLight = Color(0xFFEAF3DE);
-const _primaryGlow  = Color(0xFFC0DD97);
-const _primaryFaint = Color(0xFFF0FAE8);
-const _successDark  = Color(0xFF27500A);
-const _successText  = Color(0xFF3B6D11);
-const _bg           = Color(0xFFF7F8F5);
-const _white        = Color(0xFFFFFFFF);
-const _border       = Color(0xFFE8E8E8);
-const _borderGreen  = Color(0xFFCCE8B0);
-const _textDark     = Color(0xFF111111);
-const _textGrey     = Color(0xFF888888);
-const _textLight    = Color(0xFFBBBBBB);
-const _danger       = Color(0xFFE24B4A);
-const _dangerLight  = Color(0xFFFCEBEB);
-const _dangerBorder = Color(0xFFF5CACA);
-const _blue         = Color(0xFF185FA5);
-const _blueLight    = Color(0xFFE6F1FB);
-const _amber        = Color(0xFFEF9F27);
-const _amberLight   = Color(0xFFFAEEDA);
-const _amberDark    = Color(0xFF633806);
-const _purple       = Color(0xFF3C3489);
-const _purpleLight  = Color(0xFFEEEDFE);
+const _green       = Color(0xFF58CC02);
+const _greenDark   = Color(0xFF45A700);
+const _orange      = Color(0xFFFF9600);
+const _blue        = Color(0xFF1CB0F6);
+const _blueDark    = Color(0xFF0081C8);
+const _blueDeep    = Color(0xFF2B70C9);
+const _red         = Color(0xFFFF4B4B);
+const _redDark     = Color(0xFFCB3E3E);
+const _purple      = Color(0xFFCE82FF);
+const _purpleDark  = Color(0xFFB800FF);
+const _yellow      = Color(0xFFFFD900);
+const _coral       = Color(0xFFFF6B35);
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+const _bg          = Color(0xFFFDF6EC);
+const _cardCream   = Color(0xFFFFFAF4);
+const _border      = Color(0xFFE5E5EA);
+const _textDark    = Color(0xFF1C1C1E);
+const _textGrey    = Color(0xFF8E8E93);
+const _textLight   = Color(0xFFC7C7CC);
+
+const _tintGreen   = Color(0xFFEEFBDD);
+const _tintBlue    = Color(0xFFE3F5FE);
+const _tintOrange  = Color(0xFFFFF3E0);
+const _tintRed     = Color(0xFFFFECEC);
+const _tintPurple  = Color(0xFFF8EDFF);
+const _tintYellow  = Color(0xFFFFFBE0);
+
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -55,32 +56,32 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 12),
                     _InfoCard(
                       icon: Icons.email_rounded,
-                      iconBg: _blueLight,
-                      iconColor: _blue,
+                      iconBg: _tintBlue,
+                      iconColor: _blueDeep,
                       title: 'Email',
                       value: 'arjun@gmail.com',
                     ),
                     SizedBox(height: 10),
                     _InfoCard(
                       icon: Icons.phone_rounded,
-                      iconBg: _primaryLight,
-                      iconColor: _successDark,
+                      iconBg: _tintGreen,
+                      iconColor: _greenDark,
                       title: 'Phone',
                       value: '+91 9876543210',
                     ),
                     SizedBox(height: 10),
                     _InfoCard(
                       icon: Icons.location_on_rounded,
-                      iconBg: _dangerLight,
-                      iconColor: _danger,
+                      iconBg: _tintRed,
+                      iconColor: _redDark,
                       title: 'Location',
                       value: 'Tamil Nadu, India',
                     ),
                     SizedBox(height: 10),
                     _InfoCard(
                       icon: Icons.school_rounded,
-                      iconBg: _purpleLight,
-                      iconColor: _purple,
+                      iconBg: _tintPurple,
+                      iconColor: _purpleDark,
                       title: 'Institution',
                       value: 'ScholarHub Institute',
                     ),
@@ -89,23 +90,23 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 12),
                     _SettingTile(
                       icon: Icons.notifications_active_rounded,
-                      iconBg: _amberLight,
-                      iconColor: _amber,
+                      iconBg: _tintOrange,
+                      iconColor: _orange,
                       title: 'Notifications',
                       subtitle: 'Manage alerts & reminders',
                     ),
                     SizedBox(height: 10),
                     _SettingTile(
                       icon: Icons.lock_rounded,
-                      iconBg: _blueLight,
-                      iconColor: _blue,
+                      iconBg: _tintBlue,
+                      iconColor: _blueDeep,
                       title: 'Privacy & Security',
                       subtitle: 'Password, 2FA, data',
                     ),
                     SizedBox(height: 10),
                     _SettingTile(
                       icon: Icons.palette_rounded,
-                      iconBg: _purpleLight,
+                      iconBg: _tintPurple,
                       iconColor: _purple,
                       title: 'Appearance',
                       subtitle: 'Theme, font size',
@@ -113,8 +114,8 @@ class ProfilePage extends StatelessWidget {
                     SizedBox(height: 10),
                     _SettingTile(
                       icon: Icons.help_rounded,
-                      iconBg: _primaryLight,
-                      iconColor: _successDark,
+                      iconBg: _tintGreen,
+                      iconColor: _greenDark,
                       title: 'Help & Support',
                       subtitle: 'FAQs, contact us',
                     ),
@@ -131,14 +132,13 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-// ─── Top bar ──────────────────────────────────────────────────────────────────
 class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
-      decoration: const BoxDecoration(
-        color: _white,
+      decoration: BoxDecoration(
+        color: _cardCream,
         border: Border(bottom: BorderSide(color: _border, width: .5)),
       ),
       child: Row(
@@ -146,25 +146,18 @@ class _TopBar extends StatelessWidget {
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'Student profile',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: _textGrey,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: GoogleFonts.inter(
+                    fontSize: 11, color: _textGrey, fontWeight: FontWeight.w500),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   'Profile',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: _textDark,
-                    letterSpacing: -.5,
-                    height: 1.1,
-                  ),
+                  style: GoogleFonts.inter(
+                    fontSize: 22, fontWeight: FontWeight.w600,
+                    color: _textDark, letterSpacing: -.5, height: 1.1),
                 ),
               ],
             ),
@@ -172,18 +165,13 @@ class _TopBar extends StatelessWidget {
           GestureDetector(
             onTap: () => HapticFeedback.lightImpact(),
             child: Container(
-              width: 42,
-              height: 42,
+              width: 42, height: 42,
               decoration: BoxDecoration(
-                color: _primaryFaint,
+                color: _tintBlue,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: _borderGreen),
+                border: Border.all(color: _blue.withOpacity(.25)),
               ),
-              child: const Icon(
-                Icons.settings_rounded,
-                color: _primary,
-                size: 20,
-              ),
+              child: const Icon(Icons.settings_rounded, color: _blue, size: 20),
             ),
           ),
         ],
@@ -192,7 +180,6 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-// ─── Profile card ─────────────────────────────────────────────────────────────
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard();
 
@@ -202,13 +189,12 @@ class _ProfileCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _white,
+        color: _cardCream,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: _border, width: .6),
       ),
       child: Column(
         children: [
-          // Avatar
           Stack(
             alignment: Alignment.bottomRight,
             children: [
@@ -216,7 +202,7 @@ class _ProfileCard extends StatelessWidget {
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: _primary, width: 2),
+                  border: Border.all(color: _blue, width: 2),
                 ),
                 child: const CircleAvatar(
                   radius: 44,
@@ -224,47 +210,38 @@ class _ProfileCard extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 28,
-                height: 28,
+                width: 28, height: 28,
                 decoration: BoxDecoration(
-                  color: _primary,
+                  color: _blue,
                   shape: BoxShape.circle,
-                  border: Border.all(color: _white, width: 2),
+                  border: Border.all(color: Colors.white, width: 2),
                 ),
-                child: const Icon(Icons.edit_rounded, size: 14, color: _white),
+                child: const Icon(Icons.edit_rounded, size: 14, color: Colors.white),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Arjun Kumar',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: _textDark,
-              letterSpacing: -.4,
-            ),
+            style: GoogleFonts.inter(
+              fontSize: 22, fontWeight: FontWeight.w600,
+              color: _textDark, letterSpacing: -.4),
           ),
           const SizedBox(height: 4),
-          // Role badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
-              color: _primaryFaint,
+              color: _tintBlue,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _borderGreen),
+              border: Border.all(color: _blue.withOpacity(.25)),
             ),
-            child: const Text(
+            child: Text(
               'AI & Machine Learning · Batch 2024',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: _successText,
-              ),
+              style: GoogleFonts.inter(
+                fontSize: 11, fontWeight: FontWeight.w600, color: _blueDark),
             ),
           ),
           const SizedBox(height: 18),
-          // Stats row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: const [
@@ -284,31 +261,20 @@ class _ProfileCard extends StatelessWidget {
 class _ProfileStat extends StatelessWidget {
   final String value;
   final String label;
-
   const _ProfileStat({required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w800,
-            color: _textDark,
-            letterSpacing: -.4,
-          ),
-        ),
+        Text(value,
+          style: GoogleFonts.inter(
+            fontSize: 20, fontWeight: FontWeight.w600,
+            color: _textDark, letterSpacing: -.4)),
         const SizedBox(height: 3),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 11,
-            color: _textGrey,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        Text(label,
+          style: GoogleFonts.inter(
+            fontSize: 11, color: _textGrey, fontWeight: FontWeight.w500)),
       ],
     );
   }
@@ -316,14 +282,11 @@ class _ProfileStat extends StatelessWidget {
 
 class _VerticalDivider extends StatelessWidget {
   const _VerticalDivider();
-
   @override
-  Widget build(BuildContext context) {
-    return Container(width: 1, height: 34, color: _border);
-  }
+  Widget build(BuildContext context) =>
+      Container(width: 1, height: 34, color: _border);
 }
 
-// ─── Achievements row ─────────────────────────────────────────────────────────
 class _AchievementsRow extends StatelessWidget {
   const _AchievementsRow();
 
@@ -331,35 +294,23 @@ class _AchievementsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: _AchievementCard(
-            icon: Icons.local_fire_department_rounded,
-            iconBg: _amberLight,
-            iconColor: _amber,
-            value: '5',
-            label: 'Day streak',
-          ),
-        ),
+        Expanded(child: _AchievementCard(
+          icon: Icons.local_fire_department_rounded,
+          iconBg: _tintOrange, iconColor: _orange,
+          value: '5', label: 'Day streak',
+        )),
         const SizedBox(width: 10),
-        Expanded(
-          child: _AchievementCard(
-            icon: Icons.star_rounded,
-            iconBg: _primaryLight,
-            iconColor: _primary,
-            value: '4.8',
-            label: 'Avg. score',
-          ),
-        ),
+        Expanded(child: _AchievementCard(
+          icon: Icons.star_rounded,
+          iconBg: _tintYellow, iconColor: _yellow,
+          value: '4.8', label: 'Avg. score',
+        )),
         const SizedBox(width: 10),
-        Expanded(
-          child: _AchievementCard(
-            icon: Icons.workspace_premium_rounded,
-            iconBg: _purpleLight,
-            iconColor: _purple,
-            value: '34',
-            label: 'Badges',
-          ),
-        ),
+        Expanded(child: _AchievementCard(
+          icon: Icons.workspace_premium_rounded,
+          iconBg: _tintPurple, iconColor: _purple,
+          value: '34', label: 'Badges',
+        )),
       ],
     );
   }
@@ -373,11 +324,8 @@ class _AchievementCard extends StatelessWidget {
   final String label;
 
   const _AchievementCard({
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.value,
-    required this.label,
+    required this.icon, required this.iconBg, required this.iconColor,
+    required this.value, required this.label,
   });
 
   @override
@@ -385,66 +333,46 @@ class _AchievementCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
       decoration: BoxDecoration(
-        color: _white,
+        color: _cardCream,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: _border, width: .5),
       ),
       child: Column(
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 36, height: 36,
             decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(11),
-            ),
+              color: iconBg, borderRadius: BorderRadius.circular(11)),
             child: Icon(icon, color: iconColor, size: 18),
           ),
           const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: _textDark,
-              letterSpacing: -.3,
-            ),
-          ),
+          Text(value,
+            style: GoogleFonts.inter(
+              fontSize: 18, fontWeight: FontWeight.w600,
+              color: _textDark, letterSpacing: -.3)),
           const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              color: _textGrey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(label,
+            style: GoogleFonts.inter(
+              fontSize: 10, color: _textGrey, fontWeight: FontWeight.w500)),
         ],
       ),
     );
   }
 }
 
-// ─── Section label ────────────────────────────────────────────────────────────
 class _SectionLabel extends StatelessWidget {
   final String title;
   const _SectionLabel({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w800,
-        color: _textDark,
-        letterSpacing: -.2,
-      ),
-    );
+    return Text(title,
+      style: GoogleFonts.inter(
+        fontSize: 17, fontWeight: FontWeight.w600,
+        color: _textDark, letterSpacing: -.2));
   }
 }
 
-// ─── Info card ────────────────────────────────────────────────────────────────
 class _InfoCard extends StatelessWidget {
   final IconData icon;
   final Color iconBg;
@@ -453,11 +381,8 @@ class _InfoCard extends StatelessWidget {
   final String value;
 
   const _InfoCard({
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.title,
-    required this.value,
+    required this.icon, required this.iconBg, required this.iconColor,
+    required this.title, required this.value,
   });
 
   @override
@@ -465,19 +390,16 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _white,
+        color: _cardCream,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _border, width: .5),
       ),
       child: Row(
         children: [
           Container(
-            width: 44,
-            height: 44,
+            width: 44, height: 44,
             decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(13),
-            ),
+              color: iconBg, borderRadius: BorderRadius.circular(13)),
             child: Icon(icon, color: iconColor, size: 20),
           ),
           const SizedBox(width: 14),
@@ -485,39 +407,24 @@ class _InfoCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: _textGrey,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                Text(title,
+                  style: GoogleFonts.inter(
+                    fontSize: 11, color: _textGrey, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: _textDark,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                Text(value,
+                  style: GoogleFonts.inter(
+                    fontSize: 14, color: _textDark, fontWeight: FontWeight.w600)),
               ],
             ),
           ),
           Container(
-            width: 30,
-            height: 30,
+            width: 30, height: 30,
             decoration: BoxDecoration(
               color: _bg,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: _border, width: .5),
             ),
-            child: const Icon(
-              Icons.edit_rounded,
-              size: 14,
-              color: _textGrey,
-            ),
+            child: const Icon(Icons.edit_rounded, size: 14, color: _textGrey),
           ),
         ],
       ),
@@ -525,7 +432,6 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-// ─── Settings tile ────────────────────────────────────────────────────────────
 class _SettingTile extends StatelessWidget {
   final IconData icon;
   final Color iconBg;
@@ -534,11 +440,8 @@ class _SettingTile extends StatelessWidget {
   final String subtitle;
 
   const _SettingTile({
-    required this.icon,
-    required this.iconBg,
-    required this.iconColor,
-    required this.title,
-    required this.subtitle,
+    required this.icon, required this.iconBg, required this.iconColor,
+    required this.title, required this.subtitle,
   });
 
   @override
@@ -548,19 +451,16 @@ class _SettingTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
         decoration: BoxDecoration(
-          color: _white,
+          color: _cardCream,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: _border, width: .5),
         ),
         child: Row(
           children: [
             Container(
-              width: 42,
-              height: 42,
+              width: 42, height: 42,
               decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
+                color: iconBg, borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, color: iconColor, size: 20),
             ),
             const SizedBox(width: 14),
@@ -568,31 +468,17 @@ class _SettingTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: _textDark,
-                    ),
-                  ),
+                  Text(title,
+                    style: GoogleFonts.inter(
+                      fontSize: 13, fontWeight: FontWeight.w600, color: _textDark)),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: _textGrey,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  Text(subtitle,
+                    style: GoogleFonts.inter(
+                      fontSize: 11, color: _textGrey, fontWeight: FontWeight.w400)),
                 ],
               ),
             ),
-            const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: _textLight,
-            ),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: _textLight),
           ],
         ),
       ),
@@ -600,7 +486,6 @@ class _SettingTile extends StatelessWidget {
   }
 }
 
-// ─── Logout button ────────────────────────────────────────────────────────────
 class _LogoutButton extends StatelessWidget {
   const _LogoutButton();
 
@@ -612,23 +497,18 @@ class _LogoutButton extends StatelessWidget {
         height: 56,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: _dangerLight,
+          color: _tintRed,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: _dangerBorder),
+          border: Border.all(color: _red.withOpacity(.25)),
         ),
-        child: const Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.logout_rounded, color: _danger, size: 20),
-            SizedBox(width: 8),
-            Text(
-              'Log out',
-              style: TextStyle(
-                color: _danger,
-                fontWeight: FontWeight.w700,
-                fontSize: 14,
-              ),
-            ),
+            const Icon(Icons.logout_rounded, color: _red, size: 20),
+            const SizedBox(width: 8),
+            Text('Log out',
+              style: GoogleFonts.inter(
+                color: _red, fontWeight: FontWeight.w600, fontSize: 14)),
           ],
         ),
       ),

@@ -2,24 +2,35 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-// ─── Palette (matches student_screen _T tokens) ──────────────────────────────
-const _primary      = Color(0xFF45960A);
-const _primaryDark  = Color(0xFF2E6A06);
-const _primaryLight = Color(0xFFEAF3DE);
-const _primaryGlow  = Color(0xFFC0DD97);
-const _primaryFaint = Color(0xFFF0FAE8);
-const _successDark  = Color(0xFF27500A);
-const _successText  = Color(0xFF3B6D11);
-const _bg           = Color(0xFFF7F8F5);
-const _white        = Color(0xFFFFFFFF);
-const _border       = Color(0xFFE8E8E8);
-const _borderGreen  = Color(0xFFCCE8B0);
-const _textDark     = Color(0xFF111111);
-const _textGrey     = Color(0xFF888888);
-const _textLight    = Color(0xFFBBBBBB);
+const _green       = Color(0xFF58CC02);
+const _greenDark   = Color(0xFF45A700);
+const _orange      = Color(0xFFFF9600);
+const _blue        = Color(0xFF1CB0F6);
+const _blueDark    = Color(0xFF0081C8);
+const _blueDeep    = Color(0xFF2B70C9);
+const _red         = Color(0xFFFF4B4B);
+const _redDark     = Color(0xFFCB3E3E);
+const _purple      = Color(0xFFCE82FF);
+const _purpleDark  = Color(0xFFB800FF);
+const _yellow      = Color(0xFFFFD900);
+const _coral       = Color(0xFFFF6B35);
 
-// ─── Message model ────────────────────────────────────────────────────────────
+const _bg          = Color(0xFFFDF6EC);
+const _cardCream   = Color(0xFFFFFAF4);
+const _border      = Color(0xFFE5E5EA);
+const _textDark    = Color(0xFF1C1C1E);
+const _textGrey    = Color(0xFF8E8E93);
+const _textLight   = Color(0xFFC7C7CC);
+
+const _tintGreen   = Color(0xFFEEFBDD);
+const _tintBlue    = Color(0xFFE3F5FE);
+const _tintOrange  = Color(0xFFFFF3E0);
+const _tintRed     = Color(0xFFFFECEC);
+const _tintPurple  = Color(0xFFF8EDFF);
+const _tintYellow  = Color(0xFFFFFBE0);
+
 class _Message {
   final String text;
   final bool isUser;
@@ -40,15 +51,13 @@ class _QuickReply {
   const _QuickReply(this.label, this.icon);
 }
 
-// ─── Suggested prompts ────────────────────────────────────────────────────────
 const _suggestions = [
-  (Icons.calculate_rounded,     'Explain Algebra',      Color(0xFFEEEDFE), Color(0xFF3C3489)),
-  (Icons.science_outlined,      "Newton's Laws",        Color(0xFFE6F1FB), Color(0xFF0C447C)),
-  (Icons.history_edu_rounded,   'Essay writing tips',   Color(0xFFEAF3DE), Color(0xFF27500A)),
-  (Icons.biotech_outlined,      'Chemistry basics',     Color(0xFFFCEBEB), Color(0xFF791F1F)),
+  (Icons.calculate_rounded,   'Explain Algebra',    _tintPurple, _purpleDark),
+  (Icons.science_outlined,    "Newton's Laws",      _tintBlue,   _blueDark),
+  (Icons.history_edu_rounded, 'Essay writing tips', _tintGreen,  _greenDark),
+  (Icons.biotech_outlined,    'Chemistry basics',   _tintRed,    _redDark),
 ];
 
-// ─── Static demo messages ─────────────────────────────────────────────────────
 final _demoMessages = [
   const _Message(
     text: "Hi Arjun! 👋 I'm ScholarAI, your personal tutor. Ask me anything — concepts, homework help, or exam prep.",
@@ -80,7 +89,6 @@ final _demoMessages = [
   ),
 ];
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
 class AIChatbotPage extends StatefulWidget {
   const AIChatbotPage({super.key});
 
@@ -145,9 +153,7 @@ class _AIChatbotPageState extends State<AIChatbotPage> {
                 itemCount: _messages.length + (_showSuggestions ? 1 : 0),
                 itemBuilder: (context, i) {
                   if (_showSuggestions && i == _messages.length) {
-                    return _SuggestionsRow(
-                      onTap: (s) => _sendMessage(s),
-                    );
+                    return _SuggestionsRow(onTap: (s) => _sendMessage(s));
                   }
                   return _MessageBubble(
                     message: _messages[i],
@@ -170,31 +176,29 @@ class _AIChatbotPageState extends State<AIChatbotPage> {
   }
 }
 
-// ─── Header ───────────────────────────────────────────────────────────────────
 class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
-      decoration: const BoxDecoration(
-        color: _white,
+      decoration: BoxDecoration(
+        color: _cardCream,
         border: Border(bottom: BorderSide(color: _border, width: .5)),
       ),
       child: Row(
         children: [
-          // AI avatar
           Container(
-            width: 42,
-            height: 42,
+            width: 42, height: 42,
             decoration: BoxDecoration(
-              color: _primaryDark,
+              gradient: const LinearGradient(
+                colors: [_blue, _blueDeep],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Center(
-              child: Text(
-                '✦',
-                style: TextStyle(fontSize: 20, color: _white),
-              ),
+              child: Text('✦', style: TextStyle(fontSize: 20, color: Colors.white)),
             ),
           ),
           const SizedBox(width: 10),
@@ -202,11 +206,11 @@ class _Header extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'ScholarAI',
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     color: _textDark,
                     letterSpacing: -.3,
                   ),
@@ -214,19 +218,18 @@ class _Header extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      width: 7,
-                      height: 7,
+                      width: 7, height: 7,
                       decoration: const BoxDecoration(
-                        color: _primary,
+                        color: _green,
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Text(
+                    Text(
                       'Online · Ready to help',
-                      style: TextStyle(
+                      style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: _successText,
+                        color: _greenDark,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -235,24 +238,23 @@ class _Header extends StatelessWidget {
               ],
             ),
           ),
-          // Subject pill
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: _primaryFaint,
+              color: _tintBlue,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _borderGreen),
+              border: Border.all(color: _blue.withOpacity(.25)),
             ),
             child: Row(
-              children: const [
-                Icon(Icons.menu_book_rounded, size: 13, color: _primary),
-                SizedBox(width: 5),
+              children: [
+                const Icon(Icons.menu_book_rounded, size: 13, color: _blue),
+                const SizedBox(width: 5),
                 Text(
                   'All subjects',
-                  style: TextStyle(
+                  style: GoogleFonts.inter(
                     fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: _successDark,
+                    fontWeight: FontWeight.w600,
+                    color: _blueDark,
                   ),
                 ),
               ],
@@ -264,7 +266,6 @@ class _Header extends StatelessWidget {
   }
 }
 
-// ─── Message bubble ───────────────────────────────────────────────────────────
 class _MessageBubble extends StatelessWidget {
   final _Message message;
   final ValueChanged<String> onQuickReply;
@@ -281,7 +282,6 @@ class _MessageBubble extends StatelessWidget {
         crossAxisAlignment:
             isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          // Avatar + bubble row
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             mainAxisAlignment:
@@ -289,15 +289,17 @@ class _MessageBubble extends StatelessWidget {
             children: [
               if (!isUser) ...[
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 30, height: 30,
                   decoration: BoxDecoration(
-                    color: _primaryDark,
+                    gradient: const LinearGradient(
+                      colors: [_blue, _blueDeep],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Center(
-                    child: Text('✦',
-                        style: TextStyle(fontSize: 14, color: _white)),
+                    child: Text('✦', style: TextStyle(fontSize: 14, color: Colors.white)),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -306,7 +308,7 @@ class _MessageBubble extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(13),
                   decoration: BoxDecoration(
-                    color: isUser ? _primary : _white,
+                    color: isUser ? _blue : Colors.white,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(18),
                       topRight: const Radius.circular(18),
@@ -326,9 +328,9 @@ class _MessageBubble extends StatelessWidget {
                   ),
                   child: Text(
                     message.text,
-                    style: TextStyle(
+                    style: GoogleFonts.inter(
                       fontSize: 13,
-                      color: isUser ? _white : _textDark,
+                      color: isUser ? Colors.white : _textDark,
                       height: 1.5,
                       fontWeight: FontWeight.w500,
                     ),
@@ -338,20 +340,19 @@ class _MessageBubble extends StatelessWidget {
               if (isUser) ...[
                 const SizedBox(width: 8),
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 30, height: 30,
                   decoration: BoxDecoration(
-                    color: _primaryLight,
+                    color: _tintBlue,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: _primaryGlow),
+                    border: Border.all(color: _blue.withOpacity(.30)),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       'AK',
-                      style: TextStyle(
+                      style: GoogleFonts.inter(
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: _primaryDark,
+                        fontWeight: FontWeight.w700,
+                        color: _blueDark,
                       ),
                     ),
                   ),
@@ -359,7 +360,6 @@ class _MessageBubble extends StatelessWidget {
               ],
             ],
           ),
-          // Timestamp
           Padding(
             padding: EdgeInsets.only(
               top: 4,
@@ -368,10 +368,9 @@ class _MessageBubble extends StatelessWidget {
             ),
             child: Text(
               message.time,
-              style: const TextStyle(fontSize: 10, color: _textLight),
+              style: GoogleFonts.inter(fontSize: 10, color: _textLight),
             ),
           ),
-          // Quick reply chips
           if (message.quickReplies != null && !isUser) ...[
             const SizedBox(height: 8),
             Padding(
@@ -413,21 +412,21 @@ class _QuickReplyChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
         decoration: BoxDecoration(
-          color: _primaryFaint,
+          color: _tintBlue,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _borderGreen),
+          border: Border.all(color: _blue.withOpacity(.25)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 13, color: _primary),
+            const Icon(Icons.auto_awesome_rounded, size: 13, color: _blue),
             const SizedBox(width: 5),
             Text(
               label,
-              style: const TextStyle(
+              style: GoogleFonts.inter(
                 fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: _successDark,
+                fontWeight: FontWeight.w600,
+                color: _blueDark,
               ),
             ),
           ],
@@ -437,7 +436,6 @@ class _QuickReplyChip extends StatelessWidget {
   }
 }
 
-// ─── Suggestions row ──────────────────────────────────────────────────────────
 class _SuggestionsRow extends StatelessWidget {
   final ValueChanged<String> onTap;
   const _SuggestionsRow({required this.onTap});
@@ -449,11 +447,11 @@ class _SuggestionsRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Suggested topics',
-            style: TextStyle(
+            style: GoogleFonts.inter(
               fontSize: 11,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               color: _textGrey,
               letterSpacing: .2,
             ),
@@ -475,8 +473,8 @@ class _SuggestionsRow extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: s.$3,
                           borderRadius: BorderRadius.circular(14),
-                          border:
-                              Border.all(color: s.$4.withOpacity(.2), width: .5),
+                          border: Border.all(
+                              color: s.$4.withOpacity(.2), width: .5),
                         ),
                         child: Row(
                           children: [
@@ -485,9 +483,9 @@ class _SuggestionsRow extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 s.$2,
-                                style: TextStyle(
+                                style: GoogleFonts.inter(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   color: s.$4,
                                 ),
                               ),
@@ -504,7 +502,6 @@ class _SuggestionsRow extends StatelessWidget {
   }
 }
 
-// ─── Input bar ────────────────────────────────────────────────────────────────
 class _InputBar extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
@@ -522,35 +519,32 @@ class _InputBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 10, 14, 16),
-      decoration: const BoxDecoration(
-        color: _white,
+      decoration: BoxDecoration(
+        color: _cardCream,
         border: Border(top: BorderSide(color: _border, width: .5)),
       ),
       child: Row(
         children: [
-          // Suggestions toggle
           GestureDetector(
             onTap: onSuggestions,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 44,
-              height: 44,
+              width: 44, height: 44,
               decoration: BoxDecoration(
-                color: showSuggestions ? _primaryLight : _bg,
+                color: showSuggestions ? _tintPurple : _bg,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: showSuggestions ? _primaryGlow : _border,
+                  color: showSuggestions ? _purple.withOpacity(.40) : _border,
                 ),
               ),
               child: Icon(
                 Icons.auto_awesome_rounded,
                 size: 20,
-                color: showSuggestions ? _primary : _textGrey,
+                color: showSuggestions ? _purpleDark : _textGrey,
               ),
             ),
           ),
           const SizedBox(width: 10),
-          // Text field
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -561,41 +555,40 @@ class _InputBar extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 onSubmitted: (_) => onSend(),
-                style: const TextStyle(
+                style: GoogleFonts.inter(
                   fontSize: 13,
                   color: _textDark,
                   fontWeight: FontWeight.w500,
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Ask anything...',
-                  hintStyle: TextStyle(
+                  hintStyle: GoogleFonts.inter(
                     fontSize: 13,
                     color: _textLight,
                     fontWeight: FontWeight.w400,
                   ),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 12),
                   border: InputBorder.none,
                 ),
               ),
             ),
           ),
           const SizedBox(width: 10),
-          // Send button
           GestureDetector(
             onTap: onSend,
             child: Container(
-              width: 44,
-              height: 44,
+              width: 44, height: 44,
               decoration: BoxDecoration(
-                color: _primary,
+                gradient: const LinearGradient(
+                  colors: [_blue, _blueDeep],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(
-                Icons.arrow_upward_rounded,
-                color: _white,
-                size: 20,
-              ),
+              child: const Icon(Icons.arrow_upward_rounded,
+                  color: Colors.white, size: 20),
             ),
           ),
         ],

@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/pending_assignment_tile.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class PendingAssignmentTile extends StatelessWidget {
@@ -25,7 +26,6 @@ class PendingAssignmentTile extends StatelessWidget {
     this.isLast = false,
   });
 
-  /// Convenience constructor for danger (due today) state
   factory PendingAssignmentTile.danger({
     required String title,
     required String subject,
@@ -56,7 +56,6 @@ class PendingAssignmentTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // ── Emoji icon ──────────────────────────────────────
           Container(
             width: 46,
             height: 46,
@@ -71,15 +70,13 @@ class PendingAssignmentTile extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          // ── Text ────────────────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textDark,
@@ -89,8 +86,7 @@ class PendingAssignmentTile extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   subject,
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: AppColors.textGrey,
@@ -102,18 +98,15 @@ class PendingAssignmentTile extends StatelessWidget {
 
           const SizedBox(width: 8),
 
-          // ── Badge ───────────────────────────────────────────
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: badgeBg,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               badge,
-              style: TextStyle(
-                fontFamily: 'Nunito',
+              style: GoogleFonts.nunito(
                 color: badgeColor,
                 fontWeight: FontWeight.w700,
                 fontSize: 10,

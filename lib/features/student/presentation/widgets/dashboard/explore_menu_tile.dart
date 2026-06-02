@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/explore_menu_tile.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class ExploreMenuTile extends StatelessWidget {
@@ -29,8 +30,7 @@ class ExploreMenuTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(
-            horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
@@ -45,7 +45,6 @@ class ExploreMenuTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // ── Icon / Emoji badge ─────────────────────────────
             Container(
               width: 44,
               height: 44,
@@ -55,23 +54,20 @@ class ExploreMenuTile extends StatelessWidget {
               ),
               child: Center(
                 child: emoji.isNotEmpty
-                    ? Text(emoji,
-                        style: const TextStyle(fontSize: 22))
+                    ? Text(emoji, style: const TextStyle(fontSize: 22))
                     : Icon(icon, color: accentColor, size: 22),
               ),
             ),
 
             const SizedBox(width: 14),
 
-            // ── Label ──────────────────────────────────────────
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
+                    style: GoogleFonts.nunito(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: AppColors.textDark,
@@ -82,8 +78,7 @@ class ExploreMenuTile extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       subtitle!,
-                      style: const TextStyle(
-                        fontFamily: 'Nunito',
+                      style: GoogleFonts.nunito(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: AppColors.textGrey,
@@ -94,7 +89,6 @@ class ExploreMenuTile extends StatelessWidget {
               ),
             ),
 
-            // ── Arrow ──────────────────────────────────────────
             Container(
               width: 30,
               height: 30,

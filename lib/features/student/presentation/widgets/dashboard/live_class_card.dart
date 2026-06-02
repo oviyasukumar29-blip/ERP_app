@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/live_class_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class LiveClassCard extends StatelessWidget {
@@ -37,23 +38,20 @@ class LiveClassCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // ── Date box ─────────────────────────────────────────
           Container(
             width: 56,
             height: 68,
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                  color: AppColors.primary.withOpacity(.2)),
+              border: Border.all(color: AppColors.primary.withOpacity(.2)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'AUG',
-                  style: TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: AppColors.successText,
@@ -61,10 +59,9 @@ class LiveClassCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                const Text(
+                Text(
                   '24',
-                  style: TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                     color: AppColors.primaryDark,
@@ -78,12 +75,10 @@ class LiveClassCard extends StatelessWidget {
 
           const SizedBox(width: 14),
 
-          // ── Details ──────────────────────────────────────────
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Live badge
                 if (isLive)
                   Container(
                     margin: const EdgeInsets.only(bottom: 6),
@@ -105,29 +100,27 @@ class LiveClassCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        const Text(
+                        Text(
                           'LIVE NOW',
-                          style: TextStyle(
-                            fontFamily: 'Nunito',
+                          style: GoogleFonts.nunito(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF791F1F),
+                            color: const Color(0xFF791F1F),
                             letterSpacing: .5,
                           ),
                         ),
                         if (studentsJoined > 0) ...[
-                          const Text(
+                          Text(
                             ' · ',
-                            style: TextStyle(
-                                color: Color(0xFF791F1F), fontSize: 9),
+                            style: GoogleFonts.nunito(
+                                color: const Color(0xFF791F1F), fontSize: 9),
                           ),
                           Text(
                             '$studentsJoined joined',
-                            style: const TextStyle(
-                              fontFamily: 'Nunito',
+                            style: GoogleFonts.nunito(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF791F1F),
+                              color: const Color(0xFF791F1F),
                             ),
                           ),
                         ],
@@ -137,8 +130,7 @@ class LiveClassCard extends StatelessWidget {
 
                 Text(
                   subject,
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     fontWeight: FontWeight.w800,
                     fontSize: 14,
                     color: AppColors.textDark,
@@ -150,8 +142,7 @@ class LiveClassCard extends StatelessWidget {
 
                 Text(
                   teacher,
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     color: AppColors.textGrey,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -176,15 +167,13 @@ class LiveClassCard extends StatelessWidget {
                                     ],
                                   )
                                 : null,
-                            color: isLive
-                                ? null
-                                : AppColors.primaryLight,
+                            color: isLive ? null : AppColors.primaryLight,
                             borderRadius: BorderRadius.circular(13),
                             boxShadow: isLive
                                 ? [
                                     BoxShadow(
-                                      color: AppColors.primary
-                                          .withOpacity(.35),
+                                      color:
+                                          AppColors.primary.withOpacity(.35),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     )
@@ -194,8 +183,7 @@ class LiveClassCard extends StatelessWidget {
                           child: Center(
                             child: Text(
                               isLive ? 'Join Now 🚀' : 'Set Reminder',
-                              style: TextStyle(
-                                fontFamily: 'Nunito',
+                              style: GoogleFonts.nunito(
                                 color: isLive
                                     ? Colors.white
                                     : AppColors.successText,
@@ -211,8 +199,7 @@ class LiveClassCard extends StatelessWidget {
                       const SizedBox(width: 10),
                       Text(
                         time,
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
+                        style: GoogleFonts.nunito(
                           color: AppColors.textGrey,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,

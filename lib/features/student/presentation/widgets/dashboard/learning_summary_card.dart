@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/learning_summary_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class LearningSummaryCard extends StatelessWidget {
@@ -37,10 +38,8 @@ class LearningSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Badge chip ───────────────────────────────────────
           Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(.2),
               borderRadius: BorderRadius.circular(20),
@@ -52,8 +51,7 @@ class LearningSummaryCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   badge,
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -65,10 +63,9 @@ class LearningSummaryCard extends StatelessWidget {
 
           const SizedBox(height: 14),
 
-          const Text(
+          Text(
             'Academic Standing',
-            style: TextStyle(
-              fontFamily: 'Nunito',
+            style: GoogleFonts.nunito(
               color: Colors.white70,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -78,10 +75,9 @@ class LearningSummaryCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          const Text(
+          Text(
             'Your consistent performance has placed you in the top 5% of active researchers.',
-            style: TextStyle(
-              fontFamily: 'Nunito',
+            style: GoogleFonts.nunito(
               color: Colors.white,
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -91,7 +87,6 @@ class LearningSummaryCard extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          // ── Stats row ────────────────────────────────────────
           Row(
             children: [
               _StatCol(label: 'GLOBAL RANK', value: rank),
@@ -122,8 +117,7 @@ class _StatCol extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontFamily: 'Nunito',
+          style: GoogleFonts.nunito(
             color: Colors.white60,
             fontSize: 10,
             fontWeight: FontWeight.w700,
@@ -133,8 +127,7 @@ class _StatCol extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            fontFamily: 'Nunito',
+          style: GoogleFonts.nunito(
             color: Colors.white,
             fontSize: 32,
             fontWeight: FontWeight.w800,

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WeeklyProgressChart extends StatelessWidget {
   const WeeklyProgressChart({super.key});
@@ -35,50 +36,45 @@ class WeeklyProgressChart extends StatelessWidget {
             children: [
               const Text('📊', style: TextStyle(fontSize: 16)),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 'Weekly Progress',
-                style: TextStyle(
-                  fontFamily: 'Nunito',
+                  style: GoogleFonts.nunito(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textDark,
                   letterSpacing: -.2,
                 ),
               ),
-              const SizedBox(height: 6),
+              const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 5),
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: AppColors.primary.withOpacity(.25)),
+                    color: AppColors.primary.withOpacity(.25),
+                  ),
                 ),
                 child: const Text(
                   'This week',
-                  style: TextStyle(
-                    fontFamily: 'Nunito',
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.successText,
-                    letterSpacing: .2,
-                  ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 10),
 
           // ── Bar chart ───────────────────────────────────────
           SizedBox(
-            height: 120,
+            height: 155,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: List.generate(_values.length, (i) {
                 final isMax = _values[i] == maxVal;
-                final barH = (_values[i] / maxVal) * 110;
+                final barH = (_values[i] / maxVal) * 85;
 
                 return Expanded(
                   child: Padding(
@@ -94,7 +90,7 @@ class WeeklyProgressChart extends StatelessWidget {
                                 style: TextStyle(fontSize: 12)),
                           )
                         else
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
 
                         // Bar
                         AnimatedContainer(
@@ -122,13 +118,12 @@ class WeeklyProgressChart extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 7),
+                        const SizedBox(height: 3),
 
                         // Day label
                         Text(
                           _days[i],
-                          style: TextStyle(
-                            fontFamily: 'Nunito',
+                          style: GoogleFonts.nunito(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: isMax

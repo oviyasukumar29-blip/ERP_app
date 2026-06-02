@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/streak_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../shared/soft_card.dart';
 
@@ -16,7 +17,6 @@ class StreakCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header ──────────────────────────────────────────
           Row(
             children: [
               Container(
@@ -33,15 +33,14 @@ class StreakCard extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 'Weekly Streak',
-                style: TextStyle(
-                  fontFamily: 'Nunito',
+                style: GoogleFonts.nunito(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
                   color: AppColors.textDark,
                   letterSpacing: -.2,
                 ),
               ),
-              const SizedBox(height: 6),
+              const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 12, vertical: 6),
@@ -54,9 +53,8 @@ class StreakCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$streakDays day streak 🏆',
-                  style: const TextStyle(
-                    fontFamily: 'Nunito',
-                    color: Color(0xFF633806),
+                  style: GoogleFonts.nunito(
+                    color: const Color(0xFF633806),
                     fontWeight: FontWeight.w700,
                     fontSize: 11,
                     letterSpacing: .2,
@@ -68,7 +66,6 @@ class StreakCard extends StatelessWidget {
 
           const SizedBox(height: 18),
 
-          // ── Day dots ────────────────────────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
@@ -121,15 +118,13 @@ class StreakCard extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     _dayLabels[i],
-                    style: TextStyle(
-                      fontFamily: 'Nunito',
+                    style: GoogleFonts.nunito(
                       fontSize: 10,
                       color: active
                           ? AppColors.primary
                           : AppColors.textLight,
-                      fontWeight: active
-                          ? FontWeight.w800
-                          : FontWeight.w600,
+                      fontWeight:
+                          active ? FontWeight.w800 : FontWeight.w600,
                     ),
                   ),
                 ],

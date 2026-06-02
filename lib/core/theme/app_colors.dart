@@ -8,7 +8,7 @@ class AppColors {
   static const primaryLight    = Color(0xFFEAF3DE);
   static const primarySubtle   = Color(0xFFF0FAE8);
 
-  static const background      = Color(0xFFF7F8F5);
+  
   static const white           = Colors.white;
   static const surfaceAlt      = Color(0xFFF1F4ED);
 
@@ -25,4 +25,11 @@ class AppColors {
 
   static const successText     = Color(0xFF3B6D11);
   static const successLight    = Color(0xFFEAF3DE);
+
+  static const background = Color(0xFF0F172A);
+  static const card = Color(0xFF1E293B);
+  static const cardLight = Color(0xFF334155);
+
+  static const textPrimary = Colors.white;
+  static const textSecondary = Color(0xFF94A3B8);
 }

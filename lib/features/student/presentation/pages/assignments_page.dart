@@ -2,32 +2,61 @@
 
 import '../../data/services/assignment_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'submission_success_page.dart';
 
-// ─── Palette ────────────────────────────────────────────────────────────────
-const _bg = Color(0xFFF7F8F5);
-const _white = Color(0xFFFFFFFF);
-const _border = Color(0xFFE8E8E8);
-const _green = Color(0xFF45960A);
-const _greenLight = Color(0xFFEAF3DE);
-const _greenMid = Color(0xFFC0DD97);
-const _greenDark = Color(0xFF27500A);
-const _greenDeep = Color(0xFF3B6D11);
-const _greenFaint = Color(0xFFF0FAE8);
-const _red = Color(0xFFE24B4A);
-const _redLight = Color(0xFFFCEBEB);
-const _redDark = Color(0xFF791F1F);
-const _orange = Color(0xFFEF9F27);
-const _orangeLight = Color(0xFFFAEEDA);
-const _orangeDark = Color(0xFF633806);
-const _purple = Color(0xFF3C3489);
-const _purpleLight = Color(0xFFEEEDFE);
-const _blue = Color(0xFF0C447C);
-const _blueLight = Color(0xFFE6F1FB);
-const _text = Color(0xFF111111);
-const _subText = Color(0xFF888888);
+const _green       = Color(0xFF58CC02);
+const _greenDark   = Color(0xFF45A700);
+const _orange      = Color(0xFFFF9600);
+const _blue        = Color(0xFF1CB0F6);
+const _blueDark    = Color(0xFF0081C8);
+const _blueDeep    = Color(0xFF2B70C9);
+const _red         = Color(0xFFFF4B4B);
+const _redDark     = Color(0xFFCB3E3E);
+const _purple      = Color(0xFFCE82FF);
+const _purpleDark  = Color(0xFFB800FF);
+const _yellow      = Color(0xFFFFD900);
+const _coral       = Color(0xFFFF6B35);
 
-// ─── Data models ────────────────────────────────────────────────────────────
+const _bg          = Color(0xFFFDF6EC);
+const _cardCream   = Color(0xFFFFFAF4);
+
+const _tintGreen   = Color(0xFFEEFBDD);
+const _tintBlue    = Color(0xFFE3F5FE);
+const _tintOrange  = Color(0xFFFFF3E0);
+const _tintRed     = Color(0xFFFFECEC);
+const _tintPurple  = Color(0xFFF8EDFF);
+const _tintYellow  = Color(0xFFFFFBE0);
+
+const _labelPrimary    = Color(0xFF1C1C1E);
+const _labelSecondary  = Color(0xFF3C3C43);
+const _labelTertiary   = Color(0xFF8E8E93);
+const _labelQuaternary = Color(0xFFC7C7CC);
+const _separator       = Color(0xFFE5E5EA);
+
+TextStyle _title2({Color? color}) => GoogleFonts.inter(
+    fontSize: 17, fontWeight: FontWeight.w600,
+    color: color ?? _labelPrimary, letterSpacing: -0.41, height: 1.3);
+
+TextStyle _subheadline({Color? color}) => GoogleFonts.inter(
+    fontSize: 13, fontWeight: FontWeight.w500,
+    color: color ?? _labelTertiary, letterSpacing: -0.08, height: 1.4);
+
+TextStyle _caption1({Color? color}) => GoogleFonts.inter(
+    fontSize: 11, fontWeight: FontWeight.w500,
+    color: color ?? _labelTertiary, letterSpacing: 0.07);
+
+BoxDecoration _tintCard(Color tint, {double radius = 18}) => BoxDecoration(
+      color: tint,
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: tint.withOpacity(.60), width: 0.5),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.black.withOpacity(.04),
+            blurRadius: 12, offset: const Offset(0, 3)),
+      ],
+    );
+
 enum AssignmentStatus { pending, overdue, completed }
 
 class Assignment {
@@ -72,9 +101,9 @@ final _pendingAssignments = [
     subject: 'Mathematics',
     teacher: 'Ms. Anita',
     badgeLabel: 'Due today',
-    badgeBg: _redLight,
+    badgeBg: _tintRed,
     badgeColor: _redDark,
-    iconBg: _purpleLight,
+    iconBg: _tintPurple,
     iconColor: _purple,
     icon: Icons.functions_rounded,
     timeLabel: '11:59 PM',
@@ -86,10 +115,10 @@ final _pendingAssignments = [
     subject: 'Physics',
     teacher: 'Mr. Rajesh',
     badgeLabel: '2 days',
-    badgeBg: _orangeLight,
-    badgeColor: _orangeDark,
-    iconBg: _blueLight,
-    iconColor: _blue,
+    badgeBg: _tintOrange,
+    badgeColor: Color(0xFF633806),
+    iconBg: _tintBlue,
+    iconColor: _blueDark,
     icon: Icons.science_outlined,
     timeLabel: 'Tomorrow',
     filesLabel: '1 file',
@@ -100,9 +129,9 @@ final _pendingAssignments = [
     subject: 'History',
     teacher: 'Mrs. Priya',
     badgeLabel: '5 days',
-    badgeBg: _greenLight,
+    badgeBg: _tintGreen,
     badgeColor: _greenDark,
-    iconBg: _greenLight,
+    iconBg: _tintGreen,
     iconColor: _greenDark,
     icon: Icons.edit_outlined,
     timeLabel: 'Fri, 30 May',
@@ -112,26 +141,25 @@ final _pendingAssignments = [
 ];
 
 final _overdueAssignments = [
-  const Assignment(
+  Assignment(
     title: 'Chemistry lab report',
     subject: 'Chemistry',
     teacher: 'Mrs. Priya',
     badgeLabel: 'Overdue',
-    badgeBg: _redLight,
+    badgeBg: _tintRed,
     badgeColor: _redDark,
-    iconBg: _redLight,
-    iconColor: _redDark,
+    iconBg: _tintRed,
+    iconColor: _red,
     icon: Icons.biotech_outlined,
     timeLabel: 'Was Mon',
     filesLabel: '2 files',
     status: AssignmentStatus.overdue,
-    cardBorder: Color(0xFFF09595),
+    cardBorder: _red,
     submitColor: _red,
     submitLabel: 'Submit now',
   ),
 ];
 
-// ─── Page ────────────────────────────────────────────────────────────────────
 class AssignmentsPage extends StatefulWidget {
   const AssignmentsPage({super.key});
 
@@ -151,96 +179,101 @@ class _AssignmentsPageState extends State<AssignmentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _bg,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _TopBar(),
-            _FilterRow(
-              filters: _filters,
-              icons: _filterIcons,
-              selected: _selectedFilter,
-              onSelect: (i) => setState(() => _selectedFilter = i),
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(14, 12, 14, 30),
-                children: [
-                  _SummaryRow(),
-                  const SizedBox(height: 14),
-                  _SectionHeader(label: 'Pending'),
-                  const SizedBox(height: 10),
-                  ..._pendingAssignments.map((a) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _AssignmentCard(assignment: a),
-                      )),
-                  const SizedBox(height: 4),
-                  _SectionHeader(label: 'Overdue'),
-                  const SizedBox(height: 10),
-                  ..._overdueAssignments.map((a) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _AssignmentCard(assignment: a),
-                      )),
-                  const SizedBox(height: 4),
-                  _SectionHeader(label: 'Completed', showAction: true),
-                  const SizedBox(height: 10),
-                  _CompletedBanner(),
-                ],
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFFDF6EC), Color(0xFFFAF0E4)],
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Column(
+            children: [
+              const _TopBar(),
+              _FilterRow(
+                filters: _filters,
+                icons: _filterIcons,
+                selected: _selectedFilter,
+                onSelect: (i) => setState(() => _selectedFilter = i),
               ),
-            ),
-          ],
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 30),
+                  children: [
+                    _SummaryRow(),
+                    const SizedBox(height: 14),
+                    const _SectionHeader(label: 'Pending'),
+                    const SizedBox(height: 10),
+                    ..._pendingAssignments.map((a) => Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _AssignmentCard(assignment: a),
+                        )),
+                    const SizedBox(height: 4),
+                    const _SectionHeader(label: 'Overdue'),
+                    const SizedBox(height: 10),
+                    ..._overdueAssignments.map((a) => Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _AssignmentCard(assignment: a),
+                        )),
+                    const SizedBox(height: 4),
+                    const _SectionHeader(label: 'Completed', showAction: true),
+                    const SizedBox(height: 10),
+                    const _CompletedBanner(),
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// ─── Top bar ─────────────────────────────────────────────────────────────────
 class _TopBar extends StatelessWidget {
+  const _TopBar();
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: _white,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+      padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
+      decoration: BoxDecoration(
+        color: _cardCream,
+        border: Border(bottom: BorderSide(color: _separator, width: .5)),
+      ),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Track your work',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: _subText,
-                    letterSpacing: 0.1,
-                  ),
-                ),
+                Text('Track your work', style: _caption1()),
                 const SizedBox(height: 2),
                 Text(
                   'Assignments',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: _text,
-                    letterSpacing: -0.5,
-                    height: 1.1,
-                  ),
+                  style: GoogleFonts.inter(
+                      fontSize: 22, fontWeight: FontWeight.w600,
+                      color: _labelPrimary, letterSpacing: -0.5, height: 1.1),
                 ),
               ],
             ),
           ),
           Container(
-            width: 42,
-            height: 42,
+            width: 42, height: 42,
             decoration: BoxDecoration(
-              color: _greenFaint,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: _greenMid),
+              color: _tintOrange,
+              borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: _orange.withOpacity(.25), width: 1),
+              boxShadow: [
+                BoxShadow(color: _orange.withOpacity(.10),
+                    blurRadius: 10, offset: const Offset(0, 3)),
+              ],
             ),
-            child: const Icon(Icons.tune_rounded, color: _green, size: 20),
+            child: const Icon(Icons.tune_rounded, color: _orange, size: 20),
           ),
         ],
       ),
@@ -248,7 +281,6 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-// ─── Filter chips ─────────────────────────────────────────────────────────────
 class _FilterRow extends StatelessWidget {
   final List<String> filters;
   final List<IconData> icons;
@@ -264,11 +296,14 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: _white,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: _cardCream,
+        border: Border(bottom: BorderSide(color: _separator, width: .5)),
+      ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.fromLTRB(18, 12, 18, 12),
+        padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
         child: Row(
           children: List.generate(filters.length, (i) {
             final active = i == selected;
@@ -280,27 +315,22 @@ class _FilterRow extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
-                    color: active ? _greenLight : _white,
+                    color: active ? _tintGreen : _cardCream,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: active ? const Color(0xFF97C459) : _border,
+                      color: active ? _green.withOpacity(.40) : _separator,
                     ),
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        icons[i],
-                        size: 13,
-                        color: active ? _greenDark : _subText,
-                      ),
+                      Icon(icons[i], size: 13,
+                          color: active ? _greenDark : _labelTertiary),
                       const SizedBox(width: 5),
                       Text(
                         filters[i],
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: active ? _greenDark : _subText,
-                        ),
+                        style: GoogleFonts.inter(
+                            fontSize: 11, fontWeight: FontWeight.w600,
+                            color: active ? _greenDark : _labelTertiary),
                       ),
                     ],
                   ),
@@ -314,17 +344,16 @@ class _FilterRow extends StatelessWidget {
   }
 }
 
-// ─── Summary row ──────────────────────────────────────────────────────────────
 class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _SumCard(value: '3', label: 'Pending', valueColor: _red)),
+        Expanded(child: _SumCard(value: '3', label: 'Pending',   valueColor: _red)),
         const SizedBox(width: 8),
         Expanded(child: _SumCard(value: '8', label: 'Completed', valueColor: _green)),
         const SizedBox(width: 8),
-        Expanded(child: _SumCard(value: '1', label: 'Overdue', valueColor: _orange)),
+        Expanded(child: _SumCard(value: '1', label: 'Overdue',   valueColor: _orange)),
       ],
     );
   }
@@ -335,46 +364,34 @@ class _SumCard extends StatelessWidget {
   final String label;
   final Color valueColor;
 
-  const _SumCard({required this.value, required this.label, required this.valueColor});
+  const _SumCard({
+    required this.value,
+    required this.label,
+    required this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: _border, width: 0.5),
-      ),
+      decoration: _tintCard(valueColor.withOpacity(.10), radius: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             value,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: valueColor,
-              letterSpacing: -0.5,
-              height: 1.1,
-            ),
+            style: GoogleFonts.inter(
+                fontSize: 22, fontWeight: FontWeight.w600,
+                color: valueColor, letterSpacing: -0.5, height: 1.1),
           ),
           const SizedBox(height: 3),
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: _subText,
-            ),
-          ),
+          Text(label, style: _caption1()),
         ],
       ),
     );
   }
 }
 
-// ─── Section header ───────────────────────────────────────────────────────────
 class _SectionHeader extends StatelessWidget {
   final String label;
   final bool showAction;
@@ -385,42 +402,16 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-              color: _text,
-              letterSpacing: -0.2,
-            ),
-          ),
-        ),
+        Expanded(child: Text(label, style: _title2())),
         if (showAction)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: _greenFaint,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Text(
-              'View all',
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                color: _green,
-              ),
-            ),
-          ),
+          Text('View all', style: _subheadline(color: _blue)),
       ],
     );
   }
 }
 
-// ─── Assignment card ──────────────────────────────────────────────────────────
 class _AssignmentCard extends StatelessWidget {
   final Assignment assignment;
-
   const _AssignmentCard({required this.assignment});
 
   @override
@@ -431,90 +422,78 @@ class _AssignmentCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: _white,
+        color: _cardCream,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: a.cardBorder ?? _border,
-          width: isOverdue ? 1.0 : 0.5,
+          color: a.cardBorder ?? _orange.withOpacity(.12),
+          width: isOverdue ? 1.0 : 0.8,
         ),
+        boxShadow: [
+          BoxShadow(
+              color: const Color(0xFF1CB0F6).withOpacity(.06),
+              blurRadius: 20, offset: const Offset(0, 4)),
+          BoxShadow(
+              color: Colors.black.withOpacity(.03),
+              blurRadius: 6, offset: const Offset(0, 1)),
+        ],
       ),
       child: Column(
         children: [
-          // Top row
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Icon
               Container(
-                width: 42,
-                height: 42,
+                width: 42, height: 42,
                 decoration: BoxDecoration(
-                  color: a.iconBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                    color: a.iconBg,
+                    borderRadius: BorderRadius.circular(12)),
                 child: Icon(a.icon, color: a.iconColor, size: 20),
               ),
               const SizedBox(width: 11),
-              // Title + sub
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      a.title,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: _text,
-                        letterSpacing: -0.1,
-                      ),
-                    ),
+                    Text(a.title,
+                        style: GoogleFonts.inter(
+                            fontSize: 13, fontWeight: FontWeight.w600,
+                            color: _labelPrimary, letterSpacing: -0.1)),
                     const SizedBox(height: 3),
-                    Text(
-                      '${a.subject} · ${a.teacher}',
-                      style: const TextStyle(fontSize: 11, color: _subText),
-                    ),
+                    Text('${a.subject} · ${a.teacher}',
+                        style: _caption1()),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              // Badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                 decoration: BoxDecoration(
-                  color: a.badgeBg,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  a.badgeLabel,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: a.badgeColor,
-                  ),
-                ),
+                    color: a.badgeBg,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Text(a.badgeLabel,
+                    style: GoogleFonts.inter(
+                        fontSize: 10, fontWeight: FontWeight.w600,
+                        color: a.badgeColor)),
               ),
             ],
           ),
-          // Divider
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 11),
-            child: Divider(color: _border, height: 0.5, thickness: 0.5),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 11),
+            child: Divider(color: _separator, height: 0.5, thickness: 0.5),
           ),
-          // Footer row
           Row(
             children: [
               _Chip(
                 icon: Icons.access_time_rounded,
                 label: a.timeLabel,
-                color: isOverdue ? _red : _subText,
+                color: isOverdue ? _red : _labelTertiary,
               ),
               const SizedBox(width: 8),
               _Chip(
                 icon: Icons.attach_file_rounded,
                 label: a.filesLabel,
               ),
-              const SizedBox(height: 6),
+              const Spacer(),
               _SubmitButton(
                 label: a.submitLabel,
                 color: a.submitColor ?? _green,
@@ -535,7 +514,7 @@ class _Chip extends StatelessWidget {
   const _Chip({
     required this.icon,
     required this.label,
-    this.color = _subText,
+    this.color = _labelTertiary,
   });
 
   @override
@@ -544,14 +523,9 @@ class _Chip extends StatelessWidget {
       children: [
         Icon(icon, size: 13, color: color),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: color,
-          ),
-        ),
+        Text(label,
+            style: GoogleFonts.inter(
+                fontSize: 10, fontWeight: FontWeight.w600, color: color)),
       ],
     );
   }
@@ -561,162 +535,118 @@ class _SubmitButton extends StatefulWidget {
   final String label;
   final Color color;
 
-  const _SubmitButton({
-    required this.label,
-    required this.color,
-  });
+  const _SubmitButton({required this.label, required this.color});
 
   @override
-  State<_SubmitButton> createState() =>
-      _SubmitButtonState();
+  State<_SubmitButton> createState() => _SubmitButtonState();
 }
 
-class _SubmitButtonState
-    extends State<_SubmitButton> {
-
+class _SubmitButtonState extends State<_SubmitButton> {
   bool isSubmitted = false;
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
-
       onTap: () async {
-
         if (isSubmitted) return;
 
-        final success =
-            await AssignmentService()
-                .submitAssignment(1);
+        final success = await AssignmentService().submitAssignment(1);
 
-if (success) {
+        if (success) {
+          setState(() => isSubmitted = true);
 
-  setState(() {
-    isSubmitted = true;
-  });
-
-  Navigator.push(
-    context,
-    PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 900),
-
-      pageBuilder: (_, animation, __) {
-        return const SubmissionSuccessPage();
-      },
-
-      transitionsBuilder: (_, animation, __, child) {
-
-        return FadeTransition(
-          opacity: animation,
-
-          child: ScaleTransition(
-            scale: Tween<double>(
-              begin: 0.9,
-              end: 1,
-            ).animate(
-              CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOutBack,
-              ),
-            ),
-
-            child: child,
-          ),
-        );
-      },
-    ),
-  );
-}
-
-        if (context.mounted) {
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                success
-                    ? "Assignment submitted"
-                    : "Submission failed",
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: const Duration(milliseconds: 900),
+              pageBuilder: (_, animation, __) => const SubmissionSuccessPage(),
+              transitionsBuilder: (_, animation, __, child) =>
+                  FadeTransition(
+                opacity: animation,
+                child: ScaleTransition(
+                  scale: Tween<double>(begin: 0.9, end: 1.0).animate(
+                    CurvedAnimation(
+                        parent: animation, curve: Curves.easeOutBack),
+                  ),
+                  child: child,
+                ),
               ),
             ),
           );
         }
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                success ? 'Assignment submitted' : 'Submission failed',
+                style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+              ),
+              backgroundColor: success ? _green : _red,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+            ),
+          );
+        }
       },
-
       child: Container(
-
-        padding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 6,
-        ),
-
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
-
-          color: isSubmitted
-              ? Colors.grey
-              : widget.color,
-
+          color: isSubmitted ? _labelTertiary : widget.color,
           borderRadius: BorderRadius.circular(10),
+          boxShadow: isSubmitted
+              ? []
+              : [
+                  BoxShadow(
+                      color: widget.color.withOpacity(.30),
+                      blurRadius: 8, offset: const Offset(0, 3)),
+                ],
         ),
-
         child: Text(
-
-          isSubmitted
-              ? "Submitted"
-              : widget.label,
-
-          style: const TextStyle(
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            color: _white,
-          ),
+          isSubmitted ? 'Submitted' : widget.label,
+          style: GoogleFonts.inter(
+              fontSize: 11, fontWeight: FontWeight.w600,
+              color: Colors.white),
         ),
       ),
     );
   }
 }
-// ─── Completed banner ─────────────────────────────────────────────────────────
+
 class _CompletedBanner extends StatelessWidget {
+  const _CompletedBanner();
+
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
       decoration: BoxDecoration(
-        color: _greenFaint,
+        color: _tintGreen,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _greenMid, width: 0.5),
+        border: Border.all(color: _green.withOpacity(.25), width: 0.5),
+        boxShadow: [
+          BoxShadow(color: _green.withOpacity(.08),
+              blurRadius: 16, offset: const Offset(0, 4)),
+        ],
       ),
       child: Column(
         children: [
           Container(
-            width: 52,
-            height: 52,
-            decoration: const BoxDecoration(
-              color: _greenLight,
+            width: 52, height: 52,
+            decoration: BoxDecoration(
+              color: _green.withOpacity(.18),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.check_rounded,
-              color: _greenDark,
-              size: 26,
-            ),
+            child: const Icon(Icons.check_rounded, color: _greenDark, size: 26),
           ),
           const SizedBox(height: 8),
-          const Text(
-            '8 assignments done',
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: _greenDark,
-            ),
-          ),
+          Text('8 assignments done',
+              style: GoogleFonts.inter(
+                  fontSize: 13, fontWeight: FontWeight.w600,
+                  color: _greenDark)),
           const SizedBox(height: 4),
-          const Text(
-            'Great work this week!',
-            style: TextStyle(
-              fontSize: 11,
-              color: _greenDeep,
-            ),
-          ),
+          Text('Great work this week!', style: _caption1(color: _green)),
         ],
       ),
     );

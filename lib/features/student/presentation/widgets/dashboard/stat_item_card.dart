@@ -1,6 +1,7 @@
 // features/student/presentation/widgets/dashboard/stat_item_card.dart
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_colors.dart';
 
 class StatItemCard extends StatelessWidget {
@@ -43,7 +44,6 @@ class StatItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ── Emoji badge ─────────────────────────────────────
           Container(
             width: 40,
             height: 40,
@@ -58,11 +58,9 @@ class StatItemCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // ── Big value ───────────────────────────────────────
           Text(
             value,
-            style: const TextStyle(
-              fontFamily: 'Nunito',
+            style: GoogleFonts.nunito(
               fontSize: 24,
               fontWeight: FontWeight.w800,
               color: AppColors.textDark,
@@ -73,11 +71,9 @@ class StatItemCard extends StatelessWidget {
 
           const SizedBox(height: 3),
 
-          // ── Label ───────────────────────────────────────────
           Text(
             title,
-            style: TextStyle(
-              fontFamily: 'Nunito',
+            style: GoogleFonts.nunito(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: AppColors.textGrey,
@@ -87,7 +83,6 @@ class StatItemCard extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          // ── Progress bar ────────────────────────────────────
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
@@ -100,12 +95,10 @@ class StatItemCard extends StatelessWidget {
 
           const SizedBox(height: 6),
 
-          // ── Sub label ───────────────────────────────────────
           if (sub.isNotEmpty)
             Text(
               sub,
-              style: TextStyle(
-                fontFamily: 'Nunito',
+              style: GoogleFonts.nunito(
                 color: accentColor,
                 fontWeight: FontWeight.w700,
                 fontSize: 10,

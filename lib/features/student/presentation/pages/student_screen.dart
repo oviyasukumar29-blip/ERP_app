@@ -1,7 +1,15 @@
-// features/student/presentation/pages/student_screen.dart
+﻿// features/student/presentation/pages/student_screen.dart
+// ─────────────────────────────────────────────────────────────
+// APPLE WIDGET-STYLE DESIGN SYSTEM
+// STRICT PALETTE: #58CC02 #FF9600 #1CB0F6 #FF4B4B #CE82FF
+//                 #FFD900 #2B70C9 #FF6B35 #45A700 #CB3E3E
+//                 #0081C8 #B800FF  — NO OTHER HEX ACCENTS
+// ─────────────────────────────────────────────────────────────
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 import 'courses_page.dart';
 import 'assignments_page.dart';
 import 'ai_chatbot_page.dart';
@@ -9,151 +17,247 @@ import 'profile_page.dart';
 import '../../../../services/dashboard_service.dart';
 
 // ─────────────────────────────────────────────────────────────
-// DESIGN TOKENS  — Nunito + bubbly-green palette
+// DESIGN TOKENS
 // ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// MODERN PROFESSIONAL GREEN THEME
-// ─────────────────────────────────────────────────────────────
-
 class _T {
+  // ── 12 ALLOWED PALETTE COLORS ────────────────────────────
+  static const green       = Color(0xFF58CC02);
+  static const greenDark   = Color(0xFF45A700);
+  static const orange      = Color(0xFFFF9600);
+  static const blue        = Color(0xFF1CB0F6);
+  static const blueDark    = Color(0xFF0081C8);
+  static const blueDeep    = Color(0xFF2B70C9);
+  static const red         = Color(0xFFFF4B4B);
+  static const redDark     = Color(0xFFCB3E3E);
+  static const purple      = Color(0xFFCE82FF);
+  static const purpleDark  = Color(0xFFB800FF);
+  static const yellow      = Color(0xFFFFD900);
+  static const coral       = Color(0xFFFF6B35);
 
-  // PRIMARY BRAND COLORS
-  static const primary        = Color(0xFF1FA45B);
-  static const primaryDark    = Color(0xFF0D7A40);
-  static const primaryMid     = Color(0xFF32C56F);
-  static const primaryLight   = Color(0xFFEAF8F0);
-  static const primarySubtle  = Color(0xFFF5FCF7);
-  static const primaryGlow    = Color(0xFFB9E8CB);
+  // ── NEUTRAL BACKGROUNDS ───────────────────────────────────
+  static const bg          = Color(0xFFF2F2F7);
+  static const bgElevated  = Color(0xFFFFFFFF);
 
-  // BACKGROUND
-  static const bg             = Color(0xFFF4F7F5);
-  static const white          = Colors.white;
-  static const cardBg         = Color(0xFFFFFFFF);
+  // ── CARD TINTS (very pale — derived from palette) ─────────
+  static const tintBlue    = Color(0xFFEAF8FE);
+  static const tintGreen   = Color(0xFFF1FBE8);
+  static const tintOrange  = Color(0xFFFFF1E4);
+  static const tintRed     = Color(0xFFFFEEEE);
+  static const tintPurple  = Color(0xFFF7EEFF);
+  static const tintYellow  = Color(0xFFFFFBE3);
 
-  // TEXT
-  static const textDark       = Color(0xFF111827);
-  static const textMid        = Color(0xFF4B5563);
-  static const textGrey       = Color(0xFF6B7280);
-  static const textLight      = Color(0xFFB0B7C3);
+  // ── TEXT ─────────────────────────────────────────────────
+  static const labelPrimary    = Color(0xFF1C1C1E);
+  static const labelSecondary  = Color(0xFF3C3C43);
+  static const labelTertiary   = Color(0xFF8E8E93);
+  static const labelQuaternary = Color(0xFFC7C7CC);
 
-  // BORDERS
-  static const border         = Color(0xFFE5E7EB);
-  static const borderGreen    = Color(0xFFD3F0DF);
+  // ── SEPARATORS ───────────────────────────────────────────
+  static const separator     = Color(0xFFE5E5EA);
+  static const separatorDark = Color(0xFF38383A);
 
-  // STATUS COLORS
-  static const danger         = Color(0xFFEF4444);
-  static const dangerLight    = Color(0xFFFEF2F2);
-  static const dangerDark     = Color(0xFF991B1B);
+  // ── TYPOGRAPHY ────────────────────────────────────────────
+  static TextStyle title3({Color? color}) => GoogleFonts.inter(
+    fontSize: 17, fontWeight: FontWeight.w600,
+    color: color ?? labelPrimary, letterSpacing: -0.41, height: 1.3,
+  );
 
-  static const amber          = Color(0xFFF59E0B);
-  static const amberLight     = Color(0xFFFFF7ED);
-  static const amberDark      = Color(0xFF92400E);
+  static TextStyle headline({Color? color}) => GoogleFonts.inter(
+    fontSize: 15, fontWeight: FontWeight.w600,
+    color: color ?? labelPrimary, letterSpacing: -0.24,
+  );
 
-  static const blue           = Color(0xFF3B82F6);
-  static const blueLight      = Color(0xFFEFF6FF);
-  static const blueDark       = Color(0xFF1D4ED8);
+  static TextStyle subheadline({Color? color}) => GoogleFonts.inter(
+    fontSize: 13, fontWeight: FontWeight.w500,
+    color: color ?? labelTertiary, letterSpacing: -0.08, height: 1.4,
+  );
 
-  static const purple         = Color(0xFF8B5CF6);
-  static const purpleLight    = Color(0xFFF5F3FF);
-  static const purpleDark     = Color(0xFF6D28D9);
+  static TextStyle caption1({Color? color}) => GoogleFonts.inter(
+    fontSize: 11, fontWeight: FontWeight.w500,
+    color: color ?? labelTertiary, letterSpacing: 0.07,
+  );
 
-  static const teal           = Color(0xFF14B8A6);
-  static const tealLight      = Color(0xFFF0FDFA);
-  static const tealDark       = Color(0xFF0F766E);
+  static TextStyle caption2({Color? color}) => GoogleFonts.inter(
+    fontSize: 11, fontWeight: FontWeight.w400,
+    color: color ?? labelQuaternary, letterSpacing: 0.07,
+  );
 
-  static const successText    = Color(0xFF166534);
-  static const successDark    = Color(0xFF14532D);
+  // ── CARD DECORATIONS ──────────────────────────────────────
+  static BoxDecoration get widgetCard => BoxDecoration(
+    color: bgElevated,
+    borderRadius: BorderRadius.circular(20),
+    boxShadow: [
+      BoxShadow(color: Colors.black.withOpacity(.06), blurRadius: 20,
+          spreadRadius: 0, offset: const Offset(0, 4)),
+      BoxShadow(color: Colors.black.withOpacity(.03), blurRadius: 6,
+          spreadRadius: 0, offset: const Offset(0, 1)),
+    ],
+  );
 
-  // FONT
-  static const String font = 'Poppins';
-
-  // PREMIUM CARD SHADOW
-  static List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: const Color(0xFF000000).withOpacity(.03),
-          blurRadius: 18,
-          spreadRadius: 0,
-          offset: const Offset(0, 6),
-        ),
-        BoxShadow(
-          color: primary.withOpacity(.04),
-          blurRadius: 30,
-          spreadRadius: -8,
-          offset: const Offset(0, 12),
-        ),
-      ];
-
-  // NAV SHADOW
-  static List<BoxShadow> get navShadow => [
-        BoxShadow(
-          color: primary.withOpacity(.10),
-          blurRadius: 28,
-          spreadRadius: -8,
-          offset: const Offset(0, 10),
-        ),
-      ];
-
-  // DISPLAY TEXT
-  static TextStyle display(
-    double size, {
-    Color? color,
-    double? letterSpacing,
-  }) =>
-      TextStyle(
-        fontFamily: font,
-        fontSize: size,
-        fontWeight: FontWeight.w700,
-        color: color ?? textDark,
-        letterSpacing: letterSpacing ?? -0.4,
-        height: 1.2,
-      );
-
-  // TITLES
-  static TextStyle title(
-    double size, {
-    Color? color,
-  }) =>
-      TextStyle(
-        fontFamily: font,
-        fontSize: size,
-        fontWeight: FontWeight.w600,
-        color: color ?? textDark,
-        letterSpacing: -0.2,
-        height: 1.3,
-      );
-
-  // BODY
-  static TextStyle body(
-    double size, {
-    Color? color,
-  }) =>
-      TextStyle(
-        fontFamily: font,
-        fontSize: size,
-        fontWeight: FontWeight.w500,
-        color: color ?? textMid,
-        height: 1.5,
-      );
-
-  // LABELS
-  static TextStyle label(
-    double size, {
-    Color? color,
-  }) =>
-      TextStyle(
-        fontFamily: font,
-        fontSize: size,
-        fontWeight: FontWeight.w600,
-        color: color ?? textGrey,
-        letterSpacing: .2,
-      );
+  static BoxDecoration tintCard(Color tint) => BoxDecoration(
+    color: tint,
+    borderRadius: BorderRadius.circular(20),
+    boxShadow: [
+      BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 16,
+          spreadRadius: 0, offset: const Offset(0, 4)),
+    ],
+  );
 }
+
+// ─────────────────────────────────────────────────────────────
+// 3D ILLUSTRATIONS — all palette-compliant
+// ─────────────────────────────────────────────────────────────
+
+class _3DBookIllustration extends StatelessWidget {
+  final double size;
+  const _3DBookIllustration({this.size = 80});
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(width: size, height: size, child: CustomPaint(painter: _BookPainter()));
+}
+
+class _BookPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width; final h = size.height;
+    // Drop shadow
+    canvas.drawOval(
+      Rect.fromCenter(center: Offset(w * .50, h * .88), width: w * .70, height: h * .12),
+      Paint()..color = Colors.black.withOpacity(.14)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+
+    // Left page — #FFD900 yellow tones (palette)
+    final lp = Path()
+      ..moveTo(w * .08, h * .22)..cubicTo(w * .08, h * .14, w * .50, h * .10, w * .50, h * .18)
+      ..lineTo(w * .50, h * .80)..cubicTo(w * .50, h * .80, w * .08, h * .82, w * .08, h * .74)..close();
+    canvas.drawPath(lp, Paint()
+      ..shader = const LinearGradient(
+          colors: [Color(0xFFFFD900), Color(0xFFFF9600)]) // #FFD900 → #FF9600
+          .createShader(Rect.fromLTWH(0, 0, w * .50, h)));
+    canvas.drawPath(lp, Paint()
+      ..color = const Color(0xFFFF9600).withOpacity(.30) // #FF9600
+      ..style = PaintingStyle.stroke..strokeWidth = 1.0);
+    // Line rules — #45A700 green at low opacity
+    final ln = Paint()..color = const Color(0xFF45A700).withOpacity(.20)..strokeWidth = 1.0;
+    for (int i = 0; i < 5; i++) {
+      final y = h * (.30 + i * .10);
+      canvas.drawLine(Offset(w * .14, y), Offset(w * .44, y), ln);
+    }
+
+    // Right page — #FF9600 → #FFD900 (palette)
+    final rp = Path()
+      ..moveTo(w * .92, h * .22)..cubicTo(w * .92, h * .14, w * .50, h * .10, w * .50, h * .18)
+      ..lineTo(w * .50, h * .80)..cubicTo(w * .50, h * .80, w * .92, h * .82, w * .92, h * .74)..close();
+    canvas.drawPath(rp, Paint()
+      ..shader = const LinearGradient(
+          colors: [Color(0xFFFF9600), Color(0xFFFFD900)]) // #FF9600 → #FFD900
+          .createShader(Rect.fromLTWH(w * .50, 0, w * .50, h)));
+    canvas.drawPath(rp, Paint()
+      ..color = const Color(0xFFFFD900).withOpacity(.40) // #FFD900
+      ..style = PaintingStyle.stroke..strokeWidth = 1.0);
+    for (int i = 0; i < 5; i++) {
+      final y = h * (.30 + i * .10);
+      canvas.drawLine(Offset(w * .56, y), Offset(w * .86, y), ln);
+    }
+
+    // Spine — #1CB0F6 → #0081C8 (palette)
+    canvas.drawRect(Rect.fromLTWH(w * .46, h * .10, w * .08, h * .70), Paint()
+      ..shader = const LinearGradient(
+          colors: [Color(0xFF1CB0F6), Color(0xFF0081C8)], // palette blue
+          begin: Alignment.topCenter, end: Alignment.bottomCenter)
+          .createShader(Rect.fromLTWH(w * .46, 0, w * .08, h)));
+    // Spine highlight
+    canvas.drawRect(Rect.fromLTWH(w * .46, h * .10, w * .025, h * .70),
+        Paint()..color = Colors.white.withOpacity(.22));
+  }
+  @override bool shouldRepaint(covariant CustomPainter _) => false;
+}
+
+class _3DFireIllustration extends StatelessWidget {
+  final double size;
+  const _3DFireIllustration({this.size = 44});
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(width: size, height: size, child: CustomPaint(painter: _FirePainter()));
+}
+
+class _FirePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width; final h = size.height;
+    // Glow — #FF9600
+    canvas.drawCircle(Offset(w * .50, h * .55), w * .38, Paint()
+      ..color = const Color(0xFFFF9600).withOpacity(.22)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+    // Back flame — #CB3E3E
+    final bp = Path()
+      ..moveTo(w * .50, h * .06)..cubicTo(w * .65, h * .18, w * .82, h * .30, w * .80, h * .52)
+      ..cubicTo(w * .78, h * .68, w * .65, h * .78, w * .50, h * .82)
+      ..cubicTo(w * .35, h * .78, w * .22, h * .68, w * .20, h * .52)
+      ..cubicTo(w * .18, h * .30, w * .35, h * .18, w * .50, h * .06)..close();
+    canvas.drawPath(bp, Paint()..color = const Color(0xFFCB3E3E));
+    // Main flame — #FF9600 → #FF6B35 → #FF4B4B
+    final mp = Path()
+      ..moveTo(w * .50, h * .10)..cubicTo(w * .62, h * .20, w * .76, h * .34, w * .74, h * .54)
+      ..cubicTo(w * .72, h * .70, w * .62, h * .80, w * .50, h * .84)
+      ..cubicTo(w * .38, h * .80, w * .28, h * .70, w * .26, h * .54)
+      ..cubicTo(w * .24, h * .34, w * .38, h * .20, w * .50, h * .10)..close();
+    canvas.drawPath(mp, Paint()
+      ..shader = const LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter,
+          colors: [Color(0xFFFF9600), Color(0xFFFF6B35), Color(0xFFFF4B4B)], stops: [0, .5, 1])
+          .createShader(Rect.fromLTWH(0, 0, w, h)));
+    // Inner — #FFD900 → #FF9600 → #FF6B35
+    final ip = Path()
+      ..moveTo(w * .50, h * .22)..cubicTo(w * .58, h * .30, w * .66, h * .42, w * .64, h * .56)
+      ..cubicTo(w * .62, h * .68, w * .56, h * .75, w * .50, h * .78)
+      ..cubicTo(w * .44, h * .75, w * .38, h * .68, w * .36, h * .56)
+      ..cubicTo(w * .34, h * .42, w * .42, h * .30, w * .50, h * .22)..close();
+    canvas.drawPath(ip, Paint()
+      ..shader = const LinearGradient(begin: Alignment.bottomCenter, end: Alignment.topCenter,
+          colors: [Color(0xFFFFD900), Color(0xFFFF9600), Color(0xFFFF6B35)], stops: [0, .55, 1])
+          .createShader(Rect.fromLTWH(0, 0, w, h)));
+  }
+  @override bool shouldRepaint(covariant CustomPainter _) => false;
+}
+
+class _BooksStackIllustration extends StatelessWidget {
+  final double size;
+  const _BooksStackIllustration({this.size = 56});
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(width: size, height: size, child: CustomPaint(painter: _BooksStackPainter()));
+}
+
+class _BooksStackPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width; final h = size.height;
+    // All spine/face colors from palette only
+    _drawBook(canvas, Rect.fromLTWH(w*.08,h*.60,w*.84,h*.22),
+        const Color(0xFF1CB0F6), const Color(0xFF0081C8), 4.0);
+    _drawBook(canvas, Rect.fromLTWH(w*.12,h*.38,w*.76,h*.22),
+        const Color(0xFF58CC02), const Color(0xFF45A700), 4.0);
+    _drawBook(canvas, Rect.fromLTWH(w*.16,h*.18,w*.68,h*.22),
+        const Color(0xFFFF9600), const Color(0xFFFF6B35), 4.0);
+  }
+  void _drawBook(Canvas canvas, Rect rect, Color face, Color spine, double depth) {
+    canvas.drawRect(
+      Rect.fromLTWH(rect.left, rect.top + depth, depth, rect.height - depth),
+      Paint()..color = spine);
+    canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(3)), Paint()
+      ..shader = LinearGradient(colors: [face, Color.lerp(face, Colors.white, .18)!],
+          begin: Alignment.topLeft, end: Alignment.bottomRight).createShader(rect));
+    canvas.drawLine(Offset(rect.left + 6, rect.top + 3), Offset(rect.left + 6, rect.bottom - 3),
+      Paint()..color = Colors.white.withOpacity(.30)..strokeWidth = 2);
+  }
+  @override bool shouldRepaint(covariant CustomPainter _) => false;
+}
+
 // ─────────────────────────────────────────────────────────────
 // ROOT SCREEN
 // ─────────────────────────────────────────────────────────────
 class StudentScreen extends StatefulWidget {
   const StudentScreen({super.key});
-
   @override
   State<StudentScreen> createState() => _StudentScreenState();
 }
@@ -166,12 +270,16 @@ class _StudentScreenState extends State<StudentScreen> {
   @override
   void initState() {
     super.initState();
-    loadDashboard();
+    _loadDashboard();
   }
 
-  Future<void> loadDashboard() async {
-    final data = await dashboardService.getDashboard();
-    if (data != null) setState(() => dashboardData = data);
+  Future<void> _loadDashboard() async {
+    try {
+      final data = await dashboardService.getDashboard();
+      if (data != null) setState(() => dashboardData = data);
+    } catch (e) {
+      debugPrint("Dashboard error: $e");
+    }
   }
 
   @override
@@ -196,12 +304,9 @@ class _StudentScreenState extends State<StudentScreen> {
           duration: const Duration(milliseconds: 280),
           switchInCurve: Curves.easeOutCubic,
           switchOutCurve: Curves.easeIn,
-          child: KeyedSubtree(
-            key: ValueKey(_current),
-            child: pages[_current],
-          ),
+          child: KeyedSubtree(key: ValueKey(_current), child: pages[_current]),
         ),
-        bottomNavigationBar: _FloatingNavBar(
+        bottomNavigationBar: _AppleNavBar(
           currentIndex: _current,
           onTap: (i) => setState(() => _current = i),
         ),
@@ -219,41 +324,28 @@ class _DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dashboardData == null) {
-      return Center(
-        child: CircularProgressIndicator(color: _T.primary, strokeWidth: 3),
-      );
-    }
-
-   return SafeArea(
-    bottom: false,
-    child: Column(
-      children: [
-
-      _TopBar(dashboardData: dashboardData),
-
-  
-
-        Expanded(
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          _TopBar(dashboardData: dashboardData),
+          Expanded(
             child: ListView(
-              // ✅ Tighter padding — was 16/16/16/120
-              padding: const EdgeInsets.fromLTRB(14, 12, 14, 100),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
               children: [
                 _HeroBannerCard(dashboardData: dashboardData),
-                const SizedBox(height: 10),  // ✅ was 14
+                const SizedBox(height: 14),
                 _WeeklyStreakCard(dashboardData: dashboardData),
-                const SizedBox(height: 10),
-                _StatsGrid(dashboardData: dashboardData),
-                const SizedBox(height: 4),
-                const _WeeklyProgressChart(),
-                const SizedBox(height: 10),
-                const _AssignmentsCard(),
-                const SizedBox(height: 10),
-                const _LiveClassesCard(),
-                const SizedBox(height: 10),
-                const _QuickActionsSection(),
-                
-                
+                const SizedBox(height: 14),
+                _StatsRow(dashboardData: dashboardData),
+                const SizedBox(height: 14),
+                const _ProgressChartCard(),
+                const SizedBox(height: 14),
+                const _AssignmentsWidget(),
+                const SizedBox(height: 14),
+                const _LiveClassesWidget(),
+                const SizedBox(height: 14),
+                const _QuickActionsWidget(),
               ],
             ),
           ),
@@ -273,43 +365,31 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // ✅ Reduced vertical padding — was 12/14
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      decoration: BoxDecoration(
-        color: _T.white,
-        border: Border(bottom: BorderSide(color: _T.border, width: .8)),
-        boxShadow: [
-          BoxShadow(
-            color: _T.primary.withOpacity(.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      color: _T.bg,
       child: Row(
         children: [
-          Container(
-            width: 40,   // ✅ was 44
-            height: 40,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [_T.primaryMid, _T.primaryDark],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(13),
-              boxShadow: [
-                BoxShadow(
-                  color: _T.primary.withOpacity(.28),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+          GestureDetector(
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const _NotificationSheet(),
             ),
-            child: Center(
-              child: Text(
-                _initials(dashboardData?["student_name"]),
-                style: _T.display(13, color: Colors.white, letterSpacing: .5),
+            child: Container(
+              width: 38, height: 38,
+              decoration: BoxDecoration(
+                // #1CB0F6 → #2B70C9 gradient (palette)
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF1CB0F6), Color(0xFF2B70C9)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Text("K", style: TextStyle(color: Colors.white,
+                    fontWeight: FontWeight.w700, fontSize: 17)),
               ),
             ),
           ),
@@ -318,82 +398,66 @@ class _TopBar extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Good morning 👋', style: _T.body(10, color: _T.textGrey)),
+                Text("KIDLEARN", style: _T.title3()),
                 Text(
-                  dashboardData?["student_name"] ?? 'Student',
-                  style: _T.display(16, color: _T.textDark),
+                  dashboardData?["student_name"] != null
+                    ? "Hello, ${dashboardData!["student_name"]} 👋"
+                    : "Good morning 👋",
+                  style: _T.caption1(),
                 ),
               ],
             ),
           ),
+          // XP badge — #1CB0F6 (palette)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: _T.blue,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.diamond_rounded, color: Colors.white, size: 13),
+                const SizedBox(width: 5),
+                Text(
+                  "${dashboardData?["xp"] ?? 1240} XP",
+                  style: GoogleFonts.inter(color: Colors.white,
+                      fontWeight: FontWeight.w700, fontSize: 12, letterSpacing: -0.2),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Bell
           GestureDetector(
-          onTap: () {
-            showModalBottomSheet(
+            onTap: () => showModalBottomSheet(
               context: context,
               isScrollControlled: true,
               backgroundColor: Colors.transparent,
-              builder: (_) => const _NotificationPopup(),
-            );
-          },
-          child: _CircleBtn(
-            icon: Icons.notifications_outlined,
-            dot: true,
-          ),
-        ),
-        ],
-      ),
-    );
-  }
-
-  String _initials(String? name) {
-    if (name == null || name.isEmpty) return 'S';
-    final parts = name.trim().split(' ');
-    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    return parts[0][0].toUpperCase();
-  }
-}
-
-class _CircleBtn extends StatelessWidget {
-  final IconData icon;
-  final bool dot;
-  const _CircleBtn({required this.icon, this.dot = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: _T.primarySubtle,
-            borderRadius: BorderRadius.circular(13),
-            border: Border.all(color: _T.borderGreen, width: 1),
-          ),
-          child: Icon(icon, size: 20, color: _T.primaryDark),
-        ),
-        if (dot)
-          Positioned(
-            right: 7,
-            top: 7,
+              builder: (_) => const _NotificationSheet(),
+            ),
             child: Container(
-              width: 8,
-              height: 8,
+              width: 36, height: 36,
               decoration: BoxDecoration(
-                color: _T.danger,
-                shape: BoxShape.circle,
-                border: Border.all(color: _T.white, width: 1.5),
+                color: _T.bgElevated,
+                borderRadius: BorderRadius.circular(11),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(.06),
+                      blurRadius: 10, offset: const Offset(0, 3)),
+                ],
               ),
+              child: const Icon(Icons.notifications_rounded,
+                  color: _T.labelTertiary, size: 18),
             ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────
-// HERO BANNER  ✅ reduced internal padding & text sizes
+// HERO BANNER — #58CC02 green card
 // ─────────────────────────────────────────────────────────────
 class _HeroBannerCard extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
@@ -402,109 +466,78 @@ class _HeroBannerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),   // ✅ was 20
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2E7D05), Color(0xFF4DB810)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(22),  // ✅ was 26
+        color: _T.green,  // #58CC02
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
-          BoxShadow(
-            color: _T.primary.withOpacity(.30),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
+          BoxShadow(color: _T.greenDark.withOpacity(.35),
+              blurRadius: 28, offset: const Offset(0, 8)),
         ],
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(.2),
+                    color: Colors.white.withOpacity(.20),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('⚡', style: TextStyle(fontSize: 10)),
-                      const SizedBox(width: 4),
-                      Text("Today's Focus",
-                          style: _T.label(9, color: const Color(0xFFD4F4A5))),
-                    ],
-                  ),
+                  child: Text("Learning Progress",
+                    style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700,
+                        color: Colors.white.withOpacity(.90), letterSpacing: 0.2)),
                 ),
-                const SizedBox(height: 8),   // ✅ was 12
+                const SizedBox(height: 10),
                 Text(
-                  'Keep the streak alive! 🔥',   // ✅ single line, was 2 lines
-                  style: _T.display(18, color: Colors.white),  // ✅ was 22
+                  dashboardData?["continue_course"] ?? "Keep Learning",
+                  style: _T.title3(color: Colors.white),
                 ),
-                const SizedBox(height: 4),   // ✅ was 8
+                const SizedBox(height: 4),
                 Text(
-                  '3 tasks left today',
-                  style: _T.body(11, color: const Color(0xFFCEF0A2)),
+                  dashboardData?["course_progress_text"] ?? "72% Completed",
+                  style: _T.subheadline(color: Colors.white70),
                 ),
-                const SizedBox(height: 12),  // ✅ was 16
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(.07),
-                        blurRadius: 6,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('View tasks', style: _T.title(11, color: _T.primaryDark)),
-                      const SizedBox(width: 5),
-                      Icon(Icons.arrow_forward_rounded, size: 13, color: _T.primaryDark),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          SizedBox(
-            width: 76,    // ✅ was 88
-            height: 76,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                SizedBox(
-                  width: 76,
-                  height: 76,
-                  child: CircularProgressIndicator(
-                    value: .72,
-                    strokeWidth: 7,
-                    backgroundColor: Colors.white.withOpacity(.2),
-                    valueColor: const AlwaysStoppedAnimation(Colors.white),
-                    strokeCap: StrokeCap.round,
-                  ),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
+                const SizedBox(height: 14),
+                // Progress bar: track = white 20%, fill = white
+                Stack(
                   children: [
-                    Text('72%', style: _T.display(18, color: Colors.white)),
-                    Text('done', style: _T.label(8, color: const Color(0xFFCEF0A2))),
+                    Container(
+                      height: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(.25),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: (dashboardData?["course_progress"] ?? 72) / 100.0,
+                      child: Container(
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Text("Continue", style: _T.caption1(color: Colors.white70)),
+                    const SizedBox(width: 4),
+                    Icon(Icons.arrow_forward_ios_rounded,
+                        color: Colors.white54, size: 11),
                   ],
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 16),
+          const _3DBookIllustration(size: 84),
         ],
       ),
     );
@@ -512,63 +545,7 @@ class _HeroBannerCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// SHARED — Card wrapper & section header
-// ─────────────────────────────────────────────────────────────
-class _Card extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  const _Card({required this.child, this.padding});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      // ✅ Tighter default padding — was 18
-      padding: padding ?? const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: _T.cardBg,
-        borderRadius: BorderRadius.circular(18),  // ✅ was 22
-        border: Border.all(color: _T.border, width: .8),
-        boxShadow: _T.cardShadow,
-      ),
-      child: child,
-    );
-  }
-}
-
-// ✅ Fixed layout bug: was SizedBox(height:6) between title and Spacer — should be width
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  final String? action;
-  final String? emoji;
-  const _SectionHeader({required this.title, this.action, this.emoji});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (emoji != null) ...[
-          Text(emoji!, style: const TextStyle(fontSize: 15)),
-          const SizedBox(width: 5),
-        ],
-        Text(title, style: _T.title(14, color: _T.textDark)),
-        const Spacer(),  // ✅ pushes action badge to the right
-        if (action != null)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-            decoration: BoxDecoration(
-              color: _T.primarySubtle,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _T.borderGreen),
-            ),
-            child: Text(action!, style: _T.label(10, color: _T.successText)),
-          ),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// WEEKLY STREAK CARD  ✅ fixed Row alignment, tighter spacing
+// WEEKLY STREAK CARD
 // ─────────────────────────────────────────────────────────────
 class _WeeklyStreakCard extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
@@ -578,46 +555,74 @@ class _WeeklyStreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final streak = dashboardData?["weekly_streak"] ?? 5;
+    final streak = (dashboardData?["weekly_streak"] ?? 4) as int;
 
-    return _Card(
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: _T.widgetCard,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: _T.amberLight,
-                  borderRadius: BorderRadius.circular(11),
+              const _3DFireIllustration(size: 38),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Study Streak", style: _T.headline()),
+                    Text("Keep it going!", style: _T.caption1()),
+                  ],
                 ),
-                child: const Center(child: Text('🔥', style: TextStyle(fontSize: 16))),
               ),
-              const SizedBox(width: 8),
-              Text('Weekly Streak', style: _T.title(14)),
-              const Spacer(),  // ✅ was missing — badge was glued to title
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: _T.amberLight,
+                  color: _T.orange.withOpacity(.12),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: _T.amber.withOpacity(.3), width: .8),
                 ),
-                child: Text(
-                  '$streak day streak 🏆',
-                  style: _T.label(10, color: _T.amberDark),
-                ),
+                child: Text('🔥 $streak days',
+                  style: GoogleFonts.inter(fontSize: 12,
+                      fontWeight: FontWeight.w700, color: _T.orange)),
               ),
             ],
           ),
-          const SizedBox(height: 14),   // ✅ was 18
+          const SizedBox(height: 14),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
-              final done = i < (streak > 5 ? 5 : streak);
-              final today = i == (streak > 5 ? 5 : streak) - 1 + 1;
-              return _StreakDot(day: _days[i], done: done, today: today && i == 4);
+              final active = i < streak;
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2.5),
+                  child: Column(
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 260),
+                        curve: Curves.easeOutCubic,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          // active = #FF9600, inactive = very pale #FF9600
+                          color: active
+                              ? _T.orange
+                              : _T.orange.withOpacity(.08),
+                          borderRadius: BorderRadius.circular(9),
+                        ),
+                        child: Center(
+                          child: active
+                            ? const Icon(Icons.local_fire_department_rounded,
+                                color: Colors.white, size: 15)
+                            : Text(_days[i], style: _T.caption2()),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(_days[i],
+                        style: _T.caption2(
+                            color: active ? _T.orange : _T.labelQuaternary)),
+                    ],
+                  ),
+                ),
+              );
             }),
           ),
         ],
@@ -626,175 +631,99 @@ class _WeeklyStreakCard extends StatelessWidget {
   }
 }
 
-class _StreakDot extends StatelessWidget {
-  final String day;
-  final bool done;
-  final bool today;
-  const _StreakDot({required this.day, this.done = false, this.today = false});
-
-  @override
-  Widget build(BuildContext context) {
-    final active = done || today;
-    return Column(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: 36,    // ✅ was 38
-          height: 36,
-          decoration: BoxDecoration(
-            color: today
-                ? _T.primary
-                : done
-                    ? _T.primaryLight
-                    : _T.bg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: active ? _T.primaryGlow : _T.border,
-              width: active ? 1.5 : 1,
-            ),
-            boxShadow: today
-                ? [BoxShadow(color: _T.primary.withOpacity(.3), blurRadius: 8, offset: const Offset(0, 3))]
-                : [],
-          ),
-          child: Center(
-            child: done
-                ? Icon(Icons.check_rounded, size: 16, color: today ? Colors.white : _T.successDark)
-                : today
-                    ? const Text('✨', style: TextStyle(fontSize: 14))
-                    : null,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          day,
-          style: TextStyle(
-            fontFamily: _T.font,
-            fontSize: 10,
-            color: active ? _T.primary : _T.textLight,
-            fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 // ─────────────────────────────────────────────────────────────
-// STATS GRID  ✅ better aspect ratio — was 0.95 (too tall)
+// STATS ROW — 3 mini stat cards (font size REDUCED to 16)
 // ─────────────────────────────────────────────────────────────
-class _StatsGrid extends StatelessWidget {
+class _StatsRow extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
-  const _StatsGrid({this.dashboardData});
+  const _StatsRow({this.dashboardData});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      crossAxisCount: 2,
-      childAspectRatio: 1.15,   // ✅ was 0.95 — cards were too tall
-      crossAxisSpacing: 10,     // ✅ was 12
-      mainAxisSpacing: 10,
+    return Row(
       children: [
-        _StatCard(
-          emoji: '📚',
-          accentColor: _T.blue,
-          accentBg: _T.blueLight,
-          value: dashboardData?["courses_enrolled"]?.toString() ?? '4',
-          label: 'Courses Enrolled',
-          sub: '3 in progress',
-          progress: .60,
-        ),
-        _StatCard(
-          emoji: '⏱️',
-          accentColor: _T.primary,
-          accentBg: _T.primaryLight,
-          value: dashboardData?["study_hours"]?.toString() ?? '12.5h',
-          label: 'Studied This Week',
-          sub: 'Goal: 16h',
-          progress: .75,
-        ),
-        _StatCard(
-          emoji: '📝',
-          accentColor: _T.purple,
-          accentBg: _T.purpleLight,
+        Expanded(child: _MiniStat(
+          icon: Icons.timer_rounded, color: _T.green,
+          value: dashboardData?["study_hours"]?.toString() ?? '12.5',
+          unit: 'hrs', label: 'Studied',
+        )),
+        const SizedBox(width: 10),
+        Expanded(child: _MiniStat(
+          icon: Icons.emoji_events_rounded, color: _T.yellow,
+          value: dashboardData?["attendance"]?.toString() ?? '92',
+          unit: '%', label: 'Attendance',
+        )),
+        const SizedBox(width: 10),
+        Expanded(child: _MiniStat(
+          icon: Icons.check_circle_rounded, color: _T.purple,
           value: dashboardData?["assignments_done"]?.toString() ?? '8/11',
-          label: 'Assignments Done',
-          sub: '3 pending',
-          progress: .73,
-        ),
-        _StatCard(
-          emoji: '🎯',
-          accentColor: _T.teal,
-          accentBg: _T.tealLight,
-          value: dashboardData?["attendance"]?.toString() ?? '92%',
-          label: 'Attendance',
-          sub: 'Excellent!',
-          progress: .92,
-        ),
+          unit: '', label: 'Tasks',
+        )),
       ],
     );
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String emoji;
-  final Color accentColor;
-  final Color accentBg;
+class _MiniStat extends StatelessWidget {
+  final IconData icon;
+  final Color color;
   final String value;
+  final String unit;
   final String label;
-  final String sub;
-  final double progress;
 
-  const _StatCard({
-    required this.emoji,
-    required this.accentColor,
-    required this.accentBg,
-    required this.value,
-    required this.label,
-    required this.sub,
-    required this.progress,
+  const _MiniStat({
+    required this.icon, required this.color,
+    required this.value, required this.unit, required this.label,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),   // ✅ was 14
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       decoration: BoxDecoration(
-        color: _T.cardBg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _T.border, width: .8),
-        boxShadow: _T.cardShadow,
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(color: color.withOpacity(.38),
+              blurRadius: 16, spreadRadius: 0, offset: const Offset(0, 6)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 34,    // ✅ was 38
-            height: 34,
+            width: 28, height: 28,
             decoration: BoxDecoration(
-              color: accentBg,
-              borderRadius: BorderRadius.circular(11),
+              color: Colors.white.withOpacity(.25),
+              borderRadius: BorderRadius.circular(8),
             ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 16))),
+            child: Icon(icon, color: Colors.white, size: 15),
           ),
-          const SizedBox(height: 8),    // ✅ was 10
-          Text(value, style: _T.display(20, color: _T.textDark)),   // ✅ was 22
-          const SizedBox(height: 2),
-          Text(label, style: _T.body(9, color: _T.textGrey), maxLines: 1),
-          const SizedBox(height: 6),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 4,
-              backgroundColor: accentBg,
-              valueColor: AlwaysStoppedAnimation(accentColor),
-            ),
+          const SizedBox(height: 8),
+          // ── REDUCED font: 16 (was 20) ──
+          RichText(
+            text: TextSpan(children: [
+              TextSpan(
+                text: value,
+                style: GoogleFonts.inter(
+                  fontSize: 16,               // ← reduced from 20
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              if (unit.isNotEmpty) TextSpan(
+                text: ' $unit',
+                style: GoogleFonts.inter(
+                  fontSize: 10,               // ← reduced from 11
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white70,
+                ),
+              ),
+            ]),
           ),
-          const SizedBox(height: 4),
-          Text(sub, style: _T.label(9, color: accentColor)),
+          const SizedBox(height: 1),
+          Text(label, style: _T.caption1(color: Colors.white70)),
         ],
       ),
     );
@@ -802,71 +731,587 @@ class _StatCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// WEEKLY PROGRESS CHART  ✅ reduced chart height
+// PROGRESS CHART CARD
 // ─────────────────────────────────────────────────────────────
-class _WeeklyProgressChart extends StatelessWidget {
-  const _WeeklyProgressChart();
-
-  static const _days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  static const _values = [40, 80, 55, 90, 60, 35, 20];
+class _ProgressChartCard extends StatelessWidget {
+  const _ProgressChartCard();
 
   @override
   Widget build(BuildContext context) {
-    final maxVal = _values.reduce((a, b) => a > b ? a : b);
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: _T.widgetCard,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text("Weekly Activity", style: _T.headline()),
+              const Spacer(),
+              Text("This week", style: _T.caption1(color: _T.blue)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _ActivityBars(),
+        ],
+      ),
+    );
+  }
+}
 
-    return _Card(
+class _ActivityBars extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final values = [0.4, 0.65, 0.5, 0.9, 0.7, 0.3, 0.55];
+    final days   = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+    return SizedBox(
+      height: 90,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(7, (i) {
+          final isToday = i == 3;
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 400 + i * 60),
+                    curve: Curves.easeOutCubic,
+                    height: 70 * values[i],
+                    decoration: BoxDecoration(
+                      // #1CB0F6 full or 20% opacity
+                      color: isToday ? _T.blueDeep : _T.blueDeep.withOpacity(.20),                      borderRadius: BorderRadius.circular(7),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(days[i],
+                    style: _T.caption2(
+                        color: isToday ? _T.blue : _T.labelQuaternary)),
+                ],
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ASSIGNMENTS WIDGET
+// ─────────────────────────────────────────────────────────────
+class _AssignmentsWidget extends StatelessWidget {
+  const _AssignmentsWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: "Pending", action: "See All"),
+        const SizedBox(height: 10),
+        Container(
+          decoration: _T.widgetCard,
+          child: const Column(
+            children: [
+              _AssignmentRow(emoji: '🧮', title: "Binary Search Trees",
+                  due: "Due Today", danger: true, last: false),
+              _AssignmentRow(emoji: '✍️', title: "Market Analysis Essay",
+                  due: "2 Days Left", danger: false, last: false),
+              _AssignmentRow(emoji: '🔬', title: "Newton's Laws Worksheet",
+                  due: "5 Days Left", danger: false, last: true),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AssignmentRow extends StatelessWidget {
+  final String emoji;
+  final String title;
+  final String due;
+  final bool danger;
+  final bool last;
+
+  const _AssignmentRow({
+    required this.emoji, required this.title, required this.due,
+    required this.danger, required this.last,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+      decoration: BoxDecoration(
+        border: last ? null : Border(
+            bottom: BorderSide(color: _T.separator, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: danger
+                ? _T.red.withOpacity(.10)
+                : _T.green.withOpacity(.10),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 16))),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: _T.subheadline(color: _T.labelPrimary)),
+                const SizedBox(height: 2),
+                Text(due, style: _T.caption1(
+                    color: danger ? _T.red : _T.labelTertiary)),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, color: _T.labelQuaternary, size: 18),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// LIVE CLASSES WIDGET — grouped list style (like Pending card)
+// ─────────────────────────────────────────────────────────────
+class _LiveClassesWidget extends StatelessWidget {
+  const _LiveClassesWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: "Live Classes", action: "View All"),
+        const SizedBox(height: 10),
+        Container(
+          decoration: _T.widgetCard,
+          child: const Column(
+            children: [
+              _LiveClassRow(
+                emoji: '📐',
+                subject: "Mathematics",
+                teacher: "Mr. Kumar",
+                time: "10:00 AM",
+                accentColor: _T.blue,
+                tint: _T.tintBlue,
+                isLive: true,
+                last: false,
+              ),
+              _LiveClassRow(
+                emoji: '🔬',
+                subject: "Physics",
+                teacher: "Ms. Priya",
+                time: "12:30 PM",
+                accentColor: _T.purple,
+                tint: _T.tintPurple,
+                isLive: false,
+                last: false,
+              ),
+              _LiveClassRow(
+                emoji: '📖',
+                subject: "English",
+                teacher: "Mr. Rajan",
+                time: "2:00 PM",
+                accentColor: _T.green,
+                tint: _T.tintGreen,
+                isLive: false,
+                last: true,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _LiveClassRow extends StatelessWidget {
+  final String emoji;
+  final String subject;
+  final String teacher;
+  final String time;
+  final Color accentColor;
+  final Color tint;
+  final bool isLive;
+  final bool last;
+
+  const _LiveClassRow({
+    required this.emoji,
+    required this.subject,
+    required this.teacher,
+    required this.time,
+    required this.accentColor,
+    required this.tint,
+    required this.isLive,
+    required this.last,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+      decoration: BoxDecoration(
+        border: last
+            ? null
+            : Border(bottom: BorderSide(color: _T.separator, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          // Emoji icon box — same style as assignment row
+          Container(
+            width: 40, height: 40,
+            decoration: BoxDecoration(
+              color: tint,
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 18))),
+          ),
+          const SizedBox(width: 12),
+
+          // Subject + teacher + time
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(subject, style: _T.subheadline(color: _T.labelPrimary)),
+                    if (isLive) ...[
+                      const SizedBox(width: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _T.red,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 5, height: 5,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            Text("LIVE",
+                              style: GoogleFonts.inter(
+                                fontSize: 8, fontWeight: FontWeight.w800,
+                                color: Colors.white, letterSpacing: 0.5)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text("${teacher}  ·  $time",
+                  style: _T.caption1(color: _T.labelTertiary)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          // Join button
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: isLive ? accentColor : tint,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "Join",
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: isLive ? Colors.white : accentColor,
+                  letterSpacing: -0.1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// QUICK ACTIONS
+// ─────────────────────────────────────────────────────────────
+class _QuickActionsWidget extends StatelessWidget {
+  const _QuickActionsWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionHeader(title: "Quick Actions", action: ""),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(child: _QuickAction(icon: Icons.upload_rounded,
+                label: "Submit HW", color: _T.green, tint: _T.tintGreen)),
+            const SizedBox(width: 10),
+            Expanded(child: _QuickAction(icon: Icons.auto_awesome_rounded,
+                label: "AI Tutor", color: _T.blue, tint: _T.tintBlue)),
+            const SizedBox(width: 10),
+            Expanded(child: _QuickAction(icon: Icons.bar_chart_rounded,
+                label: "Grades", color: _T.purple, tint: _T.tintPurple)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickAction extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color tint;
+
+  const _QuickAction({
+    required this.icon, required this.label,
+    required this.color, required this.tint,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 72,
+      decoration: _T.tintCard(tint),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 5),
+          Text(label, style: _T.caption1(color: color)),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// SECTION HEADER
+// ─────────────────────────────────────────────────────────────
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  final String action;
+  const _SectionHeader({required this.title, required this.action});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(title, style: _T.title3()),
+        const Spacer(),
+        if (action.isNotEmpty)
+          Text(action, style: _T.subheadline(color: _T.blue)),
+      ],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATION SHEET
+// ─────────────────────────────────────────────────────────────
+class _NotificationSheet extends StatelessWidget {
+  const _NotificationSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.75,
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+      decoration: const BoxDecoration(
+        color: _T.bgElevated,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
       child: Column(
         children: [
-          _SectionHeader(
-            title: 'Weekly Progress',
-            emoji: '📊',
-            action: 'This week',
+          Container(
+            width: 36, height: 4,
+            decoration: BoxDecoration(
+              color: _T.separator, borderRadius: BorderRadius.circular(20)),
           ),
-          const SizedBox(height: 14),   // ✅ was 18
-          SizedBox(
-            height: 90,    // ✅ was 110
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text("Notifications", style: _T.title3()),
+              const Spacer(),
+              Text("Mark all read", style: _T.subheadline(color: _T.blue)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Container(
+                decoration: _T.widgetCard,
+                child: Column(
+                  children: const [
+                    _NotifRow(emoji: '📝', bg: _T.tintOrange,
+                      title: 'Assignment due soon',
+                      subtitle: 'Algebra Chapter 5 is due by 11:59 PM',
+                      time: '10 min ago', timeColor: _T.red, last: false),
+                    _NotifRow(emoji: '🏆', bg: _T.tintGreen,
+                      title: 'Marks published',
+                      subtitle: 'Physics test results are now available',
+                      time: '1 hr ago', timeColor: _T.green, last: false),
+                    _NotifRow(emoji: '🔹', bg: _T.tintBlue,
+                      title: 'Live class reminder',
+                      subtitle: 'English class starts in 30 minutes',
+                      time: '2 hr ago', timeColor: _T.blue, last: true),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NotifRow extends StatelessWidget {
+  final String emoji;
+  final Color bg;
+  final String title;
+  final String subtitle;
+  final String time;
+  final Color timeColor;
+  final bool last;
+
+  const _NotifRow({
+    required this.emoji, required this.bg, required this.title,
+    required this.subtitle, required this.time,
+    required this.timeColor, required this.last,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+      decoration: BoxDecoration(
+        border: last ? null : Border(
+            bottom: BorderSide(color: _T.separator, width: 0.5)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 38, height: 38,
+            decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(11)),
+            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 17))),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: _T.subheadline(color: _T.labelPrimary)),
+                const SizedBox(height: 2),
+                Text(subtitle, style: _T.caption1(color: _T.labelTertiary)),
+                const SizedBox(height: 4),
+                Text(time, style: _T.caption2(color: timeColor)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// APPLE-STYLE NAV BAR
+// ─────────────────────────────────────────────────────────────
+class _AppleNavBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const _AppleNavBar({required this.currentIndex, required this.onTap});
+
+  static const _items = [
+    (Icons.house_rounded,        Icons.house_outlined,       'Home'),
+    (Icons.menu_book_rounded,    Icons.menu_book_outlined,   'Courses'),
+    (Icons.assignment_rounded,   Icons.assignment_outlined,  'Tasks'),
+    (Icons.auto_awesome_rounded, Icons.auto_awesome_outlined,'AI'),
+    (Icons.person_rounded,       Icons.person_outline_rounded,'Profile'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(.92),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: _T.separator, width: 0.5),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(.10),
+                    blurRadius: 30, spreadRadius: 0, offset: const Offset(0, 8)),
+              ],
+            ),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(_values.length, (i) {
-                final isMax = _values[i] == maxVal;
-                final barH = (_values[i] / maxVal) * 90;
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(_items.length, (i) {
+                final active = currentIndex == i;
+                return GestureDetector(
+                  onTap: () {
+                    HapticFeedback.selectionClick();
+                    onTap(i);
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: SizedBox(
+                    width: 60,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        if (isMax)
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 3),
-                            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: _T.primary,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: const Text('🏆', style: TextStyle(fontSize: 8)),
-                          ),
                         AnimatedContainer(
-                          duration: Duration(milliseconds: 400 + i * 60),
+                          duration: const Duration(milliseconds: 200),
                           curve: Curves.easeOutCubic,
-                          height: barH,
-                          decoration: BoxDecoration(
-                            color: isMax ? _T.primary : _T.primaryLight,
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(7)),
-                            boxShadow: isMax
-                                ? [BoxShadow(color: _T.primary.withOpacity(.28), blurRadius: 6, offset: const Offset(0, -2))]
-                                : [],
+                          width: active ? 40 : 26,
+                          height: active ? 30 : 26,
+                          decoration: active
+                            ? BoxDecoration(
+                                color: _T.blue.withOpacity(.12),
+                                borderRadius: BorderRadius.circular(9))
+                            : null,
+                          child: Icon(
+                            active ? _items[i].$1 : _items[i].$2,
+                            color: active ? _T.blue : _T.labelTertiary,
+                            size: 20,
                           ),
                         ),
-                        const SizedBox(height: 5),
-                        Text(
-                          _days[i].substring(0, 1),
-                          style: TextStyle(
-                            fontFamily: _T.font,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: isMax ? _T.primary : _T.textLight,
+                        const SizedBox(height: 2),
+                        Text(_items[i].$3,
+                          style: GoogleFonts.inter(
+                            fontSize: 9.5,
+                            fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                            color: active ? _T.blue : _T.labelTertiary,
                           ),
                         ),
                       ],
@@ -876,603 +1321,6 @@ class _WeeklyProgressChart extends StatelessWidget {
               }),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// ASSIGNMENTS CARD  ✅ tighter tile vertical padding
-// ─────────────────────────────────────────────────────────────
-class _AssignmentsCard extends StatelessWidget {
-  const _AssignmentsCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return _Card(
-      child: Column(
-        children: const [
-          _SectionHeader(title: 'Pending Assignments', emoji: '📋', action: 'View all'),
-          SizedBox(height: 10),   // ✅ was 14
-          _AssignTile(
-            emoji: '🧮',
-            accentBg: Color(0xFFEEEDFE),
-            accentColor: Color(0xFF3C3489),
-            title: 'Algebra — Chapter 5',
-            subject: 'Mathematics',
-            badge: 'Due today',
-            badgeBg: Color(0xFFFCEBEB),
-            badgeColor: Color(0xFF791F1F),
-          ),
-          _AssignTile(
-            emoji: '🔬',
-            accentBg: Color(0xFFE6F1FB),
-            accentColor: Color(0xFF0C447C),
-            title: "Newton's laws worksheet",
-            subject: 'Physics',
-            badge: '2 days',
-            badgeBg: Color(0xFFFAEEDA),
-            badgeColor: Color(0xFF633806),
-          ),
-          _AssignTile(
-            emoji: '✍️',
-            accentBg: Color(0xFFE8F5DC),
-            accentColor: Color(0xFF1A4706),
-            title: 'Essay — Industrial Rev.',
-            subject: 'History',
-            badge: '5 days',
-            badgeBg: Color(0xFFE8F5DC),
-            badgeColor: Color(0xFF1A4706),
-            isLast: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AssignTile extends StatelessWidget {
-  final String emoji;
-  final Color accentBg;
-  final Color accentColor;
-  final String title;
-  final String subject;
-  final String badge;
-  final Color badgeBg;
-  final Color badgeColor;
-  final bool isLast;
-
-  const _AssignTile({
-    required this.emoji,
-    required this.accentBg,
-    required this.accentColor,
-    required this.title,
-    required this.subject,
-    required this.badge,
-    required this.badgeBg,
-    required this.badgeColor,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),   // ✅ was 12
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: _T.border, width: .8)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,    // ✅ was 44
-            height: 40,
-            decoration: BoxDecoration(
-              color: accentBg,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 18))),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: _T.title(12, color: _T.textDark)),
-                const SizedBox(height: 2),
-                Text(subject, style: _T.body(10, color: _T.textGrey)),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-            decoration: BoxDecoration(
-              color: badgeBg,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(badge, style: _T.label(10, color: badgeColor)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// LIVE CLASSES CARD
-// ─────────────────────────────────────────────────────────────
-class _LiveClassesCard extends StatelessWidget {
-  const _LiveClassesCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return _Card(
-      child: Column(
-        children: const [
-          _SectionHeader(title: 'Live Classes Today', emoji: '🎥', action: 'Full schedule'),
-          SizedBox(height: 10),
-          _LiveTile(
-            title: 'Chemistry — Periodic table',
-            teacher: 'Mrs. Priya',
-            detail: '32 students joined',
-            live: true,
-          ),
-          _LiveTile(
-            title: 'English — Essay writing',
-            teacher: 'Mr. Raj',
-            detail: 'Starts at 11:30 AM',
-            time: '11:30',
-          ),
-          _LiveTile(
-            title: 'Mathematics — Calculus',
-            teacher: 'Ms. Anita',
-            detail: 'Starts at 2:00 PM',
-            time: '2:00',
-            isLast: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _LiveTile extends StatelessWidget {
-  final String title;
-  final String teacher;
-  final String detail;
-  final bool live;
-  final String? time;
-  final bool isLast;
-
-  const _LiveTile({
-    required this.title,
-    required this.teacher,
-    required this.detail,
-    this.live = false,
-    this.time,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),   // ✅ was 12
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: _T.border, width: .8)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 9,
-            height: 9,
-            margin: const EdgeInsets.only(top: 2),
-            decoration: BoxDecoration(
-              color: live ? _T.danger : _T.amber,
-              shape: BoxShape.circle,
-              boxShadow: live
-                  ? [BoxShadow(color: _T.danger.withOpacity(.4), blurRadius: 7, spreadRadius: 1)]
-                  : [],
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: _T.title(12, color: _T.textDark)),
-                const SizedBox(height: 2),
-                Text('$teacher · $detail', style: _T.body(10, color: _T.textGrey)),
-              ],
-            ),
-          ),
-          if (live)
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [_T.primaryMid, _T.primaryDark]),
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(color: _T.primary.withOpacity(.3), blurRadius: 7, offset: const Offset(0, 2))
-                  ],
-                ),
-                child: Text('Join 🚀', style: _T.title(11, color: Colors.white)),
-              ),
-            )
-          else
-            Text(time ?? '', style: _T.title(11, color: _T.textGrey)),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// QUICK ACTIONS  ✅ better aspect ratio
-// ─────────────────────────────────────────────────────────────
-class _QuickActionsSection extends StatelessWidget {
-  const _QuickActionsSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const _SectionHeader(title: 'Quick Actions', emoji: '⚡'),
-        const SizedBox(height: 10),
-        GridView.count(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          crossAxisCount: 2,
-          childAspectRatio: 2.4,   // ✅ was 2.0 — buttons were too tall
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          children: const [
-            _QuickBtn(
-              emoji: '📤',
-              label: 'Submit Homework',
-              accentBg: Color(0xFFEEEDFE),
-              accentColor: Color(0xFF3C3489),
-            ),
-            _QuickBtn(
-              emoji: '🤖',
-              label: 'Ask AI Tutor',
-              accentBg: Color(0xFFE8F5DC),
-              accentColor: Color(0xFF256E04),
-            ),
-            _QuickBtn(
-              emoji: '🧩',
-              label: 'Practice Quiz',
-              accentBg: Color(0xFFE1F5EE),
-              accentColor: Color(0xFF0F6E56),
-            ),
-            _QuickBtn(
-              emoji: '🏅',
-              label: 'My Certificates',
-              accentBg: Color(0xFFFAEEDA),
-              accentColor: Color(0xFF633806),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _QuickBtn extends StatelessWidget {
-  final String emoji;
-  final String label;
-  final Color accentBg;
-  final Color accentColor;
-
-  const _QuickBtn({
-    required this.emoji,
-    required this.label,
-    required this.accentBg,
-    required this.accentColor,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: _T.cardBg,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _T.border, width: .8),
-        boxShadow: _T.cardShadow,
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 32,    // ✅ was 36
-            height: 32,
-            decoration: BoxDecoration(
-              color: accentBg,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 15))),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(label, style: _T.title(11, color: _T.textDark), maxLines: 2),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// NOTIFICATIONS CARD
-// ─────────────────────────────────────────────────────────────
-class _NotificationsCard extends StatelessWidget {
-  const _NotificationsCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return _Card(
-      child: Column(
-        children: const [
-          _SectionHeader(title: 'Notifications', emoji: '🔔', action: 'All'),
-          SizedBox(height: 10),
-          _NotifTile(
-            emoji: '⚠️',
-            bgColor: Color(0xFFFCEBEB),
-            title: 'Assignment due today',
-            subtitle: 'Algebra Chapter 5 is due by 11:59 PM',
-            time: '10 min ago',
-            timeColor: Color(0xFFE24B4A),
-          ),
-          _NotifTile(
-            emoji: '🏆',
-            bgColor: Color(0xFFE8F5DC),
-            title: 'Marks published',
-            subtitle: 'Physics test results are now available',
-            time: '1 hr ago',
-            timeColor: Color(0xFF3A9E09),
-          ),
-          _NotifTile(
-            emoji: '📹',
-            bgColor: Color(0xFFE6F1FB),
-            title: 'Live class reminder',
-            subtitle: 'English class starts in 30 minutes',
-            time: '2 hr ago',
-            timeColor: Color(0xFF378ADD),
-            isLast: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NotifTile extends StatelessWidget {
-  final String emoji;
-  final Color bgColor;
-  final String title;
-  final String subtitle;
-  final String time;
-  final Color timeColor;
-  final bool isLast;
-
-  const _NotifTile({
-    required this.emoji,
-    required this.bgColor,
-    required this.title,
-    required this.subtitle,
-    required this.time,
-    required this.timeColor,
-    this.isLast = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 9),   // ✅ was 12
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: _T.border, width: .8)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 38,    // ✅ was 42
-            height: 38,
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(child: Text(emoji, style: const TextStyle(fontSize: 18))),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: _T.title(12, color: _T.textDark)),
-                const SizedBox(height: 2),
-                Text(subtitle, style: _T.body(10, color: _T.textGrey)),
-                const SizedBox(height: 4),
-                Text(time, style: _T.label(10, color: timeColor)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
-
-class _NotificationPopup extends StatelessWidget {
-  const _NotificationPopup();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.75,
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      decoration: const BoxDecoration(
-        color: _T.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(28),
-        ),
-      ),
-      child: Column(
-        children: [
-
-          // TOP HANDLE
-          Container(
-            width: 50,
-            height: 5,
-            decoration: BoxDecoration(
-              color: _T.border,
-              borderRadius: BorderRadius.circular(20),
-            ),
-          ),
-
-          const SizedBox(height: 18),
-
-          // TITLE
-          Row(
-            children: [
-              Text(
-                "Notifications",
-                style: _T.display(20),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          // LIST
-          const Expanded(
-            child: SingleChildScrollView(
-              child: _NotificationsCard(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// FLOATING NAV BAR
-// ─────────────────────────────────────────────────────────────
-class _FloatingNavBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
-  const _FloatingNavBar({required this.currentIndex, required this.onTap});
-
-  static const _items = [
-    (Icons.home_outlined, Icons.home_rounded, 'Home'),
-    (Icons.menu_book_outlined, Icons.menu_book_rounded, 'Courses'),
-    (Icons.assignment_outlined, Icons.assignment_rounded, 'Tasks'),
-    (Icons.smart_toy_outlined, Icons.smart_toy_rounded, 'AI'),
-    (Icons.person_outline, Icons.person_rounded, 'Profile'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),  // ✅ was 16/0/16/12
-        child: Container(
-          height: 66,   // ✅ was 72
-          decoration: BoxDecoration(
-            color: _T.white,
-            borderRadius: BorderRadius.circular(24),  // ✅ was 28
-            border: Border.all(color: _T.borderGreen, width: 1.5),
-            boxShadow: _T.navShadow,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(
-              _items.length,
-              (i) => _NavTile(
-                icon: _items[i].$1,
-                activeIcon: _items[i].$2,
-                label: _items[i].$3,
-                active: currentIndex == i,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  onTap(i);
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavTile extends StatelessWidget {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  const _NavTile({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 60,    // ✅ was 64
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutCubic,
-              width: active ? 44 : 34,   // ✅ was 48/38
-              height: 30,                // ✅ was 34
-              decoration: BoxDecoration(
-                color: active ? _T.primaryLight : Colors.transparent,
-                borderRadius: BorderRadius.circular(11),
-                boxShadow: active
-                    ? [BoxShadow(color: _T.primary.withOpacity(.13), blurRadius: 6, offset: const Offset(0, 2))]
-                    : [],
-              ),
-              child: Icon(
-                active ? activeIcon : icon,
-                color: active ? _T.primary : _T.textLight,
-                size: active ? 20 : 19,
-              ),
-            ),
-            const SizedBox(height: 2),
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: TextStyle(
-                fontFamily: _T.font,
-                fontSize: 9,    // ✅ was 10
-                fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-                color: active ? _T.primary : _T.textLight,
-              ),
-              child: Text(label),
-            ),
-          ],
         ),
       ),
     );
