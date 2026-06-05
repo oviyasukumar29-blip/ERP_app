@@ -7,7 +7,14 @@ import '../shared/soft_card.dart';
 
 class StreakCard extends StatelessWidget {
   final int streakDays;
-  const StreakCard({super.key, this.streakDays = 5});
+  final List<bool> weekActivity;
+
+  const StreakCard({
+    super.key,
+    required this.streakDays,
+    required this.weekActivity,
+  });
+
 
   static const _dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
@@ -69,9 +76,12 @@ class StreakCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
-              final done = i < streakDays && i < 4;
-              final today = i == 4 && streakDays >= 5;
-              final active = done || today;
+              final active = weekActivity[i];
+
+              
+                  final today = i == 1;
+
+              final done = active;
 
               return Column(
                 children: [
@@ -102,18 +112,20 @@ class StreakCard extends StatelessWidget {
                             ]
                           : [],
                     ),
-                    child: Center(
-                      child: done
-                          ? Icon(Icons.check_rounded,
-                              size: 17,
-                              color: today
-                                  ? Colors.white
-                                  : AppColors.successText)
-                          : today
-                              ? const Text('✨',
-                                  style: TextStyle(fontSize: 16))
-                              : null,
-                    ),
+                   child: Center(
+                    child: today && active
+                        ? const Text(
+                            '🔥',
+                            style: TextStyle(fontSize: 16),
+                          )
+                        : active
+                            ? Icon(
+                                Icons.check_rounded,
+                                size: 17,
+                                color: AppColors.successText,
+                              )
+                            : null,
+                  ),
                   ),
                   const SizedBox(height: 5),
                   Text(

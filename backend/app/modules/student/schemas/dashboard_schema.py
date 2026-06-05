@@ -17,7 +17,15 @@ class DashboardResponse(BaseModel):
 
     weekly_streak: int
 
+    xp: int
+
     courses: int
+
+    continue_course: str
+
+    course_progress: int
+
+    course_progress_text: str
 
     study_hours: str
 
