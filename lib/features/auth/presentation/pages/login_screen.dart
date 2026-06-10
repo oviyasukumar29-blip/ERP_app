@@ -1,13 +1,11 @@
-// features/auth/presentation/pages/login_screen.dart
-
 import 'package:flutter/material.dart';
-
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/custom_button.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../auth/services/auth_service.dart';
 import '../../../admin/presentation/pages/admin_screen.dart';
 import '../../../parent/presentation/pages/parent_screen.dart';
 import '../../../student/presentation/pages/student_screen.dart';
 import '../../../trainer/presentation/pages/trainer_screen.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,105 +15,290 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String _role = "Student";
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _authService = AuthService();
 
-  static const _roles = ["Student", "Trainer", "Parent", "Admin"];
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+  String? _errorMessage;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      setState(() => _errorMessage = 'Please enter username and password');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final success = await _authService.login(username, password);
+
+      if (!mounted) return;
+
+      if (success) {
+        final role = await _authService.getCurrentRole();
+        if (!mounted) return;
+
+        final Widget screen = switch (role) {
+          'trainer' => const TrainerScreen(),
+          'parent'  => const ParentScreen(),
+          'admin'   => const AdminScreen(),
+          _         => const StudentScreen(),
+        };
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => screen),
+          (route) => false,
+        );
+      } else {
+        setState(() => _errorMessage = 'Invalid username or password');
+      }
+    } catch (e) {
+      setState(() => _errorMessage = 'Connection failed. Try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Spacer(),
-              CircleAvatar(
-                radius: 45,
-                backgroundColor: AppColors.primaryLight,
-                child: const Icon(
-                  Icons.school,
-                  size: 40,
-                  color: AppColors.primary,
+              const SizedBox(height: 48),
+
+              // Logo
+              Container(
+                width: 90,
+                height: 90,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF58CC02),
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF58CC02).withValues(alpha: .30),
+                      blurRadius: 24,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
+                child: const Icon(Icons.school_rounded, color: Colors.white, size: 48),
               ),
               const SizedBox(height: 20),
-              const Text(
-                "ScholarHub",
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+
+              Text(
+                'PineSphere',
+                style: GoogleFonts.fredoka(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF1C1C1E),
+                ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                "AI Powered Learning Platform",
-                style: TextStyle(color: Colors.grey),
+              const SizedBox(height: 6),
+              Text(
+                'AI Powered Learning Platform',
+                style: GoogleFonts.fredoka(
+                  fontSize: 14,
+                  color: const Color(0xFF8E8E93),
+                ),
               ),
-              const Spacer(),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none,
+
+              const SizedBox(height: 48),
+
+              // Username field
+              _InputField(
+                controller: _usernameController,
+                hint: 'Username or Email',
+                icon: Icons.person_outline_rounded,
+              ),
+              const SizedBox(height: 14),
+
+              // Password field
+              _InputField(
+                controller: _passwordController,
+                hint: 'Password',
+                icon: Icons.lock_outline_rounded,
+                obscure: _obscurePassword,
+                suffix: GestureDetector(
+                  onTap: () => setState(() => _obscurePassword = !_obscurePassword),
+                  child: Icon(
+                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    color: const Color(0xFF8E8E93),
+                    size: 20,
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(18),
-                    borderSide: BorderSide.none,
+
+              // Error message
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFECEC),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: GoogleFonts.fredoka(
+                      fontSize: 13,
+                      color: const Color(0xFFCB3E3E),
+                    ),
+                  ),
+                ),
+              ],
+
+              const SizedBox(height: 28),
+
+              // Login button
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: GestureDetector(
+                  onTap: _isLoading ? null : _login,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF58CC02),
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF58CC02).withValues(alpha: .35),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              'Login',
+                              style: GoogleFonts.fredoka(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: _role,
-                    isExpanded: true,
-                    items: _roles
-                        .map(
-                          (role) =>
-                              DropdownMenuItem(value: role, child: Text(role)),
-                        )
-                        .toList(),
-                    onChanged: (role) {
-                      if (role != null) setState(() => _role = role);
-                    },
+
+              const SizedBox(height: 20),
+
+              // Sign up link
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: GoogleFonts.fredoka(
+                      fontSize: 14,
+                      color: const Color(0xFF8E8E93),
+                    ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SignupScreen()),
+                    ),
+                    child: Text(
+                      'Sign up',
+                      style: GoogleFonts.fredoka(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1CB0F6),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 30),
-              CustomButton(text: "Login", onTap: () => _openRole(context)),
-              const Spacer(),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  void _openRole(BuildContext context) {
-    final Widget screen = switch (_role) {
-      "Trainer" => const TrainerScreen(),
-      "Parent" => const ParentScreen(),
-      "Admin" => const AdminScreen(),
-      _ => const StudentScreen(),
-    };
+// ── Input field ───────────────────────────────────────────────
+class _InputField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final bool obscure;
+  final Widget? suffix;
 
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+  const _InputField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    this.obscure = false,
+    this.suffix,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .05),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        style: GoogleFonts.fredoka(fontSize: 15, color: const Color(0xFF1C1C1E)),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: GoogleFonts.fredoka(fontSize: 14, color: const Color(0xFFC7C7CC)),
+          prefixIcon: Icon(icon, color: const Color(0xFF8E8E93), size: 20),
+          suffixIcon: suffix != null ? Padding(padding: const EdgeInsets.only(right: 12), child: suffix) : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+      ),
+    );
   }
 }

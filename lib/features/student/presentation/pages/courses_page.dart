@@ -6,17 +6,17 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../services/course_service.dart';
 
 class _A {
-  static const green = Color(0xFF58CC02);
-  static const greenDark = Color(0xFF45A700);
-  static const orange = Color(0xFFFF9600);
-  static const blue = Color(0xFF1CB0F6);
-  static const blueDark = Color(0xFF0081C8);
-  static const blueDeep = Color(0xFF2B70C9);
-  static const red = Color(0xFFFF4B4B);
-  static const purple = Color(0xFFCE82FF);
-  static const purpleDark = Color(0xFFB800FF);
-  static const bg = Color(0xFFF2F2F7);
-  static const bgElevated = Color(0xFFFFFFFF);
+  static const green = Color(0xFF46A800);
+  static const greenDark = Color(0xFF357800);
+  static const orange = Color(0xFFF59000);
+  static const blue = Color(0xFF14A0E0);
+  static const blueDark = Color(0xFF0072B5);
+  static const blueDeep = Color(0xFF2464B8);
+  static const red = Color(0xFFEC3A3A);
+  static const purple = Color(0xFFBB6EF0);
+  static const purpleDark = Color(0xFFA500E8);
+  static const bg = Color(0xFFFDF6EC);
+  static const bgElevated = Color(0xFFFFFAF4);
   static const tintBlue = Color(0xFFEAF8FE);
   static const tintGreen = Color(0xFFF1FBE8);
   static const tintOrange = Color(0xFFFFF1E4);
@@ -27,42 +27,54 @@ class _A {
   static const labelQuaternary = Color(0xFFC7C7CC);
   static const separator = Color(0xFFE5E5EA);
 
-  static TextStyle title2({Color? color}) => GoogleFonts.inter(
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    color: color ?? labelPrimary,
-    height: 1.3,
-  );
+  static TextStyle title2({Color? color}) => GoogleFonts.fredoka(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: color ?? labelPrimary,
+        height: 1.2,
+      );
 
-  static TextStyle subheadline({Color? color}) => GoogleFonts.inter(
-    fontSize: 13,
-    fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    height: 1.4,
-  );
+  static TextStyle headline({Color? color}) => GoogleFonts.fredoka(
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: color ?? labelPrimary,
+      );
 
-  static TextStyle caption1({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
-    fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-  );
+  static TextStyle subheadline({Color? color}) => GoogleFonts.fredoka(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: color ?? labelSecondary,
+        height: 1.4,
+      );
+
+  static TextStyle caption1({Color? color}) => GoogleFonts.fredoka(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        color: color ?? labelTertiary,
+      );
+
+  static TextStyle caption2({Color? color}) => GoogleFonts.fredoka(
+        fontSize: 10,
+        fontWeight: FontWeight.w500,
+        color: color ?? labelTertiary,
+      );
 
   static BoxDecoration get widgetCard => BoxDecoration(
-    color: bgElevated,
-    borderRadius: BorderRadius.circular(20),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(.06),
-        blurRadius: 20,
-        offset: const Offset(0, 4),
-      ),
-      BoxShadow(
-        color: Colors.black.withOpacity(.03),
-        blurRadius: 6,
-        offset: const Offset(0, 1),
-      ),
-    ],
-  );
+        color: bgElevated,
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: .08),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: .8),
+            blurRadius: 8,
+            offset: const Offset(-2, -2),
+          ),
+        ],
+      );
 }
 
 class CoursesPage extends StatefulWidget {
@@ -216,43 +228,39 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
         color: _A.bg,
         border: Border(bottom: BorderSide(color: _A.separator, width: .5)),
       ),
       child: Row(
         children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: _A.tintPurple,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Icon(Icons.menu_book_rounded, color: _A.purple, size: 24),
+          ),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('My learning', style: _A.caption1()),
-                const SizedBox(height: 2),
-                Text(
-                  'Courses',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: _A.labelPrimary,
-                  ),
-                ),
+                const SizedBox(height: 4),
+                Text('Courses', style: _A.title2()),
               ],
             ),
           ),
           Container(
-            width: 42,
-            height: 42,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: _A.tintBlue,
-              borderRadius: BorderRadius.circular(13),
-              boxShadow: [
-                BoxShadow(
-                  color: _A.blue.withOpacity(.10),
-                  blurRadius: 10,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(16),
             ),
             child: const Icon(Icons.search_rounded, color: _A.blue, size: 22),
           ),
@@ -294,15 +302,20 @@ class _ContinueLearningCard extends StatelessWidget {
     return GestureDetector(
       onTap: onStart,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
           color: _A.green,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(36),
           boxShadow: [
             BoxShadow(
-              color: _A.greenDark.withOpacity(.35),
-              blurRadius: 28,
+              color: _A.greenDark.withValues(alpha: .30),
+              blurRadius: 24,
               offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: .35),
+              blurRadius: 10,
+              offset: const Offset(-2, -2),
             ),
           ],
         ),
@@ -314,44 +327,39 @@ class _ContinueLearningCard extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 9,
-                      vertical: 4,
+                      horizontal: 10,
+                      vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.22),
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white.withValues(alpha: .22),
+                      borderRadius: BorderRadius.circular(22),
                     ),
                     child: Text(
                       '▶ Continue learning',
-                      style: GoogleFonts.inter(
-                        fontSize: 10,
+                      style: GoogleFonts.fredoka(
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Text(
                     title,
-                    style: GoogleFonts.inter(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                      height: 1.2,
-                    ),
+                    style: _A.title2().copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${course?["watched_hours"] ?? 0} hrs watched',
                     style: _A.caption1(color: Colors.white70),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 16),
                   Stack(
                     children: [
                       Container(
-                        height: 6,
+                        height: 8,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(.25),
+                          color: Colors.white.withValues(alpha: .25),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
@@ -359,7 +367,7 @@ class _ContinueLearningCard extends StatelessWidget {
                         widthFactor:
                             ((progress as num?)?.toDouble() ?? 0) / 100,
                         child: Container(
-                          height: 6,
+                          height: 8,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(100),
@@ -382,10 +390,10 @@ class _ContinueLearningCard extends StatelessWidget {
               height: 62,
               decoration: BoxDecoration(
                 color: _A.greenDark,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: _A.greenDark.withOpacity(.40),
+                    color: _A.greenDark.withValues(alpha: .40),
                     blurRadius: 16,
                     offset: const Offset(0, 5),
                   ),
@@ -436,7 +444,7 @@ class _CourseCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         decoration: _A.widgetCard,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -445,36 +453,29 @@ class _CourseCard extends StatelessWidget {
               width: 54,
               height: 54,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(.12),
-                borderRadius: BorderRadius.circular(16),
+                color: iconColor.withValues(alpha: .14),
+                borderRadius: BorderRadius.circular(18),
               ),
               child: Icon(icon, color: iconColor, size: 26),
             ),
-            const SizedBox(width: 13),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.inter(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: _A.labelPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
+                  Text(title, style: _A.headline()),
+                  const SizedBox(height: 5),
                   Text(subtitle, style: _A.caption1()),
-                  const SizedBox(height: 3),
-                  Text('$teacher · $watchedHours', style: _A.caption1()),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 4),
+                  Text('$teacher · $watchedHours', style: _A.caption2()),
+                  const SizedBox(height: 12),
                   Stack(
                     children: [
                       Container(
                         height: 5,
                         decoration: BoxDecoration(
-                          color: progressColor.withOpacity(.12),
+                          color: progressColor.withValues(alpha: .12),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
@@ -493,11 +494,7 @@ class _CourseCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     progressText,
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: progressTextColor,
-                    ),
+                    style: _A.caption2(color: progressTextColor),
                   ),
                 ],
               ),
@@ -660,7 +657,7 @@ class _RecommendedCourse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: _A.widgetCard,
       child: Row(
         children: [
@@ -668,47 +665,36 @@ class _RecommendedCourse extends StatelessWidget {
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(.12),
-              borderRadius: BorderRadius.circular(14),
+              color: iconColor.withValues(alpha: .14),
+              borderRadius: BorderRadius.circular(18),
             ),
             child: Icon(icon, color: iconColor, size: 26),
           ),
-          const SizedBox(width: 13),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                    color: _A.labelPrimary,
-                  ),
-                ),
+                Text(title, style: _A.headline()),
                 const SizedBox(height: 5),
                 Text(lessons, style: _A.caption1()),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
             decoration: BoxDecoration(
               color: _A.tintOrange,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(22),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Icon(Icons.star_rounded, color: _A.orange, size: 14),
-                const SizedBox(width: 3),
+                const SizedBox(width: 5),
                 Text(
                   rating,
-                  style: GoogleFonts.inter(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                    color: _A.orange,
-                  ),
+                  style: _A.caption2(color: _A.orange),
                 ),
               ],
             ),

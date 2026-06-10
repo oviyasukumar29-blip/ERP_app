@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'features/trainer/data/repositories/assignment_store.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 
 void main() {
-  runApp(const ScholarHubApp());
+  AssignmentStore.instance.seedDemo();
+  runApp(const ScholarHubApp()); 
 }
 
 class ScholarHubApp extends StatelessWidget {

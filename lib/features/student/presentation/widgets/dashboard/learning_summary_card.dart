@@ -29,7 +29,7 @@ class LearningSummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(.35),
+            color: AppColors.primary.withValues(alpha: .35),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
@@ -41,7 +41,7 @@ class LearningSummaryCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(.2),
+              color: Colors.white.withValues(alpha: .2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -94,7 +94,7 @@ class LearningSummaryCard extends StatelessWidget {
                 width: .5,
                 height: 50,
                 margin: const EdgeInsets.symmetric(horizontal: 24),
-                color: Colors.white.withOpacity(.25),
+                color: Colors.white.withValues(alpha: .25),
               ),
               _StatCol(label: 'POINTS EARNED', value: points),
             ],

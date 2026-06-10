@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import 'submission_success_page.dart';
 
 class AttendancePage extends StatelessWidget {
   const AttendancePage({super.key});

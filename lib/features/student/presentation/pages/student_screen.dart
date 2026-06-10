@@ -8,15 +8,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'courses_page.dart';
-import 'assignments_page.dart';
+import '../../../auth/services/auth_service.dart';
+
 import 'ai_chatbot_page.dart';
 import 'profile_page.dart';
 import 'coding_playground_page.dart';
 import 'certificates_page.dart';
 import '../../../../services/dashboard_service.dart';
+import 'package:pinesphere_erp/features/auth/presentation/pages/login_screen.dart';
+import 'assignments_page.dart';
+
+
 
 part 'dashboard_page.dart';
 
@@ -66,75 +72,72 @@ class _T {
   static const separatorDark = Color(0xFF38383A);
 
   // â”€â”€ TYPOGRAPHY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  static TextStyle title3({Color? color}) => GoogleFonts.inter(
-    fontSize: 17,
+  static TextStyle title3({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 18,
     fontWeight: FontWeight.w600,
     color: color ?? labelPrimary,
-    letterSpacing: -0.41,
-    height: 1.3,
   );
 
-  static TextStyle headline({Color? color}) => GoogleFonts.inter(
+  static TextStyle headline({Color? color}) => GoogleFonts.fredoka(
     fontSize: 15,
     fontWeight: FontWeight.w600,
     color: color ?? labelPrimary,
-    letterSpacing: -0.24,
   );
 
-  static TextStyle subheadline({Color? color}) => GoogleFonts.inter(
-    fontSize: 13,
+  static TextStyle subheadline({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 12,
     fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    letterSpacing: -0.08,
-    height: 1.4,
+    color: color ?? labelSecondary,
   );
 
-  static TextStyle caption1({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
+  static TextStyle caption1({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 10,
     fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    letterSpacing: 0.07,
+    color: color ?? labelSecondary,
   );
 
-  static TextStyle caption2({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
+  static TextStyle caption2({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 9,
+    fontWeight: FontWeight.w500,
     color: color ?? labelQuaternary,
-    letterSpacing: 0.07,
   );
 
   // â”€â”€ CARD DECORATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   static BoxDecoration get widgetCard => BoxDecoration(
     color: bgElevated,
-    borderRadius: BorderRadius.circular(20),
+    borderRadius: BorderRadius.circular(36),
     boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(.06),
-        blurRadius: 20,
-        spreadRadius: 0,
-        offset: const Offset(0, 4),
-      ),
-      BoxShadow(
-        color: Colors.black.withOpacity(.03),
-        blurRadius: 6,
-        spreadRadius: 0,
-        offset: const Offset(0, 1),
-      ),
-    ],
+    BoxShadow(
+      color: Colors.black.withValues(alpha: .08),
+      blurRadius: 18,
+      offset: const Offset(0, 8),
+    ),
+    BoxShadow(
+      color: Colors.white.withValues(alpha: .8),
+      blurRadius: 8,
+      offset: const Offset(-2, -2),
+    ),
+  ]
   );
 
-  static BoxDecoration tintCard(Color tint) => BoxDecoration(
-    color: tint,
-    borderRadius: BorderRadius.circular(20),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(.05),
-        blurRadius: 16,
-        spreadRadius: 0,
-        offset: const Offset(0, 4),
-      ),
+static BoxDecoration tintCard(Color tint) => BoxDecoration(
+  borderRadius: BorderRadius.circular(32),
+  gradient: LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      tint,
+      Color.lerp(tint, Colors.white, 0.25)!,
     ],
-  );
+  ),
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black.withValues(alpha: .08),
+      blurRadius: 16,
+      offset: const Offset(0, 8),
+    ),
+  ],
+);
 }
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -143,13 +146,18 @@ class _T {
 
 class _3DBookIllustration extends StatelessWidget {
   final double size;
-  const _3DBookIllustration({this.size = 80});
+
+  const _3DBookIllustration() : size = 80;
+
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: size,
-    height: size,
-    child: CustomPaint(painter: _BookPainter()),
-  );
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/student_reading.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
 }
 
 class _BookPainter extends CustomPainter {
@@ -165,7 +173,7 @@ class _BookPainter extends CustomPainter {
         height: h * .12,
       ),
       Paint()
-        ..color = Colors.black.withOpacity(.14)
+        ..color = Colors.black.withValues(alpha: .14)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
     );
 
@@ -189,13 +197,13 @@ class _BookPainter extends CustomPainter {
       lp,
       Paint()
         ..color = const Color(0xFFFF9600)
-            .withOpacity(.30) // #FF9600
+            .withValues(alpha: .30) // #FF9600
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
     // Line rules â€” #45A700 green at low opacity
     final ln = Paint()
-      ..color = const Color(0xFF45A700).withOpacity(.20)
+      ..color = const Color(0xFF45A700).withValues(alpha: .20)
       ..strokeWidth = 1.0;
     for (int i = 0; i < 5; i++) {
       final y = h * (.30 + i * .10);
@@ -222,7 +230,7 @@ class _BookPainter extends CustomPainter {
       rp,
       Paint()
         ..color = const Color(0xFFFFD900)
-            .withOpacity(.40) // #FFD900
+            .withValues(alpha: .40) // #FFD900
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.0,
     );
@@ -244,7 +252,7 @@ class _BookPainter extends CustomPainter {
     // Spine highlight
     canvas.drawRect(
       Rect.fromLTWH(w * .46, h * .10, w * .025, h * .70),
-      Paint()..color = Colors.white.withOpacity(.22),
+      Paint()..color = Colors.white.withValues(alpha: .22),
     );
   }
 
@@ -254,88 +262,36 @@ class _BookPainter extends CustomPainter {
 
 class _3DFireIllustration extends StatelessWidget {
   final double size;
-  const _3DFireIllustration({this.size = 44});
-  @override
-  Widget build(BuildContext context) => SizedBox(
-    width: size,
-    height: size,
-    child: CustomPaint(painter: _FirePainter()),
-  );
-}
 
-class _FirePainter extends CustomPainter {
+  const _3DFireIllustration() : size = 44;
+
   @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    // Glow â€” #FF9600
-    canvas.drawCircle(
-      Offset(w * .50, h * .55),
-      w * .38,
-      Paint()
-        ..color = const Color(0xFFFF9600).withOpacity(.22)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
-    );
-    // Back flame â€” #CB3E3E
-    final bp = Path()
-      ..moveTo(w * .50, h * .06)
-      ..cubicTo(w * .65, h * .18, w * .82, h * .30, w * .80, h * .52)
-      ..cubicTo(w * .78, h * .68, w * .65, h * .78, w * .50, h * .82)
-      ..cubicTo(w * .35, h * .78, w * .22, h * .68, w * .20, h * .52)
-      ..cubicTo(w * .18, h * .30, w * .35, h * .18, w * .50, h * .06)
-      ..close();
-    canvas.drawPath(bp, Paint()..color = const Color(0xFFCB3E3E));
-    // Main flame â€” #FF9600 â†’ #FF6B35 â†’ #FF4B4B
-    final mp = Path()
-      ..moveTo(w * .50, h * .10)
-      ..cubicTo(w * .62, h * .20, w * .76, h * .34, w * .74, h * .54)
-      ..cubicTo(w * .72, h * .70, w * .62, h * .80, w * .50, h * .84)
-      ..cubicTo(w * .38, h * .80, w * .28, h * .70, w * .26, h * .54)
-      ..cubicTo(w * .24, h * .34, w * .38, h * .20, w * .50, h * .10)
-      ..close();
-    canvas.drawPath(
-      mp,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Color(0xFFFF9600), Color(0xFFFF6B35), Color(0xFFFF4B4B)],
-          stops: [0, .5, 1],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
-    );
-    // Inner â€” #FFD900 â†’ #FF9600 â†’ #FF6B35
-    final ip = Path()
-      ..moveTo(w * .50, h * .22)
-      ..cubicTo(w * .58, h * .30, w * .66, h * .42, w * .64, h * .56)
-      ..cubicTo(w * .62, h * .68, w * .56, h * .75, w * .50, h * .78)
-      ..cubicTo(w * .44, h * .75, w * .38, h * .68, w * .36, h * .56)
-      ..cubicTo(w * .34, h * .42, w * .42, h * .30, w * .50, h * .22)
-      ..close();
-    canvas.drawPath(
-      ip,
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Color(0xFFFFD900), Color(0xFFFF9600), Color(0xFFFF6B35)],
-          stops: [0, .55, 1],
-        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/fire_mascot.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
     );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter _) => false;
 }
+
+
 
 class _BooksStackIllustration extends StatelessWidget {
   final double size;
-  const _BooksStackIllustration({this.size = 56});
+
+  const _BooksStackIllustration() : size = 56;
+
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: size,
-    height: size,
-    child: CustomPaint(painter: _BooksStackPainter()),
-  );
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/book_mascot.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
 }
 
 class _BooksStackPainter extends CustomPainter {
@@ -391,7 +347,7 @@ class _BooksStackPainter extends CustomPainter {
       Offset(rect.left + 6, rect.top + 3),
       Offset(rect.left + 6, rect.bottom - 3),
       Paint()
-        ..color = Colors.white.withOpacity(.30)
+        ..color = Colors.white.withValues(alpha: .30)
         ..strokeWidth = 2,
     );
   }
@@ -412,18 +368,38 @@ class StudentScreen extends StatefulWidget {
 class _StudentScreenState extends State<StudentScreen> {
   final dashboardService = DashboardService();
   Map<String, dynamic>? dashboardData;
+  String? _studentName;
   int _current = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadStudentName();
     _loadDashboard();
+  }
+
+  Future<void> _loadStudentName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString('student_name');
+    if (name != null && mounted) {
+      setState(() => _studentName = name);
+    }
   }
 
   Future<void> _loadDashboard() async {
     try {
       final data = await dashboardService.getDashboard();
-      if (data != null) setState(() => dashboardData = data);
+      if (data != null) {
+        // Ensure student name is always in the data
+        if (!data.containsKey('student_name') || data['student_name'] == null) {
+          final prefs = await SharedPreferences.getInstance();
+          final studentName = prefs.getString('student_name');
+          if (studentName != null) {
+            data['student_name'] = studentName;
+          }
+        }
+        setState(() => dashboardData = data);
+      }
     } catch (e) {
       debugPrint("Dashboard error: $e");
     }
@@ -434,6 +410,7 @@ class _StudentScreenState extends State<StudentScreen> {
     final pages = [
       _DashboardPage(
         dashboardData: dashboardData,
+        studentName: _studentName,
         onOpenAiTutor: () => setState(() => _current = 3),
         onOpenCoding: () => Navigator.push(
           context,
@@ -449,7 +426,7 @@ class _StudentScreenState extends State<StudentScreen> {
         ),
       ),
       CoursesPage(),
-      AssignmentsPage(),
+      const StudentAssignmentsPage(),
       const AIChatbotPage(),
       const CodingPlaygroundPage(),
     ];
@@ -504,12 +481,12 @@ class _AppleNavBar extends StatelessWidget {
           child: Container(
             height: 60,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(.92),
+              color: Colors.white.withValues(alpha: .92),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(color: _T.separator, width: 0.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(.10),
+                  color: Colors.black.withValues(alpha: .10),
                   blurRadius: 30,
                   spreadRadius: 0,
                   offset: const Offset(0, 8),
@@ -538,14 +515,14 @@ class _AppleNavBar extends StatelessWidget {
                           height: active ? 30 : 26,
                           decoration: active
                               ? BoxDecoration(
-                                  color: _T.blue.withOpacity(.12),
+                                  color: _T.blue.withValues(alpha: .12),
                                   borderRadius: BorderRadius.circular(9),
                                 )
                               : null,
                           child: Icon(
                             active ? _items[i].$1 : _items[i].$2,
                             color: active ? _T.blue : _T.labelTertiary,
-                            size: 20,
+                            size: 30,
                           ),
                         ),
                         const SizedBox(height: 2),

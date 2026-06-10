@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class Helpers {
 
-  static snackBar(
+  static void snackBar(
     BuildContext context,
     String text,
   ) {

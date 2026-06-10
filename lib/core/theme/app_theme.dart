@@ -12,7 +12,7 @@ class AppTheme {
     // GoogleFonts.poppinsTextTheme()
     // GoogleFonts.dmSansTextTheme()
     // GoogleFonts.soraTextTheme()
-    final base = GoogleFonts.soraTextTheme();
+    final base = GoogleFonts.fredokaTextTheme();
 
     return ThemeData(
       useMaterial3: true,
@@ -29,29 +29,56 @@ class AppTheme {
 
       textTheme: base.copyWith(
         displayLarge: base.displayLarge?.copyWith(
-          fontSize: 28,
+          fontSize: 24,
           fontWeight: FontWeight.w800,
           color: AppColors.textDark,
           letterSpacing: -0.5,
         ),
+        displayMedium: base.displayMedium?.copyWith(
+          color: AppColors.textDark,
+        ),
+        displaySmall: base.displaySmall?.copyWith(
+          color: AppColors.textDark,
+        ),
+        headlineLarge: base.headlineLarge?.copyWith(
+          color: AppColors.textDark,
+        ),
+        headlineMedium: base.headlineMedium?.copyWith(
+          color: AppColors.textDark,
+        ),
+        headlineSmall: base.headlineSmall?.copyWith(
+          color: AppColors.textDark,
+        ),
         titleLarge: base.titleLarge?.copyWith(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.w700,
           color: AppColors.textDark,
         ),
         titleMedium: base.titleMedium?.copyWith(
-          fontSize: 15,
+          fontSize: 14,
           fontWeight: FontWeight.w600,
           color: AppColors.textDark,
         ),
+        titleSmall: base.titleSmall?.copyWith(
+          color: AppColors.textDark,
+        ),
+        bodyLarge: base.bodyLarge?.copyWith(
+          color: AppColors.textDark,
+        ),
         bodyMedium: base.bodyMedium?.copyWith(
-          fontSize: 13,
-          color: AppColors.textGrey,
+          fontSize: 12,
+          color: AppColors.textDark,
+        ),
+        bodySmall: base.bodySmall?.copyWith(
+          color: AppColors.textDark,
+        ),
+        labelLarge: base.labelLarge?.copyWith(
+          color: AppColors.textDark,
         ),
         labelSmall: base.labelSmall?.copyWith(
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: FontWeight.w600,
-          color: AppColors.textLight,
+          color: AppColors.textDark,
           letterSpacing: 0.3,
         ),
       ),
@@ -75,6 +102,25 @@ class AppTheme {
           color: AppColors.primary,
           letterSpacing: -0.3,
         ),
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.border),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        labelStyle: const TextStyle(color: AppColors.textDark),
+        hintStyle: const TextStyle(color: AppColors.textLight),
       ),
 
       cardTheme: CardThemeData(

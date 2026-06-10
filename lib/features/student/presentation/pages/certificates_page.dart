@@ -7,25 +7,25 @@ class _K {
   static const green = Color(0xFF46A800);
   static const orange = Color(0xFFF59000);
   static const blue = Color(0xFF14A0E0);
-  static const bg = Color(0xFFFDF6EC);
-  static const card = Color(0xFFFFFAF4);
-  static const tintBlue = Color(0xFFEAF8FE);
-  static const tintGreen = Color(0xFFF1FBE8);
-  static const tintOrange = Color(0xFFFFF1E4);
-  static const labelPrimary = Color(0xFF1C1C1E);
-  static const labelTertiary = Color(0xFF8E8E93);
+  static const bg = Color(0xFF171A34);
+  static const card = Color(0xFF24284A);
+  static const tintBlue = Color(0xFF1E2A4A);
+  static const tintGreen = Color(0xFF24312D);
+  static const tintOrange = Color(0xFF3A2B1E);
+  static const labelPrimary = Color(0xFFFFFFFF);
+  static const labelTertiary = Color(0xFFBFC2D6);
 
-  static TextStyle title({Color? color}) => GoogleFonts.inter(
-    fontSize: 20,
+  static TextStyle title({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 16,
     fontWeight: FontWeight.w700,
     color: color ?? labelPrimary,
   );
 
-  static TextStyle body({Color? color}) => GoogleFonts.inter(
-    fontSize: 13,
+  static TextStyle body({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 12,
     fontWeight: FontWeight.w500,
     color: color ?? labelTertiary,
-    height: 1.4,
+    height: 1.3,
   );
 }
 
@@ -144,7 +144,7 @@ class _CertificatesPageState extends State<CertificatesPage> {
     borderRadius: BorderRadius.circular(20),
     boxShadow: [
       BoxShadow(
-        color: Colors.black.withOpacity(.06),
+        color: Colors.black.withValues(alpha: .06),
         blurRadius: 20,
         offset: const Offset(0, 4),
       ),
@@ -179,7 +179,7 @@ class _CertificateCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),

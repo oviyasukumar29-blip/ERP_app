@@ -129,7 +129,7 @@ class _ChildHeroCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
-              color: ParentTheme.greenDark.withOpacity(.35),
+              color: ParentTheme.greenDark.withValues(alpha: .35),
               blurRadius: 28,
               offset: const Offset(0, 8),
             ),
@@ -147,7 +147,7 @@ class _ChildHeroCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.22),
+                      color: Colors.white.withValues(alpha: .22),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -183,7 +183,7 @@ class _ChildHeroCard extends StatelessWidget {
               width: 70,
               height: 70,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.22),
+                color: Colors.white.withValues(alpha: .22),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Icon(
@@ -221,7 +221,7 @@ class _StatCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(.34),
+            color: color.withValues(alpha: .34),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),

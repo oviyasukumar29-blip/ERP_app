@@ -169,7 +169,7 @@ class _TopBar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _tintBlue,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: _blue.withOpacity(.25)),
+                border: Border.all(color: _blue.withValues(alpha: .25)),
               ),
               child: const Icon(Icons.settings_rounded, color: _blue, size: 20),
             ),
@@ -233,7 +233,7 @@ class _ProfileCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: _tintBlue,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _blue.withOpacity(.25)),
+              border: Border.all(color: _blue.withValues(alpha: .25)),
             ),
             child: Text(
               'AI & Machine Learning · Batch 2024',
@@ -499,7 +499,7 @@ class _LogoutButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: _tintRed,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: _red.withOpacity(.25)),
+          border: Border.all(color: _red.withValues(alpha: .25)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

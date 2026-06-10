@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import 'stat_item_card.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class StatsGrid extends StatelessWidget {
   const StatsGrid({super.key});
@@ -15,9 +14,9 @@ class StatsGrid extends StatelessWidget {
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 12,
-      mainAxisSpacing: 12,
-      childAspectRatio: 0.95,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 0.75,
       children: const [
         StatItemCard(
           emoji: '📚',

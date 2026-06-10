@@ -208,7 +208,7 @@ class _Header extends StatelessWidget {
               children: [
                 Text(
                   'ScholarAI',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.fredoka(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: _textDark,
@@ -227,7 +227,7 @@ class _Header extends StatelessWidget {
                     const SizedBox(width: 5),
                     Text(
                       'Online · Ready to help',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.fredoka(
                         fontSize: 11,
                         color: _greenDark,
                         fontWeight: FontWeight.w500,
@@ -243,7 +243,7 @@ class _Header extends StatelessWidget {
             decoration: BoxDecoration(
               color: _tintBlue,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: _blue.withOpacity(.25)),
+              border: Border.all(color: _blue.withValues(alpha: .25)),
             ),
             child: Row(
               children: [
@@ -251,7 +251,7 @@ class _Header extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   'All subjects',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.fredoka(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: _blueDark,
@@ -320,7 +320,7 @@ class _MessageBubble extends StatelessWidget {
                         : Border.all(color: _border, width: .5),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(.04),
+                        color: Colors.black.withValues(alpha: .04),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -328,7 +328,7 @@ class _MessageBubble extends StatelessWidget {
                   ),
                   child: Text(
                     message.text,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.fredoka(
                       fontSize: 13,
                       color: isUser ? Colors.white : _textDark,
                       height: 1.5,
@@ -344,12 +344,12 @@ class _MessageBubble extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: _tintBlue,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: _blue.withOpacity(.30)),
+                    border: Border.all(color: _blue.withValues(alpha: .30)),
                   ),
                   child: Center(
                     child: Text(
                       'AK',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.fredoka(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: _blueDark,
@@ -368,7 +368,7 @@ class _MessageBubble extends StatelessWidget {
             ),
             child: Text(
               message.time,
-              style: GoogleFonts.inter(fontSize: 10, color: _textLight),
+              style: GoogleFonts.fredoka(fontSize: 10, color: _textLight),
             ),
           ),
           if (message.quickReplies != null && !isUser) ...[
@@ -414,7 +414,7 @@ class _QuickReplyChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: _tintBlue,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: _blue.withOpacity(.25)),
+          border: Border.all(color: _blue.withValues(alpha: .25)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -423,7 +423,7 @@ class _QuickReplyChip extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.fredoka(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: _blueDark,
@@ -449,7 +449,7 @@ class _SuggestionsRow extends StatelessWidget {
         children: [
           Text(
             'Suggested topics',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.fredoka(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               color: _textGrey,
@@ -474,7 +474,7 @@ class _SuggestionsRow extends StatelessWidget {
                           color: s.$3,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                              color: s.$4.withOpacity(.2), width: .5),
+                              color: s.$4.withValues(alpha: .2), width: .5),
                         ),
                         child: Row(
                           children: [
@@ -483,7 +483,7 @@ class _SuggestionsRow extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 s.$2,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.fredoka(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                   color: s.$4,
@@ -534,7 +534,7 @@ class _InputBar extends StatelessWidget {
                 color: showSuggestions ? _tintPurple : _bg,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: showSuggestions ? _purple.withOpacity(.40) : _border,
+                  color: showSuggestions ? _purple.withValues(alpha: .40) : _border,
                 ),
               ),
               child: Icon(
@@ -555,14 +555,14 @@ class _InputBar extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 onSubmitted: (_) => onSend(),
-                style: GoogleFonts.inter(
+                style: GoogleFonts.fredoka(
                   fontSize: 13,
                   color: _textDark,
                   fontWeight: FontWeight.w500,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Ask anything...',
-                  hintStyle: GoogleFonts.inter(
+                  hintStyle: GoogleFonts.fredoka(
                     fontSize: 13,
                     color: _textLight,
                     fontWeight: FontWeight.w400,

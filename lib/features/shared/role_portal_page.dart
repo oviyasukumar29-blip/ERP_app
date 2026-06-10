@@ -106,7 +106,7 @@ class _HeroCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
-            color: accent.withOpacity(.30),
+            color: accent.withValues(alpha: .30),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -133,7 +133,7 @@ class _HeroCard extends StatelessWidget {
             width: 64,
             height: 64,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(.22),
+              color: Colors.white.withValues(alpha: .22),
               borderRadius: BorderRadius.circular(18),
             ),
             child: const Icon(
@@ -171,7 +171,7 @@ class _SummaryGrid extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(.05),
+                    color: Colors.black.withValues(alpha: .05),
                     blurRadius: 14,
                     offset: const Offset(0, 4),
                   ),
@@ -217,7 +217,7 @@ class _ModuleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withValues(alpha: .05),
             blurRadius: 14,
             offset: const Offset(0, 4),
           ),
@@ -232,7 +232,7 @@ class _ModuleCard extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: accent.withOpacity(.12),
+                  color: accent.withValues(alpha: .12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(Icons.apps_rounded, color: accent, size: 20),
@@ -319,7 +319,7 @@ BoxDecoration _plainCard() => BoxDecoration(
   borderRadius: BorderRadius.circular(20),
   boxShadow: [
     BoxShadow(
-      color: Colors.black.withOpacity(.05),
+      color: Colors.black.withValues(alpha: .05),
       blurRadius: 14,
       offset: const Offset(0, 4),
     ),

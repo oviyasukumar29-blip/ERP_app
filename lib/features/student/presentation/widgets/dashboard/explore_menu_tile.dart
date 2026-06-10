@@ -37,7 +37,7 @@ class ExploreMenuTile extends StatelessWidget {
           border: Border.all(color: AppColors.border, width: .8),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(.05),
+              color: AppColors.primary.withValues(alpha: .05),
               blurRadius: 16,
               offset: const Offset(0, 5),
             ),

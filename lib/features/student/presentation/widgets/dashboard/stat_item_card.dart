@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_colors.dart';
 
 class StatItemCard extends StatelessWidget {
   final String emoji;
+  final String? imagePath;
   final String title;
   final String value;
   final String sub;
@@ -16,6 +17,7 @@ class StatItemCard extends StatelessWidget {
   const StatItemCard({
     super.key,
     required this.emoji,
+    this.imagePath,
     required this.title,
     required this.value,
     this.sub = '',
@@ -27,14 +29,14 @@ class StatItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: AppColors.border, width: 0.8),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(.06),
+            color: AppColors.primary.withValues(alpha: .06),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
@@ -44,24 +46,27 @@ class StatItemCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: accentBg,
-              borderRadius: BorderRadius.circular(13),
+          if (imagePath != null)
+            Image.asset(imagePath!, width: 100, height: 100)
+          else
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: accentBg,
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Center(
+                child: Text(emoji, style: const TextStyle(fontSize: 24)),
+              ),
             ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 20)),
-            ),
-          ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 4),
 
           Text(
             value,
             style: GoogleFonts.nunito(
-              fontSize: 24,
+              fontSize: 40,
               fontWeight: FontWeight.w800,
               color: AppColors.textDark,
               letterSpacing: -.5,

@@ -3,7 +3,6 @@ from datetime import date
 from sqlalchemy.orm import Session
 
 from app.shared.models.user import User
-from app.modules.student.models.assignment import Assignment
 from app.modules.student.models.attendance import Attendance
 from app.modules.student.models.student import Student
 
@@ -39,15 +38,7 @@ def get_dashboard_data(db: Session):
         else:
             attendance_status = today_attendance.status or "Present"
 
-    assignments = db.query(Assignment).all()
-
     assignment_list = []
-
-    for assignment in assignments:
-        assignment_list.append({
-            "title": assignment.title,
-            "due": "Today"
-        })
 
     return {
 
@@ -67,7 +58,7 @@ def get_dashboard_data(db: Session):
 
         "study_hours": "0",
 
-        "assignments_done": f"0/{len(assignment_list)}",
+        "assignments_done": "0/0",
 
         "attendance": attendance_status,
 
@@ -75,7 +66,7 @@ def get_dashboard_data(db: Session):
 
         "notifications": [
             {
-                "title": "Assignment due today"
+                "title": "No pending assignment data"
             }
         ]
     }

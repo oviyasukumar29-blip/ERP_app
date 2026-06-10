@@ -30,7 +30,7 @@ class LiveClassCard extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: .8),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(.06),
+            color: AppColors.primary.withValues(alpha: .06),
             blurRadius: 16,
             offset: const Offset(0, 5),
           ),
@@ -44,7 +44,7 @@ class LiveClassCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.primary.withOpacity(.2)),
+              border: Border.all(color: AppColors.primary.withValues(alpha: .2)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -173,7 +173,7 @@ class LiveClassCard extends StatelessWidget {
                                 ? [
                                     BoxShadow(
                                       color:
-                                          AppColors.primary.withOpacity(.35),
+                                          AppColors.primary.withValues(alpha: .35),
                                       blurRadius: 10,
                                       offset: const Offset(0, 4),
                                     )

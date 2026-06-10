@@ -44,12 +44,12 @@ class _ParentScreenState extends State<ParentScreen> {
             child: Container(
               height: 62,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.94),
+                color: Colors.white.withValues(alpha: .94),
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(color: ParentTheme.separator, width: .5),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(.10),
+                    color: Colors.black.withValues(alpha: .10),
                     blurRadius: 30,
                     offset: const Offset(0, 8),
                   ),

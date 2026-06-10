@@ -55,7 +55,7 @@ class StreakCard extends StatelessWidget {
                   color: const Color(0xFFFAEEDA),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: const Color(0xFFEF9F27).withOpacity(.3),
+                      color: const Color(0xFFEF9F27).withValues(alpha: .3),
                       width: .8),
                 ),
                 child: Text(
@@ -98,14 +98,14 @@ class StreakCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(
                         color: active
-                            ? AppColors.primary.withOpacity(.4)
+                            ? AppColors.primary.withValues(alpha: .4)
                             : AppColors.border,
                         width: active ? 1.8 : 1,
                       ),
                       boxShadow: today
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withOpacity(.3),
+                                color: AppColors.primary.withValues(alpha: .3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               )

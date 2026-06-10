@@ -22,7 +22,7 @@ class WeeklyProgressChart extends StatelessWidget {
         border: Border.all(color: AppColors.border, width: 0.8),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(.06),
+            color: AppColors.primary.withValues(alpha: .06),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
@@ -55,7 +55,7 @@ class WeeklyProgressChart extends StatelessWidget {
                   color: AppColors.primaryLight,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppColors.primary.withOpacity(.25),
+                    color: AppColors.primary.withValues(alpha: .25),
                   ),
                 ),
                 child: const Text(
@@ -109,7 +109,7 @@ class WeeklyProgressChart extends StatelessWidget {
                                 ? [
                                     BoxShadow(
                                       color: AppColors.primary
-                                          .withOpacity(.3),
+                                          .withValues(alpha: .3),
                                       blurRadius: 10,
                                       offset: const Offset(0, -3),
                                     )

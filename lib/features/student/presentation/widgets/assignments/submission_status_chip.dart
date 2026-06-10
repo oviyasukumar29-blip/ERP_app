@@ -23,7 +23,7 @@ class SubmissionStatusChip extends StatelessWidget {
       ),
 
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(30),
       ),
 

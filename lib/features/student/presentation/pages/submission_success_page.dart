@@ -86,7 +86,7 @@ class _SubmissionSuccessPageState extends State<SubmissionSuccessPage>
                         color: const Color(0xFF58CC02),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF58CC02).withOpacity(.30),
+                            color: const Color(0xFF58CC02).withValues(alpha: .30),
                             blurRadius: 40,
                             offset: const Offset(0, 16),
                           ),
@@ -140,7 +140,7 @@ class _SubmissionSuccessPageState extends State<SubmissionSuccessPage>
                         borderRadius: BorderRadius.circular(30),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF58CC02).withOpacity(.25),
+                            color: const Color(0xFF58CC02).withValues(alpha: .25),
                             blurRadius: 30,
                             offset: const Offset(0, 12),
                           ),
@@ -162,7 +162,7 @@ class _SubmissionSuccessPageState extends State<SubmissionSuccessPage>
                             width: 120, height: 120,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withOpacity(.15),
+                              color: Colors.white.withValues(alpha: .15),
                             ),
                             child: const Icon(
                               Icons.workspace_premium_rounded,
@@ -208,7 +208,7 @@ class _SubmissionSuccessPageState extends State<SubmissionSuccessPage>
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 18, vertical: 10),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(.15),
+                              color: Colors.white.withValues(alpha: .15),
                               borderRadius: BorderRadius.circular(30),
                             ),
                             child: Row(

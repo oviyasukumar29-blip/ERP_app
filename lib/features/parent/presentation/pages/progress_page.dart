@@ -99,7 +99,7 @@ class _ProgressRow extends StatelessWidget {
             child: LinearProgressIndicator(
               value: 0,
               minHeight: 7,
-              backgroundColor: color.withOpacity(.12),
+              backgroundColor: color.withValues(alpha: .12),
               valueColor: AlwaysStoppedAnimation(color),
             ),
           ),
