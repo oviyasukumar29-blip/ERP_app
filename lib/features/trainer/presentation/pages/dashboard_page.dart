@@ -10,8 +10,9 @@ import '../widgets/dashboard/upcoming_class_card.dart';
 
 class TrainerDashboardPage extends StatelessWidget {
   final VoidCallback? onOpenProfile;
+  final VoidCallback? onLogout;
 
-  const TrainerDashboardPage({super.key, this.onOpenProfile});
+  const TrainerDashboardPage({super.key, this.onOpenProfile, this.onLogout});
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +27,22 @@ class TrainerDashboardPage extends StatelessWidget {
           bottom: false,
           child: Column(
             children: [
-              _TrainerTopBar(onOpenProfile: onOpenProfile),
+              _TrainerTopBar(onOpenProfile: onOpenProfile, onLogout: onLogout),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
-                  children: const [
-                    _TrainerHeroCard(),
-                    SizedBox(height: 14),
-                    ClassSummaryCard(),
-                    SizedBox(height: 14),
-                    ScheduleOverviewCard(),
-                    SizedBox(height: 14),
-                    AttendanceSummaryCard(),
-                    SizedBox(height: 14),
-                    AssignmentSummaryCard(),
-                    SizedBox(height: 14),
-                    UpcomingClassCard(),
+                  children: [
+                    const _TrainerHeroCard(),
+                    const SizedBox(height: 14),
+                    const ClassSummaryCard(),
+                    const SizedBox(height: 14),
+                    const ScheduleOverviewCard(),
+                    const SizedBox(height: 14),
+                    const AttendanceSummaryCard(),
+                    const SizedBox(height: 14),
+                    const AssignmentSummaryCard(),
+                    const SizedBox(height: 14),
+                    const UpcomingClassCard(),
                   ],
                 ),
               ),
@@ -55,19 +56,21 @@ class TrainerDashboardPage extends StatelessWidget {
 
 class DashboardPage extends StatelessWidget {
   final VoidCallback? onOpenProfile;
+  final VoidCallback? onLogout;
 
-  const DashboardPage({super.key, this.onOpenProfile});
+  const DashboardPage({super.key, this.onOpenProfile, this.onLogout});
 
   @override
   Widget build(BuildContext context) {
-    return TrainerDashboardPage(onOpenProfile: onOpenProfile);
+    return TrainerDashboardPage(onOpenProfile: onOpenProfile, onLogout: onLogout);
   }
 }
 
 class _TrainerTopBar extends StatelessWidget {
   final VoidCallback? onOpenProfile;
+  final VoidCallback? onLogout;
 
-  const _TrainerTopBar({this.onOpenProfile});
+  const _TrainerTopBar({this.onOpenProfile, this.onLogout});
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +172,30 @@ class _TrainerTopBar extends StatelessWidget {
               child: const Icon(
                 Icons.notifications_rounded,
                 color: _T.labelTertiary,
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onLogout,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: _T.bgElevated,
+                borderRadius: BorderRadius.circular(11),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: .06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.logout_rounded,
+                color: Color(0xFFE24B4A),
                 size: 18,
               ),
             ),

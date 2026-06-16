@@ -543,8 +543,8 @@ class _StatsRow extends StatelessWidget {
               imagePath: 'assets/images/clock_icon.png',
               backgroundColor: _T.green,
               value: dashboardData?["study_hours"]?.toString() ?? '0',
-              title: 'Hours Studied',
-              subtitle: 'hrs',
+              title: 'Hours Today',
+              subtitle: 'logged',
             ),
           ),
           const SizedBox(width: 8),
@@ -679,43 +679,66 @@ class _ProgressChartCard extends StatelessWidget {
   }
 }
 
-class _ActivityBars extends StatelessWidget {
+class _ActivityBars extends StatefulWidget {
+  @override
+  State<_ActivityBars> createState() => _ActivityBarsState();
+}
+
+class _ActivityBarsState extends State<_ActivityBars> {
+  List<double> _hours = List.filled(7, 0.0);
+  final _service = StudyTimeService();
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final hours = await _service.getWeeklyHours();
+    if (mounted) setState(() => _hours = hours);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final values = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0];
+    final maxVal = _hours.reduce((a, b) => a > b ? a : b);
     final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     return SizedBox(
-      height: 120,
+      height: 130,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(7, (i) {
           final isToday = i == DateTime.now().weekday - DateTime.monday;
+          final barH = maxVal > 0 ? (_hours[i] / maxVal) * 90 : 0.0;
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 3),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  if (_hours[i] > 0)
+                    Text(
+                      '${_hours[i].toStringAsFixed(1)}h',
+                      style: GoogleFonts.nunito(
+                          fontSize: 8, fontWeight: FontWeight.w700,
+                          color: _T.blue),
+                    ),
+                  const SizedBox(height: 2),
                   AnimatedContainer(
                     duration: Duration(milliseconds: 400 + i * 60),
                     curve: Curves.easeOutCubic,
-                    height: 90 * values[i],
+                    height: barH,
                     decoration: BoxDecoration(
-                      // #1CB0F6 full or 20% opacity
                       color: isToday
                           ? _T.blueDeep
-                          : _T.blueDeep.withValues(alpha: .20),
+                          : _T.blueDeep.withValues(alpha: 0.20),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(
-                    days[i],
-                    style: _T.caption2(
-                      color: isToday ? _T.blue : _T.labelQuaternary,
-                    ),
-                  ),
+                  Text(days[i], style: _T.caption2(
+                      color: isToday ? _T.blue : _T.labelQuaternary)),
                 ],
               ),
             ),
@@ -841,8 +864,15 @@ class _AssignmentRow extends StatelessWidget {
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // LIVE CLASSES WIDGET â€” grouped list style (like Pending card)
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-class _LiveClassesWidget extends StatelessWidget {
+class _LiveClassesWidget extends StatefulWidget {
   const _LiveClassesWidget();
+
+  @override
+  State<_LiveClassesWidget> createState() => _LiveClassesWidgetState();
+}
+
+class _LiveClassesWidgetState extends State<_LiveClassesWidget> {
+  late final LiveClassesService _liveClassesService = LiveClassesService();
 
   @override
   Widget build(BuildContext context) {
@@ -851,45 +881,83 @@ class _LiveClassesWidget extends StatelessWidget {
       children: [
         _SectionHeader(title: "🎥 Live Classes", action: "View All"),
         const SizedBox(height: 10),
-        Container(
-          decoration: _T.widgetCard,
-          child: const Column(
-            children: [
-              _LiveClassRow(
-                emoji: '📐',
-                subject: "📐 Mathematics",
-                teacher: "Mr. Kumar",
-                time: "10:00 AM",
-                accentColor: _T.blue,
-                tint: _T.tintBlue,
-                isLive: true,
-                last: false,
+        FutureBuilder<List<LiveClass>>(
+          future: _liveClassesService.fetchLiveClasses(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                decoration: _T.widgetCard,
+                padding: const EdgeInsets.all(16),
+                child: const Center(
+                  child: SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              );
+            }
+
+            final classes = snapshot.data ?? [];
+            
+            if (classes.isEmpty) {
+              return Container(
+                decoration: _T.widgetCard,
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: Text(
+                    'No live classes scheduled',
+                    style: _T.caption1(color: _T.labelTertiary),
+                  ),
+                ),
+              );
+            }
+
+            return Container(
+              decoration: _T.widgetCard,
+              child: Column(
+                children: List.generate(
+                  classes.length,
+                  (index) => LiveClassCard(
+                    subject: classes[index].title,
+                    teacher: classes[index].teacherName,
+                    time: _formatTime(classes[index].startTime ?? ''),
+                    isLive: classes[index].isLive,
+                  ),
+                ),
               ),
-              _LiveClassRow(
-                emoji: '⚗️',
-                subject: "🔬 Physics",
-                teacher: "Ms. Priya",
-                time: "12:30 PM",
-                accentColor: _T.purple,
-                tint: _T.tintPurple,
-                isLive: false,
-                last: false,
-              ),
-              _LiveClassRow(
-                emoji: '✏️',
-                subject: "📖 English",
-                teacher: "Mr. Rajan",
-                time: "2:00 PM",
-                accentColor: _T.green,
-                tint: _T.tintGreen,
-                isLive: false,
-                last: true,
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ],
     );
+  }
+
+  String _getEmojiForSubject(String subject) {
+    if (subject.toLowerCase().contains('math')) return '📐';
+    if (subject.toLowerCase().contains('physics')) return '⚗️';
+    if (subject.toLowerCase().contains('english')) return '✏️';
+    return '📚';
+  }
+
+  Color _getColorForIndex(int index) {
+    final colors = [_T.blue, _T.purple, _T.green];
+    return colors[index % colors.length];
+  }
+
+  Color _getTintColorForIndex(int index) {
+    final tints = [_T.tintBlue, _T.tintPurple, _T.tintGreen];
+    return tints[index % tints.length];
+  }
+
+  String _formatTime(String? schedule) {
+    if (schedule == null) return 'TBD';
+    try {
+      final dt = DateTime.parse(schedule);
+      return '${dt.hour}:${dt.minute.toString().padLeft(2, '0')} ${dt.hour >= 12 ? 'PM' : 'AM'}';
+    } catch (e) {
+      return 'TBD';
+    }
   }
 }
 

@@ -81,6 +81,16 @@ def signup(role: str, payload: SignupRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(user)
 
+    # If student role, also insert into students table
+    if role == 'student':
+        from sqlalchemy import text
+        db.execute(text("""
+            INSERT INTO students (id, user_id, created_at)
+            VALUES (:id, :user_id, NOW())
+            ON CONFLICT (id) DO NOTHING
+        """), {'id': user.id, 'user_id': user.id})
+        db.commit()
+
     logger.info("Signup success: user=%s id=%s", user.username, user.id)
     return AuthResponse(
         id=str(user.id),

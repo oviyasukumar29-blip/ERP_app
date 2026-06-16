@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../auth/services/auth_service.dart';
 import 'dashboard_page.dart';
 import 'students_page.dart';
 import 'attendance_page.dart';
@@ -16,11 +17,19 @@ class TrainerScreen extends StatefulWidget {
 
 class _TrainerScreenState extends State<TrainerScreen> {
   int currentIndex = 0;
+  final _authService = AuthService();
+
+  Future<void> _handleLogout() async {
+    await _authService.logout();
+    if (mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final pages = [
-      const DashboardPage(),
+      DashboardPage(onLogout: _handleLogout),
       const StudentsPage(),
       AttendancePage(),
       TrainerAssignmentsPage(),

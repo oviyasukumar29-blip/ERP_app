@@ -13,6 +13,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'courses_page.dart';
 import '../../../auth/services/auth_service.dart';
+import '../../../../services/live_classes_service.dart';
 
 import 'ai_chatbot_page.dart';
 import 'profile_page.dart';
@@ -22,6 +23,11 @@ import '../../../../services/dashboard_service.dart';
 import 'package:pinesphere_erp/features/auth/presentation/pages/login_screen.dart';
 import 'assignments_page.dart';
 
+// add this import at top of student_screen.dart
+import 'dart:async';
+import '../../../../services/study_time_service.dart';
+
+import 'package:pinesphere_erp/features/student/presentation/widgets/dashboard/live_class_card.dart';
 
 
 part 'dashboard_page.dart';
@@ -371,12 +377,24 @@ class _StudentScreenState extends State<StudentScreen> {
   String? _studentName;
   int _current = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadStudentName();
-    _loadDashboard();
-  }
+  Timer? _studyTimer;
+final _studyService = StudyTimeService();
+
+@override
+void initState() {
+  super.initState();
+  _loadStudentName();
+  _loadDashboard();
+  _studyTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+    _studyService.logStudyTime(5 / 60);
+  });
+}
+
+@override
+void dispose() {
+  _studyTimer?.cancel();
+  super.dispose();
+}
 
   Future<void> _loadStudentName() async {
     final prefs = await SharedPreferences.getInstance();

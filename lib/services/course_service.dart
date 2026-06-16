@@ -5,7 +5,7 @@ class CourseService {
   Future<List<Map<String, dynamic>>> getCourses() async {
     try {
       final response = await http
-          .get(Uri.parse("http://192.168.1.3:8000/student/courses"))
+          .get(Uri.parse("https://shout-crisping-icing.ngrok-free.dev/student/courses"))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {

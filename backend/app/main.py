@@ -19,10 +19,14 @@ from app.modules.admin.routers.dashboard_router import router as admin_dashboard
 from app.modules.trainer.routers.dashboard_router import router as trainer_dashboard_router
 from app.modules.parent.routers.dashboard_router import router as parent_dashboard_router
 from app.modules.auth.routers.auth_router import router as auth_router
+from app.modules.student.models.assignment import Assignment, AssignmentSubmission
+from app.modules.student.models.live_class import LiveClass
+from app.modules.trainer.routers.assignment_router import router as assignment_router
 
-
-
-
+from app.modules.student.routers.coding_router import router as coding_router
+from app.modules.student.routers.live_class_router import router as live_class_router
+from app.modules.student.routers.profile_router import router as profile_router
+from app.modules.student.routers.study_time_router import router as study_time_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -53,6 +57,18 @@ app.include_router(admin_dashboard_router)
 app.include_router(trainer_dashboard_router)
 
 app.include_router(parent_dashboard_router)
+
+app.include_router(assignment_router)
+
+app.include_router(live_class_router)
+
+app.include_router(profile_router)
+
+app.include_router(coding_router)
+
+app.include_router(study_time_router)
+
+
 
 
 @app.get("/")

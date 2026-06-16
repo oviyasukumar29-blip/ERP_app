@@ -6,7 +6,7 @@ class DashboardService {
   Future<Map<String, dynamic>?> getDashboard() async {
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.3:8000/student/dashboard"),
+        Uri.parse("https://shout-crisping-icing.ngrok-free.dev/student/dashboard"),
       ).timeout(const Duration(seconds: 10));
 
       print("✅ Status: ${response.statusCode}");
