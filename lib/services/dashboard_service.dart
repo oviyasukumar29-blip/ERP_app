@@ -3,34 +3,42 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardService {
+  static const String _host = 'https://shout-crisping-icing.ngrok-free.dev';
+
+  static const Map<String, String> _headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
+
   Future<Map<String, dynamic>?> getDashboard() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('user_id') ?? '';
+
       final response = await http.get(
-        Uri.parse("https://shout-crisping-icing.ngrok-free.dev/student/dashboard"),
+        Uri.parse('$_host/student/dashboard'),
+        headers: _headers,
       ).timeout(const Duration(seconds: 10));
 
-      print("✅ Status: ${response.statusCode}");
-      print("✅ Body: ${response.body}");
+      print('✅ Status: ${response.statusCode}');
+      print('✅ Body: ${response.body}');
 
       if (response.statusCode == 200) {
         var dashboardData = jsonDecode(response.body) as Map<String, dynamic>;
-        
-        // Add student name from SharedPreferences if available
-        final prefs = await SharedPreferences.getInstance();
+
         final studentName = prefs.getString('student_name');
         if (studentName != null) {
           dashboardData['student_name'] = studentName;
         }
-        
+
         return dashboardData;
       } else {
-        print("❌ Bad status: ${response.statusCode}");
+        print('❌ Bad status: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print("❌ Exception: $e");
-      
-      // Return basic dashboard with student name even if API fails
+      print('❌ Exception: $e');
+
       final prefs = await SharedPreferences.getInstance();
       final studentName = prefs.getString('student_name');
       if (studentName != null) {

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'dart:io' show Platform;
 
 class LiveClass {
   final String id;
@@ -35,15 +34,17 @@ class LiveClass {
 }
 
 class LiveClassesService {
-  static String get _host {
-    
-    return 'https://shout-crisping-icing.ngrok-free.dev';
-  }
+  static const String _host = 'https://shout-crisping-icing.ngrok-free.dev';
+
+  static const Map<String, String> _headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
 
   Future<List<LiveClass>> fetchLiveClasses() async {
     try {
       final response = await http
-          .get(Uri.parse('$_host/student/live-classes'))
+          .get(Uri.parse('$_host/student/live-classes'), headers: _headers)
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -60,7 +61,8 @@ class LiveClassesService {
   Future<LiveClass?> hostLiveClass(String classId) async {
     try {
       final response = await http
-          .post(Uri.parse('$_host/student/live-classes/$classId/host'))
+          .post(Uri.parse('$_host/student/live-classes/$classId/host'),
+              headers: _headers)
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -82,7 +84,7 @@ class LiveClassesService {
       final response = await http
           .post(
             Uri.parse('$_host/student/live-classes/$classId/schedule'),
-            headers: {'Content-Type': 'application/json'},
+            headers: _headers,
             body: jsonEncode({
               'start_time': startTime.toIso8601String(),
               'end_time': endTime.toIso8601String(),
@@ -109,7 +111,7 @@ class LiveClassesService {
       final response = await http
           .post(
             uri,
-            headers: {'Content-Type': 'application/json'},
+            headers: _headers,
             body: jsonEncode({'title': title, 'teacher_name': 'Trainer'}),
           )
           .timeout(const Duration(seconds: 10));

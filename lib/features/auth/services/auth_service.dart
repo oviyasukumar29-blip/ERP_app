@@ -4,14 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 
 class AuthService {
-  static const String _host = 'http://192.168.1.3:8000';
+  static const String _host = 'https://shout-crisping-icing.ngrok-free.dev';
 
   static const String _keyUserId    = 'user_id';
   static const String _keyUserName  = 'user_name';
   static const String _keyUserEmail = 'user_email';
   static const String _keyUserRole  = 'user_role';
 
-  /// Login with email + password
+  static const Map<String, String> _headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
+
   Future<bool> login(String email, String password) async {
     try {
       final body = jsonEncode({'username_or_email': email, 'password': password});
@@ -20,7 +24,7 @@ class AuthService {
         try {
           final resp = await http.post(
             Uri.parse('$_host/auth/$role/login'),
-            headers: {'Content-Type': 'application/json'},
+            headers: _headers,
             body: body,
           ).timeout(const Duration(seconds: 6));
 
@@ -63,7 +67,7 @@ class AuthService {
 
       final resp = await http.post(
         Uri.parse('$_host/auth/${user.role}/signup'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: body,
       ).timeout(const Duration(seconds: 6));
 

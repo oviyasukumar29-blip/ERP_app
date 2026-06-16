@@ -2,10 +2,17 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class RoleDashboardService {
+  static const Map<String, String> _headers = {
+    'ngrok-skip-browser-warning': 'true',
+  };
+
   Future<Map<String, dynamic>?> getDashboard(String path) async {
     try {
       final response = await http
-          .get(Uri.parse("https://shout-crisping-icing.ngrok-free.dev$path"))
+          .get(
+            Uri.parse("https://shout-crisping-icing.ngrok-free.dev$path"),
+            headers: _headers, // ← added
+          )
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
