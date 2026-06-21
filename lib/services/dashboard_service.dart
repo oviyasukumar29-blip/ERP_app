@@ -15,8 +15,13 @@ class DashboardService {
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('user_id') ?? '';
 
+      if (userId.isEmpty) {
+        print('❌ No user_id found in SharedPreferences');
+        return null;
+      }
+
       final response = await http.get(
-        Uri.parse('$_host/student/dashboard'),
+        Uri.parse('$_host/student/dashboard/$userId'),
         headers: _headers,
       ).timeout(const Duration(seconds: 10));
 

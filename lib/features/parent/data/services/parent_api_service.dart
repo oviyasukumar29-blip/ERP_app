@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ParentApiService {
-  static const String baseUrl = "http://192.168.1.3:8000";
+  static const String baseUrl = "https://shout-crisping-icing.ngrok-free.dev";
 
   Future<Map<String, dynamic>?> getDashboard() async {
     try {

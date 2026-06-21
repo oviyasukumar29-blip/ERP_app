@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LiveClass {
   final String id;
   final String title;
   final String teacherName;
+  final String courseId;
   final String? meetingLink;
   final String? startTime;
   final String? endTime;
@@ -14,6 +16,7 @@ class LiveClass {
     required this.id,
     required this.title,
     required this.teacherName,
+    required this.courseId,
     this.meetingLink,
     this.startTime,
     this.endTime,
@@ -25,6 +28,7 @@ class LiveClass {
       id: json['id'] ?? '',
       title: json['title'] ?? '',
       teacherName: json['teacher_name'] ?? '',
+      courseId: json['course_id'] ?? '',
       meetingLink: json['meeting_link'],
       startTime: json['start_time'],
       endTime: json['end_time'],
@@ -41,10 +45,19 @@ class LiveClassesService {
     'ngrok-skip-browser-warning': 'true',
   };
 
+  /// Fetches only classes that are currently live, restricted to the
+  /// logged-in student's selected courses.
   Future<List<LiveClass>> fetchLiveClasses() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final studentId = prefs.getString('user_id') ?? '';
+
+      final uri = studentId.isEmpty
+          ? Uri.parse('$_host/student/live-classes')
+          : Uri.parse('$_host/student/live-classes?student_id=$studentId');
+
       final response = await http
-          .get(Uri.parse('$_host/student/live-classes'), headers: _headers)
+          .get(uri, headers: _headers)
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
@@ -54,6 +67,25 @@ class LiveClassesService {
       return [];
     } catch (e) {
       print('Error fetching live classes: $e');
+      return [];
+    }
+  }
+
+  /// Fetches ALL live classes (live, scheduled, ended) for the trainer's
+  /// management view.
+  Future<List<LiveClass>> fetchTrainerLiveClasses() async {
+    try {
+      final response = await http
+          .get(Uri.parse('$_host/trainer/live-classes'), headers: _headers)
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        return data.map((item) => LiveClass.fromJson(item)).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error fetching trainer live classes: $e');
       return [];
     }
   }
@@ -71,6 +103,26 @@ class LiveClassesService {
       return null;
     } catch (e) {
       print('Error hosting live class: $e');
+      return null;
+    }
+  }
+
+  /// Marks a live class as stopped (is_live = false). Call this when the
+  /// trainer taps "Stop Broadcast" so the student dashboard reflects it
+  /// on the next refresh.
+  Future<LiveClass?> stopLiveClass(String classId) async {
+    try {
+      final response = await http
+          .post(Uri.parse('$_host/student/live-classes/$classId/stop'),
+              headers: _headers)
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        return LiveClass.fromJson(jsonDecode(response.body));
+      }
+      return null;
+    } catch (e) {
+      print('Error stopping live class: $e');
       return null;
     }
   }
@@ -102,7 +154,11 @@ class LiveClassesService {
     }
   }
 
-  Future<LiveClass?> createLiveClass(String title) async {
+  Future<LiveClass?> createLiveClass(
+    String title,
+    String courseId, {
+    String teacherName = 'Trainer',
+  }) async {
     print('🔵 HOST: $_host');
     try {
       final uri = Uri.parse('$_host/student/live-classes/create');
@@ -112,7 +168,11 @@ class LiveClassesService {
           .post(
             uri,
             headers: _headers,
-            body: jsonEncode({'title': title, 'teacher_name': 'Trainer'}),
+            body: jsonEncode({
+              'title': title,
+              'course_id': courseId,
+              'teacher_name': teacherName,
+            }),
           )
           .timeout(const Duration(seconds: 10));
 

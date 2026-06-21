@@ -1,7 +1,5 @@
 part of 'student_screen.dart';
 
-
-
 class _DashboardPage extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
   final String? studentName;
@@ -18,46 +16,46 @@ class _DashboardPage extends StatelessWidget {
     required this.onOpenProfile,
   });
 
-    @override
-    Widget build(BuildContext context) {
-      return SafeArea(
-        bottom: false,
-        child: Column(
-          children: [
-            _TopBar(dashboardData: dashboardData, onOpenProfile: onOpenProfile),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
-                children: [
-                  _HeroBannerCard(dashboardData: dashboardData),
-                  const SizedBox(height: 14),
-                  _WeeklyStreakCard(dashboardData: dashboardData),
-                  const SizedBox(height: 14),
-                  _StatsRow(dashboardData: dashboardData),
-                  const SizedBox(height: 14),
-                  const _ProgressChartCard(),
-                  const SizedBox(height: 14),
-                  _AssignmentsWidget(dashboardData: dashboardData),
-                  const SizedBox(height: 14),
-                  const _LiveClassesWidget(),
-                  const SizedBox(height: 14),
-                  _QuickActionsWidget(
-                    onOpenAiTutor: onOpenAiTutor,
-                    onOpenCoding: onOpenCoding,
-                    onOpenCertificates: onOpenCertificates,
-                  ),
-                ],
-              ),
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          _TopBar(dashboardData: dashboardData, onOpenProfile: onOpenProfile),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
+              children: [
+                _HeroBannerCard(dashboardData: dashboardData),
+                const SizedBox(height: 14),
+                _WeeklyStreakCard(dashboardData: dashboardData),
+                const SizedBox(height: 14),
+                _StatsRow(dashboardData: dashboardData),
+                const SizedBox(height: 14),
+                const _ProgressChartCard(),
+                const SizedBox(height: 14),
+                _AssignmentsWidget(dashboardData: dashboardData),
+                const SizedBox(height: 14),
+                const _LiveClassesWidget(),
+                const SizedBox(height: 14),
+                _QuickActionsWidget(
+                  onOpenAiTutor: onOpenAiTutor,
+                  onOpenCoding: onOpenCoding,
+                  onOpenCertificates: onOpenCertificates,
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
+}
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // TOP BAR
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 class _TopBar extends StatefulWidget {
   final Map<String, dynamic>? dashboardData;
   final VoidCallback onOpenProfile;
@@ -167,14 +165,15 @@ class _TopBarState extends State<_TopBar> {
               ],
             ),
           ),
-          // AFTER
           const SizedBox(width: 8),
           GestureDetector(
             onTap: () async {
               final confirm = await showDialog<bool>(
                 context: context,
                 builder: (_) => AlertDialog(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   title: const Text("Logout"),
                   content: const Text("Are you sure you want to logout?"),
                   actions: [
@@ -184,12 +183,15 @@ class _TopBarState extends State<_TopBar> {
                     ),
                     TextButton(
                       onPressed: () => Navigator.pop(context, true),
-                      child: const Text("Logout", style: TextStyle(color: Colors.red)),
+                      child: const Text(
+                        "Logout",
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
                   ],
                 ),
               );
-                if (confirm == true && context.mounted) {
+              if (confirm == true && context.mounted) {
                 await AuthService().logout();
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -219,19 +221,16 @@ class _TopBarState extends State<_TopBar> {
               ),
             ),
           ),
-
           const SizedBox(width: 8),
-          // NOTE: Three-dots overflow removed per UX request; trainer live classes
-          // are available from the main navigation tab.
         ],
       ),
     );
   }
 }
 
-
-// HERO BANNER â€” #58CC02 green card
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
+// HERO BANNER — #58CC02 green card
+// ─────────────────────────────────────────────────────────────
 class _HeroBannerCard extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
   const _HeroBannerCard({this.dashboardData});
@@ -293,7 +292,6 @@ class _HeroBannerCard extends StatelessWidget {
                     style: _T.subheadline(color: Colors.white70),
                   ),
                   const SizedBox(height: 14),
-                  // Progress bar: track = white 20%, fill = white
                   Stack(
                     children: [
                       Container(
@@ -365,26 +363,72 @@ class _HeroBannerCard extends StatelessWidget {
     final number = value is num
         ? value.toDouble()
         : value is String
-        ? double.tryParse(value) ?? 0
-        : 0.0;
+            ? double.tryParse(value) ?? 0
+            : 0.0;
     return number.clamp(0, 100).toDouble();
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // WEEKLY STREAK CARD
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-class _WeeklyStreakCard extends StatelessWidget {
+// ─────────────────────────────────────────────────────────────
+class _WeeklyStreakCard extends StatefulWidget {
   final Map<String, dynamic>? dashboardData;
   const _WeeklyStreakCard({this.dashboardData});
 
+  @override
+  State<_WeeklyStreakCard> createState() => _WeeklyStreakCardState();
+}
+
+class _WeeklyStreakCardState extends State<_WeeklyStreakCard> {
   static const _days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  static const _dayCount = 7;
+  static const _rollingWindowSize = 5;
+
+  final _service = AppOpenStreakService();
+  List<bool> _weekOpenStatus = List.filled(7, false);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOpenStatus();
+  }
+
+  Future<void> _loadOpenStatus() async {
+  await _service.recordOpenToday();
+  final status = await _service.getWeekOpenStatus();
+  // ignore: avoid_print
+  print('STREAK DEBUG status=$status today=${DateTime.now()} weekday=${DateTime.now().weekday}');
+  if (mounted) {
+    setState(() => _weekOpenStatus = status);
+  }
+}
+
+  int get _todayIndex => DateTime.now().weekday - DateTime.monday;
+
+  // A tile index is inside the rolling 5-day window if it falls within
+  // [todayIndex - 4, todayIndex] on this week's Mon(0)..Sun(6) scale.
+  bool _isInRollingWindow(int i) {
+    final windowStart = _todayIndex - (_rollingWindowSize - 1);
+    return i >= windowStart && i <= _todayIndex;
+  }
+
+  // Badge: how many of the rolling-window days were actually opened.
+  int get _completedCount {
+    int count = 0;
+    for (int i = 0; i < _dayCount; i++) {
+      if (_isInRollingWindow(i) &&
+          i < _weekOpenStatus.length &&
+          _weekOpenStatus[i]) {
+        count++;
+      }
+    }
+    return count;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final streak = _intValue(dashboardData?["weekly_streak"], fallback: 0);
-    final todayIndex = DateTime.now().weekday - DateTime.monday;
-    final streakStartIndex = (todayIndex - streak + 1).clamp(0, 6);
+    final completedCount = _completedCount;
 
     return Transform.translate(
       offset: const Offset(0, -3),
@@ -422,10 +466,8 @@ class _WeeklyStreakCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: _T.orange.withValues(alpha: .12),
                     borderRadius: BorderRadius.circular(20),
@@ -433,14 +475,11 @@ class _WeeklyStreakCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(
-                        'assets/images/fire_mascot.png',
-                        width: 28,
-                        height: 28,
-                      ),
+                      Image.asset('assets/images/fire_mascot.png',
+                          width: 28, height: 28),
                       const SizedBox(width: 6),
                       Text(
-                        '$streak days',
+                        '$completedCount ${completedCount == 1 ? "day" : "days"}',
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -454,10 +493,12 @@ class _WeeklyStreakCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Row(
-              children: List.generate(7, (i) {
-                final active =
-                    streak > 0 && i >= streakStartIndex && i <= todayIndex;
-                final isToday = i == todayIndex;
+              children: List.generate(_dayCount, (i) {
+                final inWindow = _isInRollingWindow(i);
+                final active = inWindow &&
+                    i < _weekOpenStatus.length &&
+                    _weekOpenStatus[i];
+                final isToday = i == _todayIndex;
                 return Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2.5),
@@ -468,33 +509,30 @@ class _WeeklyStreakCard extends StatelessWidget {
                           curve: Curves.easeOutCubic,
                           height: 42,
                           decoration: BoxDecoration(
-                            color: active
-                                ? _T.orange
-                                : _T.orange.withValues(alpha: .08),
+                            color: inWindow
+                                ? active
+                                    ? _T.orange
+                                    : _T.orange.withValues(alpha: .08)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(18),
                             border: isToday
                                 ? Border.all(color: _T.red, width: 2)
                                 : null,
                           ),
                           child: Center(
-                            child: active
-                                ? Padding(
-                                    padding: const EdgeInsets.all(4),
-                                    child: Image.asset(
-                                      'assets/images/fire_mascot.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  )
-                                : Text(_days[i], style: _T.caption2()),
+                            child: Opacity(
+                              opacity: inWindow ? (active ? 1.0 : 0.35) : 0.2,
+                              child: Image.asset('assets/images/fire_mascot.png',
+                                  width: 24, height: 24),
+                            ),
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           _days[i],
                           style: _T.caption2(
-                            color: active ? _T.orange : _T.labelQuaternary,
-                          ),
+                              color:
+                                  inWindow ? _T.orange : _T.labelQuaternary),
                         ),
                       ],
                     ),
@@ -507,26 +545,10 @@ class _WeeklyStreakCard extends StatelessWidget {
       ),
     );
   }
-
-  int _intValue(dynamic value, {required int fallback}) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    if (value is String) return int.tryParse(value) ?? fallback;
-    return fallback;
-  }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// STATS ROW â€” 3 mini stat cards (font size REDUCED to 16)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // ─────────────────────────────────────────────────────────────
-// STATS ROW – 3 mini stat cards (overflow fixed)
-// ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// STATS ROW – 3 mini stat cards (overflow fixed)
-// ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// STATS ROW – 3 mini stat cards (same size, bigger picture)
+// STATS ROW — 3 mini stat cards
 // ─────────────────────────────────────────────────────────────
 class _StatsRow extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
@@ -650,9 +672,10 @@ class _MiniStat extends StatelessWidget {
     );
   }
 }
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+
+// ─────────────────────────────────────────────────────────────
 // PROGRESS CHART CARD
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 class _ProgressChartCard extends StatelessWidget {
   const _ProgressChartCard();
 
@@ -721,8 +744,10 @@ class _ActivityBarsState extends State<_ActivityBars> {
                     Text(
                       '${_hours[i].toStringAsFixed(1)}h',
                       style: GoogleFonts.nunito(
-                          fontSize: 8, fontWeight: FontWeight.w700,
-                          color: _T.blue),
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: _T.blue,
+                      ),
                     ),
                   const SizedBox(height: 2),
                   AnimatedContainer(
@@ -737,8 +762,12 @@ class _ActivityBarsState extends State<_ActivityBars> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(days[i], style: _T.caption2(
-                      color: isToday ? _T.blue : _T.labelQuaternary)),
+                  Text(
+                    days[i],
+                    style: _T.caption2(
+                      color: isToday ? _T.blue : _T.labelQuaternary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -749,9 +778,12 @@ class _ActivityBarsState extends State<_ActivityBars> {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // ASSIGNMENTS WIDGET
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// ASSIGNMENTS WIDGET
+// ─────────────────────────────────────────────────────────────
 class _AssignmentsWidget extends StatelessWidget {
   final Map<String, dynamic>? dashboardData;
   const _AssignmentsWidget({this.dashboardData});
@@ -766,6 +798,9 @@ class _AssignmentsWidget extends StatelessWidget {
         _SectionHeader(
           title: "📝 Pending Assignments",
           action: assignments.isEmpty ? "" : "See All",
+          onActionTap: assignments.isEmpty
+              ? null
+              : () => _goToAssignments(context),
         ),
         const SizedBox(height: 10),
         Container(
@@ -788,11 +823,19 @@ class _AssignmentsWidget extends StatelessWidget {
                       due: due,
                       danger: due.toLowerCase().contains("today"),
                       last: i == assignments.length - 1,
+                      onTap: () => _goToAssignments(context),
                     );
                   }),
                 ),
         ),
       ],
+    );
+  }
+
+  void _goToAssignments(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const StudentAssignmentsPage()),
     );
   }
 }
@@ -803,6 +846,7 @@ class _AssignmentRow extends StatelessWidget {
   final String due;
   final bool danger;
   final bool last;
+  final VoidCallback? onTap;
 
   const _AssignmentRow({
     required this.emoji,
@@ -810,60 +854,67 @@ class _AssignmentRow extends StatelessWidget {
     required this.due,
     required this.danger,
     required this.last,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-      decoration: BoxDecoration(
-        border: last
-            ? null
-            : Border(bottom: BorderSide(color: _T.separator, width: 0.5)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: danger
-                  ? _T.red.withValues(alpha: .10)
-                  : _T.green.withValues(alpha: .10),
-              borderRadius: BorderRadius.circular(18),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+        decoration: BoxDecoration(
+          border: last
+              ? null
+              : Border(bottom: BorderSide(color: _T.separator, width: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: danger
+                    ? _T.red.withValues(alpha: .10)
+                    : _T.green.withValues(alpha: .10),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Center(
+                child: Text(emoji, style: const TextStyle(fontSize: 24)),
+              ),
             ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 24)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: _T.subheadline(color: _T.labelPrimary)),
+                  const SizedBox(height: 2),
+                  Text(
+                    due,
+                    style: _T.caption1(color: danger ? _T.red : _T.labelTertiary),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: _T.subheadline(color: _T.labelPrimary)),
-                const SizedBox(height: 2),
-                Text(
-                  due,
-                  style: _T.caption1(color: danger ? _T.red : _T.labelTertiary),
-                ),
-              ],
+            Icon(
+              Icons.chevron_right_rounded,
+              color: _T.labelQuaternary,
+              size: 18,
             ),
-          ),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: _T.labelQuaternary,
-            size: 18,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// LIVE CLASSES WIDGET â€” grouped list style (like Pending card)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
+// LIVE CLASSES WIDGET
+// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────
+// LIVE CLASSES WIDGET — auto-refreshing, live-only, course-filtered
+// ─────────────────────────────────────────────────────────────────────
 class _LiveClassesWidget extends StatefulWidget {
   const _LiveClassesWidget();
 
@@ -874,6 +925,37 @@ class _LiveClassesWidget extends StatefulWidget {
 class _LiveClassesWidgetState extends State<_LiveClassesWidget> {
   late final LiveClassesService _liveClassesService = LiveClassesService();
 
+  List<LiveClass>? _classes;
+  bool _loading = true;
+  Timer? _pollTimer;
+
+  static const _pollInterval = Duration(seconds: 15);
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+    _pollTimer = Timer.periodic(_pollInterval, (_) => _load(silent: true));
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _load({bool silent = false}) async {
+    if (!silent && mounted) {
+      setState(() => _loading = true);
+    }
+    final classes = await _liveClassesService.fetchLiveClasses();
+    if (!mounted) return;
+    setState(() {
+      _classes = classes;
+      _loading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -881,77 +963,50 @@ class _LiveClassesWidgetState extends State<_LiveClassesWidget> {
       children: [
         _SectionHeader(title: "🎥 Live Classes", action: "View All"),
         const SizedBox(height: 10),
-        FutureBuilder<List<LiveClass>>(
-          future: _liveClassesService.fetchLiveClasses(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container(
-                decoration: _T.widgetCard,
-                padding: const EdgeInsets.all(16),
-                child: const Center(
-                  child: SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-              );
-            }
-
-            final classes = snapshot.data ?? [];
-            
-            if (classes.isEmpty) {
-              return Container(
-                decoration: _T.widgetCard,
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: Text(
-                    'No live classes scheduled',
-                    style: _T.caption1(color: _T.labelTertiary),
-                  ),
-                ),
-              );
-            }
-
-            return Container(
-              decoration: _T.widgetCard,
-              child: Column(
-                children: List.generate(
-                  classes.length,
-                  (index) => LiveClassCard(
-                    subject: classes[index].title,
-                    teacher: classes[index].teacherName,
-                    time: _formatTime(classes[index].startTime ?? ''),
-                    isLive: classes[index].isLive,
-                  ),
+        if (_loading && _classes == null)
+          Container(
+            decoration: _T.widgetCard,
+            padding: const EdgeInsets.all(16),
+            child: const Center(
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          )
+        else if ((_classes ?? []).isEmpty)
+          Container(
+            decoration: _T.widgetCard,
+            padding: const EdgeInsets.all(16),
+            child: Center(
+              child: Text(
+                'No live classes right now',
+                style: _T.caption1(color: _T.labelTertiary),
+              ),
+            ),
+          )
+        else
+          Container(
+            decoration: _T.widgetCard,
+            child: Column(
+              children: List.generate(
+                _classes!.length,
+                (index) => LiveClassCard(
+                  subject: _classes![index].title,
+                  teacher: _classes![index].teacherName,
+                  time: _formatTime(_classes![index].startTime ?? ''),
+                  isLive: _classes![index].isLive,
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
       ],
     );
   }
 
-  String _getEmojiForSubject(String subject) {
-    if (subject.toLowerCase().contains('math')) return '📐';
-    if (subject.toLowerCase().contains('physics')) return '⚗️';
-    if (subject.toLowerCase().contains('english')) return '✏️';
-    return '📚';
-  }
-
-  Color _getColorForIndex(int index) {
-    final colors = [_T.blue, _T.purple, _T.green];
-    return colors[index % colors.length];
-  }
-
-  Color _getTintColorForIndex(int index) {
-    final tints = [_T.tintBlue, _T.tintPurple, _T.tintGreen];
-    return tints[index % tints.length];
-  }
-
   String _formatTime(String? schedule) {
-    if (schedule == null) return 'TBD';
+    if (schedule == null || schedule.isEmpty) return 'TBD';
     try {
       final dt = DateTime.parse(schedule);
       return '${dt.hour}:${dt.minute.toString().padLeft(2, '0')} ${dt.hour >= 12 ? 'PM' : 'AM'}';
@@ -961,140 +1016,9 @@ class _LiveClassesWidgetState extends State<_LiveClassesWidget> {
   }
 }
 
-class _LiveClassRow extends StatelessWidget {
-  final String emoji;
-  final String subject;
-  final String teacher;
-  final String time;
-  final Color accentColor;
-  final Color tint;
-  final bool isLive;
-  final bool last;
-
-  const _LiveClassRow({
-    required this.emoji,
-    required this.subject,
-    required this.teacher,
-    required this.time,
-    required this.accentColor,
-    required this.tint,
-    required this.isLive,
-    required this.last,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-      decoration: BoxDecoration(
-        border: last
-            ? null
-            : Border(bottom: BorderSide(color: _T.separator, width: 0.5)),
-      ),
-      child: Row(
-        children: [
-          // Emoji icon box â€” same style as assignment row
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: tint,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 18)),
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Subject + teacher + time
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      subject,
-                      style: _T.subheadline(color: _T.labelPrimary),
-                    ),
-                    if (isLive) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _T.red,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 5,
-                              height: 5,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 3),
-                            Text(
-                              "LIVE",
-                              style: GoogleFonts.inter(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  "$teacher  Â·  $time",
-                  style: _T.caption1(color: _T.labelTertiary),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-
-          // Join button
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              decoration: BoxDecoration(
-                color: isLive ? accentColor : tint,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Text(
-                "Join",
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isLive ? Colors.white : accentColor,
-                  letterSpacing: -0.1,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // QUICK ACTIONS
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 class _QuickActionsWidget extends StatelessWidget {
   final VoidCallback onOpenAiTutor;
   final VoidCallback onOpenCoding;
@@ -1230,13 +1154,21 @@ class _QuickAction extends StatelessWidget {
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // SECTION HEADER
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// SECTION HEADER
+// ─────────────────────────────────────────────────────────────
 class _SectionHeader extends StatelessWidget {
   final String title;
   final String action;
-  const _SectionHeader({required this.title, required this.action});
+  final VoidCallback? onActionTap;
+  const _SectionHeader({
+    required this.title,
+    required this.action,
+    this.onActionTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1245,15 +1177,18 @@ class _SectionHeader extends StatelessWidget {
         Text(title, style: _T.title3()),
         const Spacer(),
         if (action.isNotEmpty)
-          Text(action, style: _T.subheadline(color: _T.blue)),
+          GestureDetector(
+            onTap: onActionTap,
+            child: Text(action, style: _T.subheadline(color: _T.blue)),
+          ),
       ],
     );
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 // NOTIFICATION SHEET
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────
 class _NotificationSheet extends StatelessWidget {
   const _NotificationSheet();
 
@@ -1292,7 +1227,7 @@ class _NotificationSheet extends StatelessWidget {
                 child: Column(
                   children: const [
                     _NotifRow(
-                      emoji: 'ðŸ“',
+                      emoji: '📝',
                       bg: _T.tintOrange,
                       title: 'Assignment due soon',
                       subtitle: 'Algebra Chapter 5 is due by 11:59 PM',
@@ -1301,7 +1236,7 @@ class _NotificationSheet extends StatelessWidget {
                       last: false,
                     ),
                     _NotifRow(
-                      emoji: 'ðŸ†',
+                      emoji: '🏆',
                       bg: _T.tintGreen,
                       title: 'Marks published',
                       subtitle: 'Physics test results are now available',
@@ -1310,7 +1245,7 @@ class _NotificationSheet extends StatelessWidget {
                       last: false,
                     ),
                     _NotifRow(
-                      emoji: 'ðŸ”¹',
+                      emoji: '🔹',
                       bg: _T.tintBlue,
                       title: 'Live class reminder',
                       subtitle: 'English class starts in 30 minutes',
@@ -1389,7 +1324,3 @@ class _NotifRow extends StatelessWidget {
     );
   }
 }
-
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// APPLE-STYLE NAV BAR
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

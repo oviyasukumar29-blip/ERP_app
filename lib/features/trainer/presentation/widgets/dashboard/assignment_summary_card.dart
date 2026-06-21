@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class AssignmentSummaryCard extends StatelessWidget {
   final int pendingReview;
@@ -15,90 +16,81 @@ class AssignmentSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use student-style white card with border and mascot
     return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: _D.widgetCard,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: .06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(child: Text('Assignments', style: _D.title3())),
-              Text('Review queue', style: _D.subheadline(color: _D.blue)),
+              Expanded(
+                child: Text('Assignments', style: GoogleFonts.nunito(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.textDark)),
+              ),
+              Text('Review queue', style: GoogleFonts.nunito(fontSize: 12, color: AppColors.textGrey)),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
-                child: _AssignmentMetric(
-                  icon: Icons.pending_actions_rounded,
-                  value: '$pendingReview',
-                  label: 'Pending',
-                  color: _D.orange,
-                  tint: _D.tintOrange,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('$pendingReview', style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.textDark)),
+                    const SizedBox(height: 4),
+                    Text('Pending', style: GoogleFonts.nunito(fontSize: 11, color: AppColors.textGrey)),
+                  ],
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
-                child: _AssignmentMetric(
-                  icon: Icons.check_circle_rounded,
-                  value: '$gradedToday',
-                  label: 'Graded',
-                  color: _D.green,
-                  tint: _D.tintGreen,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('$gradedToday', style: GoogleFonts.nunito(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.textDark)),
+                    const SizedBox(height: 4),
+                    Text('Graded', style: GoogleFonts.nunito(fontSize: 11, color: AppColors.textGrey)),
+                  ],
                 ),
               ),
             ],
           ),
           const SizedBox(height: 10),
           Container(
-            padding: const EdgeInsets.all(13),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: _D.tintBlue,
+              color: AppColors.primaryLight,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: _D.blue.withValues(alpha: .18),
-                width: .5,
-              ),
+              border: Border.all(color: AppColors.primary.withValues(alpha: .18), width: .5),
             ),
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .72),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.upload_file_rounded,
-                    color: _D.blue,
-                    size: 19,
-                  ),
-                ),
-                const SizedBox(width: 11),
+                Image.asset('assets/images/reward_chest.png', width: 36, height: 36),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Ready to publish',
-                        style: _D.subheadline(color: _D.labelPrimary),
-                      ),
+                      Text('Ready to publish', style: GoogleFonts.nunito(fontSize: 12, color: AppColors.textDark)),
                       const SizedBox(height: 2),
-                      Text(
-                        '$draftsReady assignment drafts prepared',
-                        style: _D.caption1(),
-                      ),
+                      Text('$draftsReady assignment drafts prepared', style: GoogleFonts.nunito(fontSize: 11, color: AppColors.textGrey)),
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: _D.blue,
-                  size: 14,
-                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: AppColors.textGrey, size: 14),
               ],
             ),
           ),

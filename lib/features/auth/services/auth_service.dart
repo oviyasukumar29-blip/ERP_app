@@ -31,16 +31,14 @@ class AuthService {
           if (resp.statusCode == 200) {
             final data = jsonDecode(resp.body) as Map<String, dynamic>;
             await _saveSession(data);
-            print('✅ Login success: id=${data['id']} role=${data['role']}');
             return true;
           }
         } catch (e) {
-          print('🔴 Login error for $role: $e');
+          // try next role
         }
       }
       return false;
     } catch (e) {
-      print('🔴 Login error: $e');
       return false;
     }
   }
@@ -55,7 +53,8 @@ class AuthService {
     await prefs.setString('user_id',      data['id']?.toString() ?? '');
   }
 
-  Future<bool> signup(UserModel user) async {
+  /// Returns null on success, or an error message string on failure.
+  Future<String?> signup(UserModel user) async {
     try {
       final body = jsonEncode({
         'full_name':        user.fullName ?? user.username,
@@ -74,13 +73,19 @@ class AuthService {
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         final data = jsonDecode(resp.body) as Map<String, dynamic>;
         await _saveSession(data);
-        return true;
+        return null; // success
       }
-      print('🔴 Signup failed: ${resp.statusCode} ${resp.body}');
-      return false;
+
+      // Try to read the actual error message from the backend response
+      try {
+        final data = jsonDecode(resp.body) as Map<String, dynamic>;
+        final msg = data['detail'] ?? data['message'] ?? data['error'];
+        if (msg != null) return msg.toString();
+      } catch (_) {}
+
+      return 'Signup failed (${resp.statusCode}). Please try again.';
     } catch (e) {
-      print('🔴 Signup error: $e');
-      return false;
+      return 'Connection failed. Please check your internet and try again.';
     }
   }
 

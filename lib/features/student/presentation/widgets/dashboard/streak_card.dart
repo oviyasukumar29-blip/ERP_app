@@ -15,8 +15,10 @@ class StreakCard extends StatelessWidget {
     required this.weekActivity,
   });
 
-
   static const _dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  static const _targetWindow = 6; // Mon..Sat
+  static const _orange = Color(0xFFF59000);
+  static const _orangeTint = Color(0xFFFFF1E4);
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +52,16 @@ class StreakCard extends StatelessWidget {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 6),
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFFAEEDA),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: const Color(0xFFEF9F27).withValues(alpha: .3),
-                      width: .8),
+                    color: const Color(0xFFEF9F27).withValues(alpha: .3),
+                    width: .8,
+                  ),
                 ),
                 child: Text(
                   '$streakDays day streak 🏆',
@@ -76,12 +81,10 @@ class StreakCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(7, (i) {
-              final active = weekActivity[i];
-
-              
-                  final today = i == 1;
-
-              final done = active;
+              final isTargetDay = i < _targetWindow;
+              final active =
+                  isTargetDay && i < weekActivity.length && weekActivity[i];
+              final today = i == DateTime.now().weekday - DateTime.monday;
 
               return Column(
                 children: [
@@ -91,14 +94,16 @@ class StreakCard extends StatelessWidget {
                     height: 38,
                     decoration: BoxDecoration(
                       color: today
-                          ? AppColors.primary
-                          : done
-                              ? AppColors.primaryLight
-                              : Colors.white,
+                          ? _orange
+                          : active
+                          ? _orange
+                          : isTargetDay
+                          ? _orangeTint
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(13),
                       border: Border.all(
                         color: active
-                            ? AppColors.primary.withValues(alpha: .4)
+                            ? _orange.withOpacity(.4)
                             : AppColors.border,
                         width: active ? 1.8 : 1,
                       ),
@@ -108,35 +113,28 @@ class StreakCard extends StatelessWidget {
                                 color: AppColors.primary.withValues(alpha: .3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
-                              )
+                              ),
                             ]
                           : [],
                     ),
-                   child: Center(
-                    child: today && active
-                        ? const Text(
-                            '🔥',
-                            style: TextStyle(fontSize: 16),
-                          )
-                        : active
-                            ? Icon(
-                                Icons.check_rounded,
-                                size: 17,
-                                color: AppColors.successText,
-                              )
-                            : null,
-                  ),
+                    child: Center(
+                      child: Opacity(
+                        opacity: 1.0,
+                        child: Image.asset(
+                          'assets/images/fire_mascot.png',
+                          width: 18,
+                          height: 18,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 5),
                   Text(
                     _dayLabels[i],
                     style: GoogleFonts.nunito(
                       fontSize: 10,
-                      color: active
-                          ? AppColors.primary
-                          : AppColors.textLight,
-                      fontWeight:
-                          active ? FontWeight.w800 : FontWeight.w600,
+                      color: active ? _orange : AppColors.textLight,
+                      fontWeight: active ? FontWeight.w800 : FontWeight.w600,
                     ),
                   ),
                 ],

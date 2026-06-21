@@ -170,8 +170,22 @@ def get_student_assignments(student_id: str, db: Session = Depends(get_db)):
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid student_id")
 
+    # Get the course IDs this student is enrolled in
+    from app.modules.student.models.student_course import StudentCourse
+    enrolled = db.query(StudentCourse).filter(
+        StudentCourse.student_id == sid
+    ).all()
+    enrolled_course_ids = [e.course_id for e in enrolled]
+
+    # Only fetch assignments belonging to enrolled courses
+    # Also include assignments with no course_id (general assignments)
+    from sqlalchemy import or_
     assignments = db.query(Assignment).filter(
-        Assignment.status == "Open"
+        Assignment.status == "Open",
+        or_(
+            Assignment.course_id.in_(enrolled_course_ids),
+            Assignment.course_id == None,
+        )
     ).order_by(Assignment.created_at.desc()).all()
 
     result = []

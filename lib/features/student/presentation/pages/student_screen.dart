@@ -28,7 +28,7 @@ import 'dart:async';
 import '../../../../services/study_time_service.dart';
 
 import 'package:pinesphere_erp/features/student/presentation/widgets/dashboard/live_class_card.dart';
-
+import '../../data/services/app_open_streak_service.dart';
 
 part 'dashboard_page.dart';
 
@@ -113,37 +113,34 @@ class _T {
     color: bgElevated,
     borderRadius: BorderRadius.circular(36),
     boxShadow: [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: .08),
-      blurRadius: 18,
-      offset: const Offset(0, 8),
-    ),
-    BoxShadow(
-      color: Colors.white.withValues(alpha: .8),
-      blurRadius: 8,
-      offset: const Offset(-2, -2),
-    ),
-  ]
+      BoxShadow(
+        color: Colors.black.withValues(alpha: .08),
+        blurRadius: 18,
+        offset: const Offset(0, 8),
+      ),
+      BoxShadow(
+        color: Colors.white.withValues(alpha: .8),
+        blurRadius: 8,
+        offset: const Offset(-2, -2),
+      ),
+    ],
   );
 
-static BoxDecoration tintCard(Color tint) => BoxDecoration(
-  borderRadius: BorderRadius.circular(32),
-  gradient: LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [
-      tint,
-      Color.lerp(tint, Colors.white, 0.25)!,
-    ],
-  ),
-  boxShadow: [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: .08),
-      blurRadius: 16,
-      offset: const Offset(0, 8),
+  static BoxDecoration tintCard(Color tint) => BoxDecoration(
+    borderRadius: BorderRadius.circular(32),
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [tint, Color.lerp(tint, Colors.white, 0.25)!],
     ),
-  ],
-);
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: .08),
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
+  );
 }
 
 // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -282,8 +279,6 @@ class _3DFireIllustration extends StatelessWidget {
   }
 }
 
-
-
 class _BooksStackIllustration extends StatelessWidget {
   final double size;
 
@@ -378,23 +373,23 @@ class _StudentScreenState extends State<StudentScreen> {
   int _current = 0;
 
   Timer? _studyTimer;
-final _studyService = StudyTimeService();
+  final _studyService = StudyTimeService();
 
-@override
-void initState() {
-  super.initState();
-  _loadStudentName();
-  _loadDashboard();
-  _studyTimer = Timer.periodic(const Duration(minutes: 5), (_) {
-    _studyService.logStudyTime(5 / 60);
-  });
-}
+  @override
+  void initState() {
+    super.initState();
+    _loadStudentName();
+    _loadDashboard();
+    _studyTimer = Timer.periodic(const Duration(minutes: 5), (_) {
+      _studyService.logStudyTime(5 / 60);
+    });
+  }
 
-@override
-void dispose() {
-  _studyTimer?.cancel();
-  super.dispose();
-}
+  @override
+  void dispose() {
+    _studyTimer?.cancel();
+    super.dispose();
+  }
 
   Future<void> _loadStudentName() async {
     final prefs = await SharedPreferences.getInstance();
@@ -443,7 +438,7 @@ void dispose() {
           MaterialPageRoute(builder: (_) => const ProfilePage()),
         ),
       ),
-      CoursesPage(),
+      const CoursesPage(),
       const StudentAssignmentsPage(),
       const AIChatbotPage(),
       const CodingPlaygroundPage(),

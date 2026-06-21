@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../services/live_classes_service.dart';
+import '../../../../services/course_service.dart';
 
 class TrainerLiveClassesPage extends StatefulWidget {
   const TrainerLiveClassesPage({super.key});
@@ -11,240 +12,200 @@ class TrainerLiveClassesPage extends StatefulWidget {
 }
 
 class _TrainerLiveClassesPageState extends State<TrainerLiveClassesPage> {
-  String? _activeClassId;
-  bool _isHosting = false;
-  String _meetingLink = 'https://pinesphere.live/orbt-d92';
-  bool _isLoading = true;
-  String? _errorMessage;
+  final LiveClassesService _liveClassesService = LiveClassesService();
+  final CourseService _courseService = CourseService();
 
-  final _liveClassesService = LiveClassesService();
   List<LiveClass> _classes = [];
+  List<CourseItem> _courses = [];
+  bool _loadingClasses = true;
+  bool _loadingCourses = true;
+
+  String? _activeClassId;
+  String _meetingLink = '';
 
   @override
   void initState() {
     super.initState();
-    _fetchClasses();
+    _loadClasses();
+    _loadCourses();
   }
 
-  Future<void> _fetchClasses() async {
+  Future<void> _loadClasses() async {
+    setState(() => _loadingClasses = true);
+    final classes = await _liveClassesService.fetchTrainerLiveClasses();
+    if (!mounted) return;
     setState(() {
-      _isLoading = true;
-      _errorMessage = null;
+      _classes = classes;
+      _loadingClasses = false;
+      final active = classes.where((c) => c.isLive).toList();
+      if (active.isNotEmpty) {
+        _activeClassId = active.first.id;
+        _meetingLink = active.first.meetingLink ?? '';
+      } else {
+        _activeClassId = null;
+        _meetingLink = '';
+      }
     });
+  }
+
+  Future<void> _loadCourses() async {
     try {
-      final classes = await _liveClassesService.fetchLiveClasses();
+      final courses = await _courseService.getTrainerCourses();
+      if (!mounted) return;
       setState(() {
-        _classes = classes;
-        _isLoading = false;
+        _courses = courses;
+        _loadingCourses = false;
       });
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Failed to load classes. Tap to retry.';
-        _isLoading = false;
-      });
+      if (mounted) setState(() => _loadingCourses = false);
     }
   }
 
   Future<void> _startHosting(String classId) async {
-    final result = await _liveClassesService.hostLiveClass(classId);
-    setState(() {
-      _activeClassId = classId;
-      _isHosting = true;
-      if (result?.meetingLink != null) {
-        _meetingLink = result!.meetingLink!;
-      } else {
-        _meetingLink = 'https://pinesphere.live/orbt-${classId.substring(0, 6)}';
-      }
-    });
-    await _fetchClasses();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Live class started!'),
-          backgroundColor: const Color(0xFF58CC02),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+    final updated = await _liveClassesService.hostLiveClass(classId);
+    if (updated != null) {
+      await _loadClasses();
+    } else {
+      _showSnack('Failed to start broadcast', isError: true);
     }
   }
 
-  void _stopHosting() {
-    setState(() {
-      _isHosting = false;
-      _activeClassId = null;
-    });
+  Future<void> _stopHosting() async {
+    if (_activeClassId == null) return;
+    final updated = await _liveClassesService.stopLiveClass(_activeClassId!);
+    if (updated != null) {
+      await _loadClasses();
+    } else {
+      _showSnack('Failed to stop broadcast', isError: true);
+    }
   }
 
   void _copyMeetingLink() {
+    if (_meetingLink.isEmpty) return;
     Clipboard.setData(ClipboardData(text: _meetingLink));
+    _showSnack('Link copied!');
+  }
+
+  void _showSnack(String message, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Link copied!',
-            style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-        backgroundColor: const Color(0xFF58CC02),
+        content: Text(message, style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+        backgroundColor: isError ? const Color(0xFFE24B4A) : const Color(0xFF58CC02),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
-  Future<void> _openScheduleDialog(LiveClass cls) async {
-    DateTime now = DateTime.now();
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: now.add(const Duration(days: 365)),
-    );
-    if (pickedDate == null) return;
-
-    TimeOfDay? pickedStartTime = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 9, minute: 0),
-    );
-    if (pickedStartTime == null) return;
-
-    TimeOfDay? pickedEndTime = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 10, minute: 0),
-    );
-    if (pickedEndTime == null) return;
-
-    final startTime = DateTime(pickedDate.year, pickedDate.month,
-        pickedDate.day, pickedStartTime.hour, pickedStartTime.minute);
-    final endTime = DateTime(pickedDate.year, pickedDate.month,
-        pickedDate.day, pickedEndTime.hour, pickedEndTime.minute);
-
-    final result = await _liveClassesService.scheduleLiveClass(
-        cls.id, startTime, endTime);
-
-    if (result != null) {
-      await _fetchClasses();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Session scheduled!',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-            backgroundColor: const Color(0xFF58CC02),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to schedule. Try again.',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-            backgroundColor: const Color(0xFFFF4B4B),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
-    }
-  }
-
-  // ── NEW: CREATE DIALOG ──────────────────────────────────────
   Future<void> _openCreateDialog() async {
-    final titleController = TextEditingController();
+    final titleCtrl = TextEditingController();
+    String? selectedCourseId = _courses.isNotEmpty ? _courses.first.id : null;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Create Live Class',
-            style: GoogleFonts.nunito(
-                fontSize: 17, fontWeight: FontWeight.w800)),
-        content: TextField(
-          controller: titleController,
-          autofocus: true,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            hintText: 'e.g. Mathematics – Chapter 5',
-            hintStyle: GoogleFonts.nunito(color: const Color(0xFF8E8E93)),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12)),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF1CB0F6), width: 2),
-            ),
-          ),
-          style: GoogleFonts.nunito(fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel',
-                style: GoogleFonts.nunito(color: const Color(0xFF8E8E93))),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1CB0F6),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Create',
-                style: GoogleFonts.nunito(
-                    fontWeight: FontWeight.w800, color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true) return;
-
-    final title = titleController.text.trim();
-    if (title.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a class title.',
-              style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-          backgroundColor: const Color(0xFFFF4B4B),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
+    if (_courses.isEmpty) {
+      _showSnack('No courses available — create a course first', isError: true);
       return;
     }
 
-    setState(() => _isLoading = true);
-    final result = await _liveClassesService.createLiveClass(title);
+    final created = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text('Create Live Class',
+                  style: GoogleFonts.nunito(fontWeight: FontWeight.w800, fontSize: 18)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: titleCtrl,
+                    decoration: InputDecoration(
+                      labelText: 'Class title',
+                      hintText: 'e.g. Algebra Live Q&A',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text('Course',
+                      style: GoogleFonts.nunito(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF8E8E93))),
+                  const SizedBox(height: 6),
+                  DropdownButtonFormField<String>(
+                    initialValue: selectedCourseId,
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                    ),
+                    items: _courses
+                        .map((c) => DropdownMenuItem<String>(
+                              value: c.id,
+                              child: Text(c.title, overflow: TextOverflow.ellipsis),
+                            ))
+                        .toList(),
+                    onChanged: (val) {
+                      setDialogState(() => selectedCourseId = val);
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF58CC02),
+                  ),
+                  child: const Text('Create',
+                      style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (created != true) return;
+
+    final title = titleCtrl.text.trim();
+    if (title.isEmpty || selectedCourseId == null) {
+      _showSnack('Title and course are required', isError: true);
+      return;
+    }
+
+    final result = await _liveClassesService.createLiveClass(
+      title,
+      selectedCourseId!,
+    );
 
     if (result != null) {
-      await _fetchClasses();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Class created! Tap "Host Now" to go live.',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-            backgroundColor: const Color(0xFF58CC02),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
+      _showSnack('Live class created');
+      await _loadClasses();
     } else {
-      setState(() => _isLoading = false);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to create class. Try again.',
-                style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
-            backgroundColor: const Color(0xFFFF4B4B),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        );
-      }
+      _showSnack('Failed to create live class', isError: true);
     }
+  }
+
+  String _courseTitle(String courseId) {
+    final match = _courses.where((c) => c.id == courseId).toList();
+    return match.isNotEmpty ? match.first.title : 'Unknown course';
   }
 
   @override
   Widget build(BuildContext context) {
+    final isHosting = _activeClassId != null;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6EC),
       appBar: AppBar(
@@ -260,111 +221,74 @@ class _TrainerLiveClassesPageState extends State<TrainerLiveClassesPage> {
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: const Color(0xFF1C1C1E))),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded,
-                color: Color(0xFF8E8E93), size: 22),
-            onPressed: _fetchClasses,
-          ),
-        ],
       ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF58CC02)))
-          : _errorMessage != null
-              ? _buildErrorState()
-              : _buildBody(),
-    );
-  }
-
-  Widget _buildErrorState() {
-    return Center(
-      child: GestureDetector(
-        onTap: _fetchClasses,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+      body: RefreshIndicator(
+        onRefresh: _loadClasses,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
           children: [
-            const Icon(Icons.wifi_off_rounded,
-                color: Color(0xFF8E8E93), size: 48),
-            const SizedBox(height: 12),
-            Text(_errorMessage!,
-                style: GoogleFonts.nunito(
-                    fontSize: 14,
-                    color: const Color(0xFF8E8E93),
-                    fontWeight: FontWeight.w600)),
+            _BroadcastCard(
+              isHosting: isHosting,
+              meetingLink: _meetingLink,
+              onCopy: _copyMeetingLink,
+              onStop: _stopHosting,
+            ),
+            const SizedBox(height: 20),
+
+            _LightButton(
+              icon: Icons.add_circle_outline_rounded,
+              label: 'Create Live Class',
+              color: const Color(0xFF1CB0F6),
+              onTap: _loadingCourses ? () {} : _openCreateDialog,
+            ),
+            const SizedBox(height: 24),
+
+            Row(children: [
+              Text('Your Classes',
+                  style: GoogleFonts.nunito(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF1C1C1E))),
+              const Spacer(),
+              GestureDetector(
+                onTap: _loadClasses,
+                child: const Icon(Icons.refresh_rounded,
+                    color: Color(0xFF8E8E93), size: 20),
+              ),
+            ]),
+            const SizedBox(height: 14),
+
+            if (_loadingClasses)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 32),
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (_classes.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: Center(
+                  child: Text('No classes yet — create one above',
+                      style: GoogleFonts.nunito(color: const Color(0xFF8E8E93))),
+                ),
+              )
+            else
+              ..._classes.map((cls) => Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _ClassCard(
+                      cls: cls,
+                      courseTitle: _courseTitle(cls.courseId),
+                      isActive: cls.id == _activeClassId,
+                      onHost: () => _startHosting(cls.id),
+                      onCopyLink: () {
+                        Clipboard.setData(
+                            ClipboardData(text: cls.meetingLink ?? ''));
+                        _showSnack('Link copied!');
+                      },
+                    ),
+                  )),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildBody() {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-      children: [
-        _BroadcastCard(
-          isHosting: _isHosting,
-          meetingLink: _meetingLink,
-          onCopy: _copyMeetingLink,
-          onStop: _stopHosting,
-        ),
-        const SizedBox(height: 20),
-        _LightButton(
-          icon: Icons.add_circle_outline_rounded,
-          label: 'Create Live Class',
-          color: const Color(0xFF1CB0F6),
-          onTap: _openCreateDialog, // ← WIRED UP
-        ),
-        const SizedBox(height: 10),
-        _LightButton(
-          icon: Icons.description_outlined,
-          label: 'Create Draft',
-          color: const Color(0xFF8E8E93),
-          outlined: true,
-          onTap: () {},
-        ),
-        const SizedBox(height: 24),
-        Row(children: [
-          Text('Upcoming Classes',
-              style: GoogleFonts.nunito(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: const Color(0xFF1C1C1E))),
-          const Spacer(),
-          GestureDetector(
-            onTap: _fetchClasses,
-            child: Text('REFRESH',
-                style: GoogleFonts.nunito(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1CB0F6),
-                    letterSpacing: 0.5)),
-          ),
-        ]),
-        const SizedBox(height: 14),
-        if (_classes.isEmpty)
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 32),
-              child: Text('No classes yet. Create one above!',
-                  style: GoogleFonts.nunito(
-                      fontSize: 14,
-                      color: const Color(0xFF8E8E93),
-                      fontWeight: FontWeight.w600)),
-            ),
-          )
-        else
-          ..._classes.map((cls) => Padding(
-                padding: const EdgeInsets.only(bottom: 14),
-                child: _ClassCard(
-                  cls: cls,
-                  isActive: cls.id == _activeClassId,
-                  onHost: () => _startHosting(cls.id),
-                  onSchedule: () => _openScheduleDialog(cls),
-                  onCopyLink: _copyMeetingLink,
-                ),
-              )),
-      ],
     );
   }
 }
@@ -417,10 +341,10 @@ class _BroadcastCard extends StatelessWidget {
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                  width: 6,
-                  height: 6,
+                  width: 6, height: 6,
                   decoration: const BoxDecoration(
-                      color: Color(0xFFFF4B4B), shape: BoxShape.circle)),
+                      color: Color(0xFFFF4B4B),
+                      shape: BoxShape.circle)),
               const SizedBox(width: 6),
               Text('LIVE SESSION ACTIVE',
                   style: GoogleFonts.nunito(
@@ -431,39 +355,50 @@ class _BroadcastCard extends StatelessWidget {
             ]),
           ),
         if (isHosting) const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF5F5F5),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(children: [
-            const Icon(Icons.link_rounded, color: Color(0xFF8E8E93), size: 16),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(meetingLink,
-                  style: GoogleFonts.robotoMono(
-                      fontSize: 11, color: const Color(0xFF1C1C1E))),
+
+        if (isHosting && meetingLink.isNotEmpty)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(12),
             ),
-            GestureDetector(
-              onTap: onCopy,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1CB0F6).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text('Copy',
-                    style: GoogleFonts.nunito(
+            child: Row(children: [
+              const Icon(Icons.link_rounded,
+                  color: Color(0xFF8E8E93), size: 16),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(meetingLink,
+                    style: GoogleFonts.robotoMono(
                         fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        color: const Color(0xFF1CB0F6))),
+                        color: const Color(0xFF1C1C1E))),
               ),
-            ),
-          ]),
-        ),
+              GestureDetector(
+                onTap: onCopy,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1CB0F6).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text('Copy',
+                      style: GoogleFonts.nunito(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFF1CB0F6))),
+                ),
+              ),
+            ]),
+          )
+        else
+          Text(
+            'No active broadcast. Tap "Host Now" on a class below to go live.',
+            style: GoogleFonts.nunito(
+                fontSize: 12, color: const Color(0xFF8E8E93)),
+          ),
         const SizedBox(height: 12),
+
         GestureDetector(
           onTap: isHosting ? onStop : null,
           child: Container(
@@ -480,7 +415,8 @@ class _BroadcastCard extends StatelessWidget {
                     : const Color(0xFFE5E5EA),
               ),
             ),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.center, children: [
               Icon(
                 isHosting
                     ? Icons.stop_circle_outlined
@@ -550,7 +486,8 @@ class _LightButton extends StatelessWidget {
           ],
         ),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(icon, color: outlined ? const Color(0xFF8E8E93) : color, size: 18),
+          Icon(icon,
+              color: outlined ? const Color(0xFF8E8E93) : color, size: 18),
           const SizedBox(width: 8),
           Text(label,
               style: GoogleFonts.nunito(
@@ -567,50 +504,22 @@ class _LightButton extends StatelessWidget {
 
 class _ClassCard extends StatelessWidget {
   final LiveClass cls;
+  final String courseTitle;
   final bool isActive;
   final VoidCallback onHost;
-  final VoidCallback onSchedule;
   final VoidCallback onCopyLink;
 
   const _ClassCard({
     required this.cls,
+    required this.courseTitle,
     required this.isActive,
     required this.onHost,
-    required this.onSchedule,
     required this.onCopyLink,
   });
 
-  String _emojiForSubject(String subject) {
-    final s = subject.toLowerCase();
-    if (s.contains('math')) return '📐';
-    if (s.contains('physics') || s.contains('quantum')) return '⚗️';
-    if (s.contains('english') || s.contains('literature')) return '📖';
-    if (s.contains('chemistry')) return '🧪';
-    if (s.contains('biology')) return '🧬';
-    if (s.contains('computer') || s.contains('code')) return '💻';
-    if (s.contains('python') || s.contains('stack')) return '🐍';
-    return '📚';
-  }
-
-  String _formatTime(String? isoTime) {
-    if (isoTime == null) return 'Time TBD';
-    try {
-      final dt = DateTime.parse(isoTime).toLocal();
-      final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-      final minute = dt.minute.toString().padLeft(2, '0');
-      final ampm = dt.hour >= 12 ? 'PM' : 'AM';
-      return '$hour:$minute $ampm';
-    } catch (_) {
-      return 'Time TBD';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isLive = isActive || cls.isLive;
-    final emoji = _emojiForSubject(cls.title);
-    final timeLabel = _formatTime(cls.startTime);
-
+    final isLive = cls.isLive;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -632,84 +541,85 @@ class _ClassCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(
-            width: 52,
-            height: 52,
+            width: 52, height: 52,
             decoration: BoxDecoration(
               color: const Color(0xFFF5F5F5),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Center(
-              child: Text(emoji, style: const TextStyle(fontSize: 24)),
+            child: const Center(
+              child: Text('📚', style: TextStyle(fontSize: 24)),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isLive)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 4),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF58CC02).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Container(
-                            width: 5,
-                            height: 5,
-                            decoration: const BoxDecoration(
-                                color: Color(0xFF58CC02),
-                                shape: BoxShape.circle)),
-                        const SizedBox(width: 4),
-                        Text('LIVE NOW',
-                            style: GoogleFonts.nunito(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                color: const Color(0xFF58CC02),
-                                letterSpacing: 0.5)),
-                      ]),
-                    ),
-                  Text(cls.title,
-                      style: GoogleFonts.nunito(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF1C1C1E))),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Starts $timeLabel • ${cls.teacherName}',
-                    style: GoogleFonts.nunito(
-                        fontSize: 11, color: const Color(0xFF8E8E93)),
+                crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (isLive)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 4),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF58CC02).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ]),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Container(
+                        width: 5, height: 5,
+                        decoration: const BoxDecoration(
+                            color: Color(0xFF58CC02),
+                            shape: BoxShape.circle)),
+                    const SizedBox(width: 4),
+                    Text('LIVE NOW',
+                        style: GoogleFonts.nunito(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF58CC02),
+                            letterSpacing: 0.5)),
+                  ]),
+                ),
+              Text(cls.title,
+                  style: GoogleFonts.nunito(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF1C1C1E))),
+              const SizedBox(height: 2),
+              Text(
+                'Course: $courseTitle',
+                style: GoogleFonts.nunito(
+                    fontSize: 11,
+                    color: const Color(0xFF8E8E93)),
+              ),
+            ]),
           ),
         ]),
         const SizedBox(height: 14),
+
         Row(children: [
           Expanded(
             child: GestureDetector(
-              onTap: onHost,
+              onTap: isLive ? null : onHost,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 11),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF58CC02),
+                  color: isLive
+                      ? const Color(0xFFE5E5EA)
+                      : const Color(0xFF58CC02),
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                        color: const Color(0xFF58CC02).withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 3))
-                  ],
+                  boxShadow: isLive
+                      ? []
+                      : [BoxShadow(
+                          color: const Color(0xFF58CC02).withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3))],
                 ),
                 child: Center(
                   child: Text(
-                    isActive ? 'Hosting Now' : 'Host Now',
+                    isLive ? 'Hosting Now' : 'Host Now',
                     style: GoogleFonts.nunito(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white),
+                        color: isLive ? const Color(0xFF8E8E93) : Colors.white),
                   ),
                 ),
               ),
@@ -717,24 +627,20 @@ class _ClassCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           GestureDetector(
-            onTap: cls.isLive ? onCopyLink : onSchedule,
+            onTap: onCopyLink,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: 11),
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFE5E5EA)),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(
-                    cls.isLive
-                        ? Icons.link_rounded
-                        : Icons.calendar_month_rounded,
-                    color: const Color(0xFF1CB0F6),
-                    size: 16),
+                const Icon(Icons.link_rounded,
+                    color: Color(0xFF1CB0F6), size: 16),
                 const SizedBox(width: 6),
-                Text(cls.isLive ? 'Copy Link' : 'Schedule',
+                Text('Copy Link',
                     style: GoogleFonts.nunito(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,

@@ -63,14 +63,15 @@ class _SignupScreenState extends State<SignupScreen> {
         email: email,
       );
 
-      final success = await _authService.signup(user);
+      final String? error = await _authService.signup(user);
       if (!mounted) return;
 
-      if (success) {
+      if (error == null) {
+        // Signup successful — navigate to the right screen
         final Widget screen = switch (_role) {
           'trainer' => const TrainerScreen(),
           'parent'  => const ParentScreen(),
-          'admin'   => const AdminScreen(),
+          'admin'   => AdminScreen(),
           _         => const StudentScreen(),
         };
         Navigator.pushAndRemoveUntil(
@@ -79,10 +80,11 @@ class _SignupScreenState extends State<SignupScreen> {
           (route) => false,
         );
       } else {
-        setState(() => _errorMessage = 'Signup failed. Username may already exist.');
+        // Show the actual error from the backend
+        setState(() => _errorMessage = error);
       }
     } catch (e) {
-      setState(() => _errorMessage = 'Connection failed. Try again.');
+      if (mounted) setState(() => _errorMessage = 'Connection failed. Try again.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

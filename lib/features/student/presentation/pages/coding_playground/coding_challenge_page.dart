@@ -23,7 +23,7 @@ class _CodingChallengePageState extends State<CodingChallengePage> {
   bool _running = false;
   bool _passed  = false;
 
-  static const String _host = 'http://192.168.1.3:8000';
+  static const String _host = 'https://shout-crisping-icing.ngrok-free.dev';
 
   @override
   void initState() {

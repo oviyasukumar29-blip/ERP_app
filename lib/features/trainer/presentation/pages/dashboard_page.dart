@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../../core/theme/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../widgets/dashboard/assignment_summary_card.dart';
@@ -22,7 +23,7 @@ class TrainerDashboardPage extends StatelessWidget {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Container(
-        color: _T.bg,
+        color: AppColors.background,
         child: SafeArea(
           bottom: false,
           child: Column(
@@ -66,6 +67,9 @@ class DashboardPage extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// TOP BAR
+// ─────────────────────────────────────────────────────────────
 class _TrainerTopBar extends StatelessWidget {
   final VoidCallback? onOpenProfile;
   final VoidCallback? onLogout;
@@ -79,26 +83,39 @@ class _TrainerTopBar extends StatelessWidget {
       color: _T.bg,
       child: Row(
         children: [
+          // Avatar — circle with border like student
           GestureDetector(
             onTap: onOpenProfile,
             child: Container(
-              width: 38,
-              height: 38,
+              width: 46,
+              height: 46,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [_T.blue, _T.blueDeep],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFBBE5FF), width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: .08),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: const Center(
-                child: Text(
-                  'T',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 17,
+              child: ClipOval(
+                child: Image.asset(
+                  'assets/images/trainer_profile.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Container(
+                    color: _T.blue,
+                    child: const Center(
+                      child: Text(
+                        'T',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -113,11 +130,15 @@ class _TrainerTopBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('KIDLEARN', style: _T.title3()),
-                  Text('Good morning, Meera', style: _T.caption1()),
+                  Text(
+                    'Hello, Meera 👋',
+                    style: _T.title3().copyWith(fontSize: 14),
+                  ),
                 ],
               ),
             ),
           ),
+          // Trainer badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -134,9 +155,9 @@ class _TrainerTopBar extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   'Trainer',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.fredoka(
                     color: Colors.white,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     fontSize: 12,
                     letterSpacing: -.2,
                   ),
@@ -145,6 +166,7 @@ class _TrainerTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          // Notifications
           GestureDetector(
             onTap: () {
               HapticFeedback.selectionClick();
@@ -177,6 +199,7 @@ class _TrainerTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          // Logout
           GestureDetector(
             onTap: onLogout,
             child: Container(
@@ -195,7 +218,7 @@ class _TrainerTopBar extends StatelessWidget {
               ),
               child: const Icon(
                 Icons.logout_rounded,
-                color: Color(0xFFE24B4A),
+                color: Color(0xFFEC3A3A),
                 size: 18,
               ),
             ),
@@ -206,6 +229,9 @@ class _TrainerTopBar extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// HERO CARD
+// ─────────────────────────────────────────────────────────────
 class _TrainerHeroCard extends StatelessWidget {
   const _TrainerHeroCard();
 
@@ -217,11 +243,11 @@ class _TrainerHeroCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: _T.green,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(36),
         boxShadow: [
           BoxShadow(
-            color: _T.greenDark.withValues(alpha: .35),
-            blurRadius: 28,
+            color: Colors.black12,
+            blurRadius: 20,
             offset: const Offset(0, 8),
           ),
         ],
@@ -229,90 +255,120 @@ class _TrainerHeroCard extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .20),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    'Teaching Progress',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white.withValues(alpha: .90),
-                      letterSpacing: .2,
+            flex: 6,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Python fundamentals',
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: _T.title3(color: Colors.white),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '76% of today plan completed',
-                  style: _T.subheadline(color: Colors.white70),
-                ),
-                const SizedBox(height: 14),
-                Stack(
-                  children: [
-                    Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: .25),
-                        borderRadius: BorderRadius.circular(100),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: .20),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      'Teaching Progress',
+                      style: GoogleFonts.fredoka(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white.withValues(alpha: .90),
+                        letterSpacing: .2,
                       ),
                     ),
-                    FractionallySizedBox(
-                      widthFactor: completion,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 260),
-                        curve: Curves.easeOutCubic,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Python Fundamentals',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: _T.title3(color: Colors.white),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '76% of today\'s plan completed',
+                    style: _T.subheadline(color: Colors.white70),
+                  ),
+                  const SizedBox(height: 14),
+                  Stack(
+                    children: [
+                      Container(
                         height: 8,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Colors.white.withValues(alpha: .25),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Text(
-                      'Open class',
-                      style: _T.caption1(color: Colors.white70),
-                    ),
-                    const SizedBox(width: 4),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Colors.white54,
-                      size: 11,
-                    ),
-                  ],
-                ),
-              ],
+                      FractionallySizedBox(
+                        widthFactor: completion,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 260),
+                          curve: Curves.easeOutCubic,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      Text(
+                        'Open class',
+                        style: _T.caption1(color: Colors.white70),
+                      ),
+                      const SizedBox(width: 4),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Colors.white54,
+                        size: 11,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 16),
-          const _TrainerBoardIllustration(size: 84),
+          // Illustration — trainer at board image
+          Expanded(
+            flex: 4,
+            child: SizedBox(
+              height: 160,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: OverflowBox(
+                  maxHeight: 230,
+                  maxWidth: 220,
+                  alignment: Alignment.bottomRight,
+                  child: Transform.translate(
+                    offset: const Offset(18, 20),
+                    child: Image.asset(
+                      'assets/images/student_reading.png',
+                      height: 190,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) =>
+                          const _TrainerBoardIllustration(size: 130),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// FALLBACK BOARD ILLUSTRATION (kept from original)
+// ─────────────────────────────────────────────────────────────
 class _TrainerBoardIllustration extends StatelessWidget {
   final double size;
 
@@ -394,6 +450,9 @@ class _TrainerBoardPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
+// ─────────────────────────────────────────────────────────────
+// NOTIFICATION SHEET
+// ─────────────────────────────────────────────────────────────
 class _TrainerNotificationSheet extends StatelessWidget {
   const _TrainerNotificationSheet();
 
@@ -405,7 +464,14 @@ class _TrainerNotificationSheet extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         decoration: BoxDecoration(
           color: _T.bgElevated,
-          borderRadius: BorderRadius.circular(22),
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: .08),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -421,35 +487,47 @@ class _TrainerNotificationSheet extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: Text('Notifications', style: _T.title3())),
-                Text('Mark all read', style: _T.subheadline(color: _T.blue)),
+                Expanded(
+                  child: Text('Notifications', style: _T.title3()),
+                ),
+                Text(
+                  'Mark all read',
+                  style: _T.subheadline(color: _T.blue),
+                ),
               ],
             ),
             const SizedBox(height: 12),
-            const _NotificationTile(
-              icon: Icons.assignment_turned_in_rounded,
-              title: '18 submissions are ready for grading',
-              subtitle: 'Advanced ML batch',
-              time: '8 min ago',
-              bg: _T.tintOrange,
-              color: _T.orange,
-            ),
-            const _NotificationTile(
-              icon: Icons.groups_rounded,
-              title: 'Python fundamentals starts soon',
-              subtitle: 'Lab 2 - 10:30 AM',
-              time: '24 min ago',
-              bg: _T.tintBlue,
-              color: _T.blue,
-            ),
-            const _NotificationTile(
-              icon: Icons.fact_check_rounded,
-              title: 'Attendance report submitted',
-              subtitle: 'Grade 7 - Batch C',
-              time: '1 hr ago',
-              bg: _T.tintGreen,
-              color: _T.green,
-              showDivider: false,
+            Container(
+              decoration: _T.widgetCard,
+              child: Column(
+                children: const [
+                  _NotificationTile(
+                    icon: Icons.assignment_turned_in_rounded,
+                    title: '18 submissions ready for grading',
+                    subtitle: 'Advanced ML batch',
+                    time: '8 min ago',
+                    bg: _T.tintOrange,
+                    color: _T.orange,
+                  ),
+                  _NotificationTile(
+                    icon: Icons.groups_rounded,
+                    title: 'Python fundamentals starts soon',
+                    subtitle: 'Lab 2 · 10:30 AM',
+                    time: '24 min ago',
+                    bg: _T.tintBlue,
+                    color: _T.blue,
+                  ),
+                  _NotificationTile(
+                    icon: Icons.fact_check_rounded,
+                    title: 'Attendance report submitted',
+                    subtitle: 'Grade 7 · Batch C',
+                    time: '1 hr ago',
+                    bg: _T.tintGreen,
+                    color: _T.green,
+                    showDivider: false,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -480,30 +558,34 @@ class _NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: showDivider ? 12 : 0),
-      margin: EdgeInsets.only(bottom: showDivider ? 12 : 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       decoration: BoxDecoration(
         border: showDivider
-            ? const Border(bottom: BorderSide(color: _T.separator, width: .5))
+            ? const Border(
+                bottom: BorderSide(color: _T.separator, width: .5),
+              )
             : null,
       ),
       child: Row(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: bg,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: color, size: 19),
+            child: Icon(icon, color: color, size: 20),
           ),
-          const SizedBox(width: 11),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: _T.subheadline(color: _T.labelPrimary)),
+                Text(
+                  title,
+                  style: _T.subheadline(color: _T.labelPrimary),
+                ),
                 const SizedBox(height: 2),
                 Text(subtitle, style: _T.caption1()),
                 const SizedBox(height: 2),
@@ -517,50 +599,101 @@ class _NotificationTile extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// DESIGN TOKENS — matches student _T exactly
+// ─────────────────────────────────────────────────────────────
 class _T {
-  static const green = Color(0xFF46A800);
-  static const greenDark = Color(0xFF357800);
+  // Use the student app color tokens for consistent theme
+  static const green = AppColors.primary;
+  static const greenDark = AppColors.primaryDark;
   static const orange = Color(0xFFF59000);
-  static const blue = Color(0xFF14A0E0);
-  static const blueDeep = Color(0xFF2464B8);
+  static const blue = AppColors.primary;
+  static const blueDeep = AppColors.primaryDark;
   static const yellow = Color(0xFFE8C400);
-  static const bg = Color(0xFFFDF6EC);
-  static const bgElevated = Color(0xFFFFFAF4);
-  static const tintBlue = Color(0xFFEAF8FE);
-  static const tintGreen = Color(0xFFF1FBE8);
-  static const tintOrange = Color(0xFFFFF1E4);
-  static const labelPrimary = Color(0xFF1C1C1E);
-  static const labelTertiary = Color(0xFF8E8E93);
-  static const labelQuaternary = Color(0xFFC7C7CC);
-  static const separator = Color(0xFFE5E5EA);
+  static const red = AppColors.danger;
+  static const purple = Color(0xFFBB6EF0);
 
-  static TextStyle title3({Color? color}) => GoogleFonts.inter(
-    fontSize: 17,
+  static const bg = AppColors.background;
+  static const bgElevated = AppColors.cardLight;
+
+  static const tintBlue = AppColors.primaryLight;
+  static const tintGreen = AppColors.primaryLight;
+  static const tintOrange = Color(0xFFFFF1E4);
+  static const tintPurple = Color(0xFFF7EEFF);
+  static const tintYellow = Color(0xFFFFFBE3);
+  static const tintRed = AppColors.dangerLight;
+
+  static const labelPrimary = AppColors.textDark;
+  static const labelSecondary = AppColors.textGrey;
+  static const labelTertiary = AppColors.textGrey;
+  static const labelQuaternary = AppColors.textLight;
+  static const separator = AppColors.border;
+
+  // ── Typography — Fredoka + Nunito like student dashboard ──
+  static TextStyle title3({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 18,
     fontWeight: FontWeight.w600,
     color: color ?? labelPrimary,
-    letterSpacing: -.41,
-    height: 1.3,
   );
 
-  static TextStyle subheadline({Color? color}) => GoogleFonts.inter(
-    fontSize: 13,
+  static TextStyle headline({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: color ?? labelPrimary,
+  );
+
+  static TextStyle subheadline({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 12,
     fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    letterSpacing: -.08,
-    height: 1.4,
+    color: color ?? labelSecondary,
   );
 
-  static TextStyle caption1({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
+  static TextStyle caption1({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 10,
     fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    letterSpacing: .07,
+    color: color ?? labelSecondary,
   );
 
-  static TextStyle caption2({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
+  static TextStyle caption2({Color? color}) => GoogleFonts.fredoka(
+    fontSize: 9,
+    fontWeight: FontWeight.w500,
     color: color ?? labelQuaternary,
-    letterSpacing: .07,
+  );
+
+  // ── Card decorations — identical to student ──
+  static BoxDecoration get widgetCard => BoxDecoration(
+    color: bgElevated,
+    borderRadius: BorderRadius.circular(36),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: .08),
+        blurRadius: 18,
+        offset: const Offset(0, 8),
+      ),
+      BoxShadow(
+        color: Colors.white.withValues(alpha: .8),
+        blurRadius: 8,
+        offset: const Offset(-2, -2),
+      ),
+    ],
+  );
+
+  static BoxDecoration tintCard(Color tint) => BoxDecoration(
+    borderRadius: BorderRadius.circular(32),
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [
+        tint,
+        Color.lerp(tint, Colors.white, 0.25)!,
+      ],
+    ),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(alpha: .08),
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
   );
 }

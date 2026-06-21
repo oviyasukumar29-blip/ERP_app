@@ -13,6 +13,8 @@ class StatItemCard extends StatelessWidget {
   final double progress;
   final Color accentColor;
   final Color accentBg;
+  final double imageSize;
+  final bool compact;
 
   const StatItemCard({
     super.key,
@@ -24,15 +26,23 @@ class StatItemCard extends StatelessWidget {
     this.progress = 0.5,
     this.accentColor = AppColors.primary,
     this.accentBg = AppColors.primaryLight,
+    this.imageSize = 100,
+    this.compact = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final padding = compact
+      ? const EdgeInsets.fromLTRB(8, 6, 8, 8)
+      : const EdgeInsets.fromLTRB(14, 10, 14, 14);
+
+    final borderRadius = compact ? 14.0 : 22.0;
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(14, 10, 14, 14),
+      padding: padding,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(color: AppColors.border, width: 0.8),
         boxShadow: [
           BoxShadow(
@@ -47,17 +57,26 @@ class StatItemCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (imagePath != null)
-            Image.asset(imagePath!, width: 100, height: 100)
+            Container(
+              width: compact ? imageSize + 12 : imageSize + 16,
+              height: compact ? imageSize + 12 : imageSize + 16,
+              padding: EdgeInsets.all(compact ? 6 : 8),
+              decoration: BoxDecoration(
+                color: accentBg,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Image.asset(imagePath!, fit: BoxFit.contain),
+            )
           else
             Container(
-              width: 60,
-              height: 60,
+              width: compact ? 40 : 60,
+              height: compact ? 40 : 60,
               decoration: BoxDecoration(
                 color: accentBg,
                 borderRadius: BorderRadius.circular(13),
               ),
               child: Center(
-                child: Text(emoji, style: const TextStyle(fontSize: 24)),
+                child: Text(emoji, style: TextStyle(fontSize: compact ? 14 : 24)),
               ),
             ),
 
@@ -66,7 +85,7 @@ class StatItemCard extends StatelessWidget {
           Text(
             value,
             style: GoogleFonts.nunito(
-              fontSize: 40,
+              fontSize: compact ? 22 : 40,
               fontWeight: FontWeight.w800,
               color: AppColors.textDark,
               letterSpacing: -.5,
@@ -79,7 +98,7 @@ class StatItemCard extends StatelessWidget {
           Text(
             title,
             style: GoogleFonts.nunito(
-              fontSize: 11,
+              fontSize: compact ? 9 : 11,
               fontWeight: FontWeight.w600,
               color: AppColors.textGrey,
               height: 1.3,
@@ -92,7 +111,7 @@ class StatItemCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress,
-              minHeight: 5,
+              minHeight: compact ? 3 : 5,
               backgroundColor: accentBg,
               valueColor: AlwaysStoppedAnimation(accentColor),
             ),

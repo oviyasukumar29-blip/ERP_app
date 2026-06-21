@@ -5,7 +5,7 @@ import 'dashboard_page.dart';
 import 'students_page.dart';
 import 'attendance_page.dart';
 import 'assignments_page.dart';
-import 'communication_page.dart';
+import 'coursevideo_page.dart';
 import 'live_classes_page.dart';
 
 class TrainerScreen extends StatefulWidget {
@@ -19,6 +19,25 @@ class _TrainerScreenState extends State<TrainerScreen> {
   int currentIndex = 0;
   final _authService = AuthService();
 
+  String? _userId;
+  bool _loadingUser = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final id = await _authService.getUserId();
+    if (mounted) {
+      setState(() {
+        _userId = id;
+        _loadingUser = false;
+      });
+    }
+  }
+
   Future<void> _handleLogout() async {
     await _authService.logout();
     if (mounted) {
@@ -28,12 +47,32 @@ class _TrainerScreenState extends State<TrainerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Wait for the userId to load before building pages that depend on it.
+    if (_loadingUser) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // If there's no logged-in user, bounce back to login instead of
+    // silently passing a null/empty userId into CourseVideoPage.
+    if (_userId == null || _userId!.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        }
+      });
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final pages = [
       DashboardPage(onLogout: _handleLogout),
       const StudentsPage(),
       AttendancePage(),
       TrainerAssignmentsPage(),
-      const CommunicationPage(),
+      CourseVideoPage(userId: _userId!, userRole: UserRole.trainer),
       const TrainerLiveClassesPage(),
     ];
 
@@ -70,7 +109,7 @@ class _TrainerScreenState extends State<TrainerScreen> {
           NavigationDestination(
             icon: Icon(Icons.chat_outlined),
             selectedIcon: Icon(Icons.chat),
-            label: "Chat",
+            label: "Courses",
           ),
           NavigationDestination(
             icon: Icon(Icons.videocam_outlined),

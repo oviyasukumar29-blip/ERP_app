@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinesphere_erp/core/theme/app_colors.dart';
 import '../../../student/data/services/assignment_service.dart';
+import '../../../../services/course_service.dart';
 
 class CreateAssignmentPage extends StatefulWidget {
   const CreateAssignmentPage({super.key});
@@ -13,16 +14,22 @@ class CreateAssignmentPage extends StatefulWidget {
 }
 
 class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
-  final _service = AssignmentService();
   final _formKey = GlobalKey<FormState>();
-  bool _isPublishing = false;
+  final AssignmentService _service = AssignmentService();
+
+  final CourseService _courseService = CourseService();
 
   // Basic fields
-  final _titleCtrl       = TextEditingController();
-  final _subjectCtrl     = TextEditingController();
-  final _descCtrl        = TextEditingController();
-  final _dueDateCtrl     = TextEditingController();
-  final _totalMarksCtrl  = TextEditingController(text: '100');
+  final _titleCtrl      = TextEditingController();
+  final _subjectCtrl    = TextEditingController();
+  final _descCtrl       = TextEditingController();
+  final _dueDateCtrl    = TextEditingController();
+  final _totalMarksCtrl = TextEditingController(text: '100');
+
+  // Course selection
+  List<CourseItem> _courses = [];
+  String? _selectedCourseId;
+  bool _loadingCourses = true;
 
   // Type selection
   String _type = 'written'; // written | quiz | file
@@ -33,10 +40,28 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
   // Quiz: link
   final _quizLinkCtrl = TextEditingController();
 
+  bool _isPublishing = false;
+
   @override
   void initState() {
     super.initState();
-    _addQuestion(); // start with one question for written
+    _addQuestion();
+    _loadCourses();
+  }
+
+  Future<void> _loadCourses() async {
+    try {
+      final courses = await _courseService.getTrainerCourses();
+      if (mounted) {
+        setState(() {
+          _courses = courses;
+          _loadingCourses = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('🔴 _loadCourses error: $e');
+      if (mounted) setState(() => _loadingCourses = false);
+    }
   }
 
   @override
@@ -95,6 +120,7 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
       questions:      questions,
       quizLink:       _type == 'quiz' ? _quizLinkCtrl.text.trim() : null,
       totalMarks:     int.tryParse(_totalMarksCtrl.text.trim()) ?? 100,
+      courseId:       _selectedCourseId,
     );
 
     if (!mounted) return;
@@ -134,7 +160,8 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: Text('Create Assignment',
-            style: GoogleFonts.fredoka(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textDark)),
+            style: GoogleFonts.fredoka(
+                fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textDark)),
         backgroundColor: AppColors.white,
         foregroundColor: AppColors.textDark,
         elevation: 0,
@@ -198,6 +225,79 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
                   ),
                 ),
               ]),
+              const SizedBox(height: 12),
+
+              // ── Course dropdown ──────────────────────────────────────────
+              _loadingCourses
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '📚 Assign to Course',
+                          style: GoogleFonts.fredoka(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textDark),
+                        ),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String?>(
+                              value: _selectedCourseId,
+                              isExpanded: true,
+                              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                              style: GoogleFonts.inter(
+                                  fontSize: 14, color: AppColors.textDark),
+                              items: [
+                                DropdownMenuItem<String?>(
+                                  value: null,
+                                  child: Text(
+                                    'All Students (no specific course)',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 13, color: AppColors.textGrey),
+                                  ),
+                                ),
+                                ..._courses.map((c) => DropdownMenuItem<String?>(
+                                      value: c.id,
+                                      child: Text(
+                                        c.title,
+                                        style: GoogleFonts.inter(fontSize: 13),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    )),
+                              ],
+                              onChanged: (val) =>
+                                  setState(() => _selectedCourseId = val),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          _selectedCourseId == null
+                              ? '⚠️ No course selected — all students will see this'
+                              : '✅ Only students enrolled in this course will see this',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            color: _selectedCourseId == null
+                                ? Colors.orange.shade800
+                                : const Color(0xFF45A700),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
             ]),
 
             const SizedBox(height: 16),
@@ -218,7 +318,8 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
                     : _type == 'quiz'
                         ? 'Share a Google Form or any quiz link. Students mark it as done after completing.'
                         : 'Students upload a file (PDF, image, doc) as their submission.',
-                style: GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey, height: 1.5),
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textGrey, height: 1.5),
               ),
             ]),
 
@@ -238,16 +339,24 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
                   elevation: 2,
                 ),
                 child: _isPublishing
                     ? const SizedBox(
-                        height: 20, width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                    : Text('🚀 Publish to All Students',
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white))
+                    : Text(
+                        _selectedCourseId == null
+                            ? '🚀 Publish to All Students'
+                            : '🚀 Publish to Course Students',
                         style: GoogleFonts.fredoka(
-                            fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white)),
               ),
             ),
           ],
@@ -267,10 +376,12 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
             color: active ? AppColors.primary : AppColors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: active ? AppColors.primary : AppColors.border, width: 1.5),
+                color: active ? AppColors.primary : AppColors.border,
+                width: 1.5),
           ),
           child: Column(children: [
-            Icon(icon, size: 18, color: active ? Colors.white : AppColors.textGrey),
+            Icon(icon,
+                size: 18, color: active ? Colors.white : AppColors.textGrey),
             const SizedBox(height: 4),
             Text(label,
                 style: GoogleFonts.inter(
@@ -285,8 +396,10 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
 
   Widget _buildWrittenSection() {
     return _sectionCard('❓ Questions', [
-      Text('Add questions with model answers. AI will use these to auto-grade student submissions.',
-          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey, height: 1.5)),
+      Text(
+          'Add questions with model answers. AI will use these to auto-grade student submissions.',
+          style:
+              GoogleFonts.inter(fontSize: 12, color: AppColors.textGrey, height: 1.5)),
       const SizedBox(height: 16),
       ..._questions.asMap().entries.map((entry) {
         final i = entry.key;
@@ -299,27 +412,35 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: AppColors.border),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(
-                width: 24, height: 24,
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
-                    color: AppColors.primary, borderRadius: BorderRadius.circular(8)),
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(8)),
                 child: Center(
                   child: Text('${i + 1}',
                       style: GoogleFonts.fredoka(
-                          fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white)),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white)),
                 ),
               ),
               const SizedBox(width: 8),
               Text('Question ${i + 1}',
                   style: GoogleFonts.inter(
-                      fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textDark)),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textDark)),
               const Spacer(),
               if (_questions.length > 1)
                 GestureDetector(
                   onTap: () => _removeQuestion(i),
-                  child: const Icon(Icons.close_rounded, size: 18, color: Colors.red),
+                  child:
+                      const Icon(Icons.close_rounded, size: 18, color: Colors.red),
                 ),
             ]),
             const SizedBox(height: 10),
@@ -328,12 +449,14 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
               decoration: _dec('Question text'),
               style: GoogleFonts.inter(fontSize: 13),
               maxLines: 2,
-              validator: (v) => v == null || v.trim().isEmpty ? 'Enter question' : null,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Enter question' : null,
             ),
             const SizedBox(height: 8),
             TextFormField(
               controller: q['model_answer'],
-              decoration: _dec('Model answer (for AI grading)', hint: 'Expected correct answer'),
+              decoration: _dec('Model answer (for AI grading)',
+                  hint: 'Expected correct answer'),
               style: GoogleFonts.inter(fontSize: 13),
               maxLines: 2,
             ),
@@ -367,11 +490,14 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
       const SizedBox(height: 12),
       TextFormField(
         controller: _quizLinkCtrl,
-        decoration: _dec('Quiz URL', hint: 'https://forms.google.com/...'),
+        decoration:
+            _dec('Quiz URL', hint: 'https://forms.google.com/...'),
         style: GoogleFonts.inter(fontSize: 14),
         keyboardType: TextInputType.url,
         validator: (v) {
-          if (_type == 'quiz' && (v == null || v.trim().isEmpty)) return 'Enter a quiz link';
+          if (_type == 'quiz' && (v == null || v.trim().isEmpty)) {
+            return 'Enter a quiz link';
+          }
           return null;
         },
       ),
@@ -385,18 +511,22 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
         decoration: BoxDecoration(
           color: AppColors.primaryLight.withAlpha(30),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.primary.withAlpha(80), width: 1.5),
+          border:
+              Border.all(color: AppColors.primary.withAlpha(80), width: 1.5),
         ),
         child: Column(children: [
           Icon(Icons.upload_file_rounded, size: 40, color: AppColors.primary),
           const SizedBox(height: 8),
           Text('Students will upload a file as their submission',
               style: GoogleFonts.inter(
-                  fontSize: 13, color: AppColors.textDark, fontWeight: FontWeight.w500),
+                  fontSize: 13,
+                  color: AppColors.textDark,
+                  fontWeight: FontWeight.w500),
               textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Text('Supported: PDF, Word, Images',
-              style: GoogleFonts.inter(fontSize: 11, color: AppColors.textGrey)),
+              style: GoogleFonts.inter(
+                  fontSize: 11, color: AppColors.textGrey)),
         ]),
       ),
     ]);
@@ -411,13 +541,17 @@ class _CreateAssignmentPageState extends State<CreateAssignmentPage> {
         border: Border.all(color: AppColors.border, width: .8),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withAlpha(6), blurRadius: 10, offset: const Offset(0, 4))
+              color: Colors.black.withAlpha(6),
+              blurRadius: 10,
+              offset: const Offset(0, 4))
         ],
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
             style: GoogleFonts.fredoka(
-                fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textDark)),
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textDark)),
         const SizedBox(height: 14),
         ...children,
       ]),

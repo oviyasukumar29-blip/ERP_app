@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class AttendanceSummaryCard extends StatelessWidget {
   final double attendancePercent;
@@ -18,103 +19,38 @@ class AttendanceSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = (attendancePercent / 100).clamp(0.0, 1.0);
-
+    // Student-style gradient attendance card with mascot
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: _D.widgetCard,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [AppColors.primary, Color(0xFF5BA51D)],
+        ),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: _D.tintGreen,
-                  borderRadius: BorderRadius.circular(13),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Attendance', style: TextStyle(color: Colors.white70)),
+                const SizedBox(height: 8),
+                Text(
+                  '${attendancePercent.round()}%',
+                  style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800),
                 ),
-                child: const Icon(
-                  Icons.fact_check_rounded,
-                  color: _D.green,
-                  size: 21,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Attendance', style: _D.headline()),
-                    Text('Today across all batches', style: _D.caption1()),
-                  ],
-                ),
-              ),
-              Text(
-                '${attendancePercent.round()}%',
-                style: GoogleFonts.inter(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
-                  color: _D.green,
-                  letterSpacing: -.45,
-                ),
-              ),
-            ],
+                const SizedBox(height: 6),
+                Text('Today across all batches', style: TextStyle(color: Colors.white70)),
+              ],
+            ),
           ),
-          const SizedBox(height: 16),
-          Stack(
-            children: [
-              Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  color: _D.green.withValues(alpha: .12),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              ),
-              FractionallySizedBox(
-                widthFactor: progress,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 260),
-                  curve: Curves.easeOutCubic,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _D.green,
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: _MetricPill(
-                  label: 'Present',
-                  value: '$present',
-                  color: _D.green,
-                  tint: _D.tintGreen,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _MetricPill(
-                  label: 'Absent',
-                  value: '$absent',
-                  color: _D.red,
-                  tint: _D.tintRed,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _MetricPill(
-                  label: 'Late',
-                  value: '$late',
-                  color: _D.orange,
-                  tint: _D.tintOrange,
-                ),
-              ),
-            ],
+          // Mascot
+          Image.asset(
+            'assets/images/fire_mascot.png',
+            width: 56,
+            height: 56,
+            fit: BoxFit.contain,
           ),
         ],
       ),

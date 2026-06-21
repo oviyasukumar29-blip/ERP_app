@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pinesphere_erp/features/auth/presentation/pages/login_screen.dart';
 import '../../../auth/services/auth_service.dart';
 
-const _host = 'http://192.168.1.3:8000';
+const _host = 'https://shout-crisping-icing.ngrok-free.dev';
 
 // ── Palette (matches dashboard _T theme) ────────────────────────────────────
 const _green      = Color(0xFF58CC02);

@@ -8,7 +8,7 @@ void main() {
     (WidgetTester tester) async {
 
       await tester.pumpWidget(
-        const ScholarHubApp(),
+        const PineSphereApp(),
       );
 
       expect(

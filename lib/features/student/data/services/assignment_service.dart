@@ -195,7 +195,7 @@ class SubmissionModel {
 // ── Service ───────────────────────────────────────────────────────────────────
 
 class AssignmentService {
-  static String get _host => 'http://192.168.1.3:8000';
+  static String get _host => 'https://shout-crisping-icing.ngrok-free.dev';
 
   Future<String?> _getUserId() async {
     final prefs = await SharedPreferences.getInstance();

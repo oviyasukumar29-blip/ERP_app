@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class UpcomingClass {
   final String title;
@@ -75,8 +76,19 @@ class UpcomingClassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: _D.widgetCard,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: .06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -109,20 +121,19 @@ class _UpcomingClassTile extends StatelessWidget {
       padding: EdgeInsets.only(bottom: showDivider ? 12 : 0),
       margin: EdgeInsets.only(bottom: showDivider ? 12 : 0),
       decoration: BoxDecoration(
-        border: showDivider
-            ? const Border(bottom: BorderSide(color: _D.separator, width: .5))
-            : null,
+        border: showDivider ? Border(bottom: BorderSide(color: AppColors.border, width: .5)) : null,
       ),
       child: Row(
         children: [
+          // Cartoon icon square
           Container(
-            width: 48,
-            height: 48,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: item.tint,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(item.icon, color: item.color, size: 22),
+            child: Image.asset('assets/images/star_filled.png', width: 24, height: 24),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -136,38 +147,23 @@ class _UpcomingClassTile extends StatelessWidget {
                         item.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: _D.subheadline(color: _D.labelPrimary),
+                        style: GoogleFonts.nunito(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textDark),
                       ),
                     ),
                     if (item.isLive) const SizedBox(width: 8),
                     if (item.isLive)
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: _D.tintRed,
+                          color: AppColors.dangerLight,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Text(
-                          'Live',
-                          style: GoogleFonts.inter(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            color: _D.red,
-                          ),
-                        ),
+                        child: Text('Live', style: GoogleFonts.nunito(fontSize: 10, color: AppColors.dangerText, fontWeight: FontWeight.w700)),
                       ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text(
-                  '${item.batch} - ${item.time} - ${item.room}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: _D.caption1(),
-                ),
+                Text('${item.batch} - ${item.time} - ${item.room}', maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.nunito(fontSize: 11, color: AppColors.textGrey)),
                 const SizedBox(height: 9),
                 Row(
                   children: [
@@ -183,10 +179,7 @@ class _UpcomingClassTile extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      '${item.joined}/${item.total}',
-                      style: _D.caption1(color: item.color),
-                    ),
+                    Text('${item.joined}/${item.total}', style: GoogleFonts.nunito(fontSize: 11, color: item.color)),
                   ],
                 ),
               ],

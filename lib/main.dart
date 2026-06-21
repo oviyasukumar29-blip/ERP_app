@@ -1,23 +1,20 @@
 // main.dart
-
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
-import 'features/trainer/data/repositories/assignment_store.dart';
 import 'features/auth/presentation/pages/login_screen.dart';
 
 void main() {
-  AssignmentStore.instance.seedDemo();
-  runApp(const ScholarHubApp()); 
+  runApp(const PineSphereApp());
 }
 
-class ScholarHubApp extends StatelessWidget {
-  const ScholarHubApp({super.key});
+class PineSphereApp extends StatelessWidget {
+  const PineSphereApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ScholarHub',
+      title: 'PineSphere ERP',
       theme: AppTheme.lightTheme,
       home: const LoginScreen(),
     );

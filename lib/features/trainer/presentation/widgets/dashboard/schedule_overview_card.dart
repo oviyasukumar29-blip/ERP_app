@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../../../core/theme/app_colors.dart';
 
 class ScheduleOverviewCard extends StatelessWidget {
   final List<int> classMinutes;
@@ -18,64 +19,101 @@ class ScheduleOverviewCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: _D.widgetCard,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.border, width: 0.8),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: .06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Expanded(child: Text('Schedule Overview', style: _D.headline())),
-              Text('This week', style: _D.caption1(color: _D.blue)),
+              const Text('📊', style: TextStyle(fontSize: 16)),
+              const SizedBox(width: 6),
+              Text(
+                'Schedule Overview',
+                style: GoogleFonts.nunito(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textDark,
+                  letterSpacing: -.2,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: .25),
+                  ),
+                ),
+                child: const Text('This week'),
+              ),
             ],
           ),
-          const SizedBox(height: 18),
+
+          const SizedBox(height: 10),
+
           SizedBox(
-            height: 130,
+            height: 155,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: List.generate(classMinutes.length, (index) {
                 final value = classMinutes[index];
-                final active = index == todayIndex;
-                final height = 28 + (value / maxMinutes) * 72;
+                final isMax = value == maxMinutes;
+                final barH = (value / maxMinutes) * 85;
 
                 return Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Text(
-                          '${(value / 60).toStringAsFixed(value % 60 == 0 ? 0 : 1)}h',
-                          style: _D.caption1(
-                            color: active ? _D.blue : _D.labelQuaternary,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
+                        if (isMax)
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 4),
+                            child: const Text('🏆', style: TextStyle(fontSize: 12)),
+                          )
+                        else
+                          const SizedBox(height: 16),
+
                         AnimatedContainer(
-                          duration: const Duration(milliseconds: 260),
+                          duration: Duration(milliseconds: 350 + index * 60),
                           curve: Curves.easeOutCubic,
-                          height: height,
+                          height: barH,
                           decoration: BoxDecoration(
-                            color: active
-                                ? _D.blue
-                                : _D.blue.withValues(alpha: .20),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: active
+                            color: isMax ? AppColors.primary : AppColors.primaryLight,
+                            borderRadius: const BorderRadius.vertical(top: Radius.circular(9)),
+                            boxShadow: isMax
                                 ? [
                                     BoxShadow(
-                                      color: _D.blue.withValues(alpha: .25),
-                                      blurRadius: 12,
-                                      offset: const Offset(0, 4),
-                                    ),
+                                      color: AppColors.primary.withValues(alpha: .3),
+                                      blurRadius: 10,
+                                      offset: const Offset(0, -3),
+                                    )
                                   ]
-                                : null,
+                                : [],
                           ),
                         ),
-                        const SizedBox(height: 7),
+
+                        const SizedBox(height: 3),
+
                         Text(
                           _days[index],
-                          style: _D.caption1(
-                            color: active ? _D.blue : _D.labelQuaternary,
+                          style: GoogleFonts.nunito(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: isMax ? AppColors.primary : AppColors.textLight,
                           ),
                         ),
                       ],
@@ -91,41 +129,4 @@ class ScheduleOverviewCard extends StatelessWidget {
   }
 }
 
-class _D {
-  static const blue = Color(0xFF14A0E0);
-  static const bgElevated = Color(0xFFFFFAF4);
-  static const labelPrimary = Color(0xFF1C1C1E);
-  static const labelTertiary = Color(0xFF8E8E93);
-  static const labelQuaternary = Color(0xFFC7C7CC);
-
-  static TextStyle headline({Color? color}) => GoogleFonts.inter(
-    fontSize: 15,
-    fontWeight: FontWeight.w600,
-    color: color ?? labelPrimary,
-    letterSpacing: -.24,
-  );
-
-  static TextStyle caption1({Color? color}) => GoogleFonts.inter(
-    fontSize: 11,
-    fontWeight: FontWeight.w500,
-    color: color ?? labelTertiary,
-    letterSpacing: .07,
-  );
-
-  static BoxDecoration get widgetCard => BoxDecoration(
-    color: bgElevated,
-    borderRadius: BorderRadius.circular(20),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withValues(alpha: .06),
-        blurRadius: 20,
-        offset: const Offset(0, 4),
-      ),
-      BoxShadow(
-        color: Colors.black.withValues(alpha: .03),
-        blurRadius: 6,
-        offset: const Offset(0, 1),
-      ),
-    ],
-  );
-}
+// No local tokens — using `AppColors` to match student styling
