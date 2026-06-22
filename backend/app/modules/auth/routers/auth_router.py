@@ -1,10 +1,13 @@
+# backend/app/modules/auth/routers/auth_router.py
+
 import logging
 from typing import Optional
 
 import bcrypt
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from app.core.database import get_db
 from app.shared.models.user import User
@@ -19,6 +22,9 @@ class SignupRequest(BaseModel):
     email: Optional[EmailStr] = None
     password: str
     confirm_password: str
+    # Parent-only: child's credentials to link at signup
+    student_username: Optional[str] = None
+    student_password: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -51,7 +57,6 @@ def _verify_password(plain: str, stored: str) -> bool:
     try:
         return bcrypt.checkpw(plain.encode(), stored.encode())
     except Exception:
-        # Legacy plain text fallback
         return plain == stored
 
 
@@ -70,6 +75,27 @@ def signup(role: str, payload: SignupRequest, db: Session = Depends(get_db)):
         if db.query(User).filter(User.email == payload.email).first():
             raise HTTPException(status_code=400, detail="Email already exists")
 
+    # For parent: validate child credentials BEFORE creating the parent account
+    student_user = None
+    if role == "parent":
+        if not payload.student_username or not payload.student_password:
+            raise HTTPException(
+                status_code=400,
+                detail="Child's username and password are required for parent signup",
+            )
+        student_user = db.query(User).filter(
+            User.username == payload.student_username,
+            User.role == "student",
+        ).first()
+        if not student_user or not _verify_password(
+            payload.student_password, student_user.password_hash
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid child username or password",
+            )
+
+    # Create the user account
     user = User(
         username=payload.username,
         name=payload.full_name,
@@ -77,19 +103,40 @@ def signup(role: str, payload: SignupRequest, db: Session = Depends(get_db)):
         password_hash=_hash_password(payload.password),
         role=role,
     )
-    db.add(user)
-    db.commit()
-    db.refresh(user)
 
-    # If student role, also insert into students table
-    if role == 'student':
-        from sqlalchemy import text
+    try:
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    except Exception as e:
+        db.rollback()
+        err = str(e).lower()
+        if "username" in err:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        elif "email" in err:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        else:
+            raise HTTPException(status_code=400, detail="Signup failed, please try again")
+
+    # If student: insert into students table
+    if role == "student":
         db.execute(text("""
             INSERT INTO students (id, user_id, created_at)
             VALUES (:id, :user_id, NOW())
             ON CONFLICT (id) DO NOTHING
-        """), {'id': user.id, 'user_id': user.id})
+        """), {"id": user.id, "user_id": user.id})
         db.commit()
+
+    # If parent: create the link row
+    if role == "parent" and student_user is not None:
+        db.execute(text("""
+            INSERT INTO parent_student_links
+                (parent_user_id, student_user_id, linked_via, created_at)
+            VALUES (:parent_id, :student_id, 'signup_credentials', NOW())
+            ON CONFLICT (parent_user_id, student_user_id) DO NOTHING
+        """), {"parent_id": user.id, "student_id": student_user.id})
+        db.commit()
+        logger.info("Parent %s linked to student %s", user.username, student_user.username)
 
     logger.info("Signup success: user=%s id=%s", user.username, user.id)
     return AuthResponse(

@@ -19,11 +19,19 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController    = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _authService        = AuthService();
 
-  bool _isLoading       = false;
-  bool _obscurePassword = true;
-  String _role          = 'student';
+  // Only used when _role == 'parent' — links this parent account to an
+  // existing student account so the parent inherits visibility into
+  // that student's attendance, fees, progress, etc.
+  final _studentUsernameController = TextEditingController();
+  final _studentPasswordController = TextEditingController();
+
+  final _authService = AuthService();
+
+  bool _isLoading            = false;
+  bool _obscurePassword      = true;
+  bool _obscureStudentPassword = true;
+  String _role               = 'student';
   String? _errorMessage;
 
   static const _roles = ['student', 'trainer', 'parent', 'admin'];
@@ -34,6 +42,8 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
+    _studentUsernameController.dispose();
+    _studentPasswordController.dispose();
     super.dispose();
   }
 
@@ -42,6 +52,8 @@ class _SignupScreenState extends State<SignupScreen> {
     final email    = _emailController.text.trim();
     final username = _usernameController.text.trim();
     final password = _passwordController.text.trim();
+    final studentUsername = _studentUsernameController.text.trim();
+    final studentPassword = _studentPasswordController.text.trim();
 
     if (name.isEmpty || username.isEmpty || password.isEmpty) {
       setState(() => _errorMessage = 'Please fill in all required fields');
@@ -49,6 +61,12 @@ class _SignupScreenState extends State<SignupScreen> {
     }
     if (password.length < 6) {
       setState(() => _errorMessage = 'Password must be at least 6 characters');
+      return;
+    }
+    if (_role == 'parent' &&
+        (studentUsername.isEmpty || studentPassword.isEmpty)) {
+      setState(() => _errorMessage =
+          "Enter your child's username and password to link their account");
       return;
     }
 
@@ -63,7 +81,11 @@ class _SignupScreenState extends State<SignupScreen> {
         email: email,
       );
 
-      final String? error = await _authService.signup(user);
+      final String? error = await _authService.signup(
+        user,
+        studentUsername: _role == 'parent' ? studentUsername : null,
+        studentPassword: _role == 'parent' ? studentPassword : null,
+      );
       if (!mounted) return;
 
       if (error == null) {
@@ -92,6 +114,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isParent = _role == 'parent';
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6EC),
       body: SafeArea(
@@ -188,13 +212,67 @@ class _SignupScreenState extends State<SignupScreen> {
                             value: r,
                             child: Text(r[0].toUpperCase() + r.substring(1)),
                           )).toList(),
-                          onChanged: (r) { if (r != null) setState(() => _role = r); },
+                          onChanged: (r) {
+                            if (r != null) setState(() => _role = r);
+                          },
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
+
+              // ── Parent-only: link to child's account ──
+              if (isParent) ...[
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Link your child's account",
+                    style: GoogleFonts.fredoka(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1C1C1E),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Enter your child's login so their activity can be linked to your account",
+                    style: GoogleFonts.fredoka(
+                      fontSize: 12,
+                      color: const Color(0xFF8E8E93),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _InputField(
+                  controller: _studentUsernameController,
+                  hint: "Child's Username",
+                  icon: Icons.escalator_warning_rounded,
+                ),
+                const SizedBox(height: 14),
+                _InputField(
+                  controller: _studentPasswordController,
+                  hint: "Child's Password",
+                  icon: Icons.lock_outline_rounded,
+                  obscure: _obscureStudentPassword,
+                  suffix: GestureDetector(
+                    onTap: () => setState(
+                      () => _obscureStudentPassword = !_obscureStudentPassword,
+                    ),
+                    child: Icon(
+                      _obscureStudentPassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: const Color(0xFF8E8E93),
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
 
               // Error
               if (_errorMessage != null) ...[

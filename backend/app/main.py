@@ -33,6 +33,9 @@ from app.modules.trainer.routers.assignment_router import router as assignment_r
 from app.modules.trainer.routers.courses import router as trainer_courses_router  # ✅
 from app.modules.trainer.routers.videos import router as trainer_videos_router    # ✅
 from app.modules.parent.routers.dashboard_router import router as parent_dashboard_router
+from app.modules.parent.routers.parent_router import router as parent_router
+
+
 
 # ── DB setup ───────────────────────────────────────────────────────────────────
 Base.metadata.create_all(bind=engine)
@@ -69,6 +72,8 @@ app.include_router(assignment_router)
 app.include_router(parent_dashboard_router)
 app.include_router(trainer_courses_router, prefix="/trainer", tags=["Trainer Courses"])
 app.include_router(trainer_videos_router, prefix="/trainer", tags=["Trainer Videos"])
+app.include_router(parent_router)
+
 
 # ── Static files ───────────────────────────────────────────────────────────────
 app.mount(

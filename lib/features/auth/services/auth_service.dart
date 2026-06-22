@@ -54,7 +54,16 @@ class AuthService {
   }
 
   /// Returns null on success, or an error message string on failure.
-  Future<String?> signup(UserModel user) async {
+  ///
+  /// When [user.role] is 'parent', pass [studentUsername] and
+  /// [studentPassword] — the student account this parent should be
+  /// linked to. The backend verifies those credentials and creates the
+  /// parent-student link server-side as part of the same signup call.
+  Future<String?> signup(
+    UserModel user, {
+    String? studentUsername,
+    String? studentPassword,
+  }) async {
     try {
       final body = jsonEncode({
         'full_name':        user.fullName ?? user.username,
@@ -62,6 +71,10 @@ class AuthService {
         'email':            user.email ?? '',
         'password':         user.password,
         'confirm_password': user.password,
+        if (user.role == 'parent') ...{
+          'student_username': studentUsername ?? '',
+          'student_password': studentPassword ?? '',
+        },
       });
 
       final resp = await http.post(
@@ -73,6 +86,23 @@ class AuthService {
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         final data = jsonDecode(resp.body) as Map<String, dynamic>;
         await _saveSession(data);
+        // If this signup created a parent account that links to a student,
+        // persist the linked student's username/name locally so the
+        // Parent UI can show the linked child immediately (uses mock
+        // service until backend endpoints are wired up).
+        if (user.role == 'parent') {
+          final prefs = await SharedPreferences.getInstance();
+          if (studentUsername != null && studentUsername.isNotEmpty) {
+            await prefs.setString('linked_student_username', studentUsername);
+          }
+          // Backend may return linked student details; persist when present
+          if (data['linked_student_name'] != null) {
+            await prefs.setString('linked_student_name', data['linked_student_name'].toString());
+          }
+          if (data['linked_student_id'] != null) {
+            await prefs.setString('linked_student_id', data['linked_student_id'].toString());
+          }
+        }
         return null; // success
       }
 
