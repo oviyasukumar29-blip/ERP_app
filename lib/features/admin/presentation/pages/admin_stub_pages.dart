@@ -73,6 +73,106 @@ class AdminNotificationsPage extends StatelessWidget {
   }
 }
 
+// ─── Manage Users Page ────────────────────────────────────────────────────────
+
+class AdminUsersPage extends StatelessWidget {
+  const AdminUsersPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFDF6EC),
+        elevation: 0,
+        title: Text('Manage Users', style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: const Color(0xFF1A1A2E))),
+        iconTheme: const IconThemeData(color: Color(0xFF1A1A2E)),
+      ),
+      body: const Center(child: _ComingSoon(icon: Icons.people_outline_rounded, label: 'User management coming soon')),
+    );
+  }
+}
+
+// ─── Manage Courses Page ──────────────────────────────────────────────────────
+
+class AdminCoursesPage extends StatelessWidget {
+  const AdminCoursesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFDF6EC),
+        elevation: 0,
+        title: Text('Manage Courses', style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: const Color(0xFF1A1A2E))),
+        iconTheme: const IconThemeData(color: Color(0xFF1A1A2E)),
+      ),
+      body: const Center(child: _ComingSoon(icon: Icons.school_outlined, label: 'Course management coming soon')),
+    );
+  }
+}
+
+// ─── Assignments Page ─────────────────────────────────────────────────────────
+
+class AdminAssignmentsPage extends StatelessWidget {
+  const AdminAssignmentsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFDF6EC),
+        elevation: 0,
+        title: Text('Assignments', style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: const Color(0xFF1A1A2E))),
+        iconTheme: const IconThemeData(color: Color(0xFF1A1A2E)),
+      ),
+      body: const Center(child: _ComingSoon(icon: Icons.assignment_outlined, label: 'Assignment overview coming soon')),
+    );
+  }
+}
+
+// ─── Reports Page ─────────────────────────────────────────────────────────────
+
+class AdminReportsPage extends StatelessWidget {
+  const AdminReportsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFDF6EC),
+        elevation: 0,
+        title: Text('Reports', style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: const Color(0xFF1A1A2E))),
+        iconTheme: const IconThemeData(color: Color(0xFF1A1A2E)),
+      ),
+      body: const Center(child: _ComingSoon(icon: Icons.bar_chart_rounded, label: 'Reports & analytics coming soon')),
+    );
+  }
+}
+
+// ─── Settings Page ────────────────────────────────────────────────────────────
+
+class AdminSettingsPage extends StatelessWidget {
+  const AdminSettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFDF6EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFDF6EC),
+        elevation: 0,
+        title: Text('Settings', style: GoogleFonts.inter(fontWeight: FontWeight.w700, color: const Color(0xFF1A1A2E))),
+        iconTheme: const IconThemeData(color: Color(0xFF1A1A2E)),
+      ),
+      body: const Center(child: _ComingSoon(icon: Icons.settings_outlined, label: 'Settings coming soon')),
+    );
+  }
+}
+
 // ─── Shared coming-soon widget ────────────────────────────────────────────────
 
 class _ComingSoon extends StatelessWidget {

@@ -1,58 +1,89 @@
 // features/parent/data/services/attendance_service.dart
 // ─────────────────────────────────────────────────────────────
-// Attendance history + weekly/monthly summary for a given child.
-// MOCK MODE — see parent_api_service.dart header for swap notes.
+// Wired to real backend.
+// Endpoint: GET /parent/children/{childId}/attendance?parent_id=...&year=...&month=...
 // ─────────────────────────────────────────────────────────────
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/child_model.dart';
 
 class AttendanceService {
-  /// Full calendar-month attendance for the given child.
+  static const _host = 'https://shout-crisping-icing.ngrok-free.dev';
+  static const _headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
+
+  Future<String?> _getParentId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
+
+  // ── Full monthly attendance records ──────────────────────
   Future<List<AttendanceRecord>> getMonthlyAttendance(
     String childId, {
     DateTime? month,
   }) async {
-    await Future.delayed(const Duration(milliseconds: 250));
+    final parentId = await _getParentId();
+    if (parentId == null) return [];
+
     final base = month ?? DateTime.now();
-    final daysInMonth = DateTime(base.year, base.month + 1, 0).day;
-    final records = <AttendanceRecord>[];
+    final uri = Uri.parse(
+      '$_host/parent/children/$childId/attendance'
+      '?parent_id=$parentId&year=${base.year}&month=${base.month}',
+    );
 
-    for (int day = 1; day <= daysInMonth; day++) {
-      final date = DateTime(base.year, base.month, day);
-      if (date.isAfter(DateTime.now())) break;
-      if (date.weekday == DateTime.sunday) continue;
+    final response = await http
+        .get(uri, headers: _headers)
+        .timeout(const Duration(seconds: 10));
 
-      String status = 'present';
-      if (day % 11 == 0) {
-        status = 'absent';
-      } else if (day % 7 == 0) {
-        status = 'leave';
-      }
-      records.add(AttendanceRecord(date: date, status: status));
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final records = body['records'] as List<dynamic>;
+      return records
+          .map((r) => AttendanceRecord(
+                date: DateTime.parse(r['date'] as String),
+                status: r['status'] as String,
+              ))
+          .toList();
+    } else {
+      throw Exception('Failed to load attendance: ${response.statusCode}');
     }
-    return records;
   }
 
-  /// Quick rollup used by the attendance overview card + chart.
+  // ── Summary rollup (present/absent/leave/percent) ────────
   Future<Map<String, dynamic>> getAttendanceSummary(String childId) async {
-    final records = await getMonthlyAttendance(childId);
-    final present = records.where((r) => r.status == 'present').length;
-    final absent = records.where((r) => r.status == 'absent').length;
-    final leave = records.where((r) => r.status == 'leave').length;
-    final total = records.length == 0 ? 1 : records.length;
+    final parentId = await _getParentId();
+    if (parentId == null) return {"present": 0, "absent": 0, "leave": 0, "total": 1, "percent": 0};
 
-    return {
-      "present": present,
-      "absent": absent,
-      "leave": leave,
-      "total": total,
-      "percent": ((present / total) * 100).round(),
-    };
+    final now = DateTime.now();
+    final uri = Uri.parse(
+      '$_host/parent/children/$childId/attendance'
+      '?parent_id=$parentId&year=${now.year}&month=${now.month}',
+    );
+
+    final response = await http
+        .get(uri, headers: _headers)
+        .timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      return body['summary'] as Map<String, dynamic>;
+    } else {
+      throw Exception('Failed to load attendance summary: ${response.statusCode}');
+    }
   }
 
-  /// Recent absences worth flagging to the parent (used by absence_alert_card).
+  // ── Recent absences for alert card ───────────────────────
   Future<List<AttendanceRecord>> getRecentAbsences(String childId) async {
     final records = await getMonthlyAttendance(childId);
-    return records.where((r) => r.status != 'present').toList().reversed.take(3).toList();
+    return records
+        .where((r) => r.status != 'present')
+        .toList()
+        .reversed
+        .take(3)
+        .toList();
   }
 }

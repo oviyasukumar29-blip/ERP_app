@@ -69,6 +69,7 @@ class _ProgressPageState extends State<ProgressPage>
         _overallProgress = results[3] as num;
         _loading = false;
       });
+      print('DEBUG: loaded ${_marks.length} marks: ${_marks.map((m) => m.subject).toList()}');
     }
   }
 
@@ -259,7 +260,7 @@ class _SkillsTab extends StatelessWidget {
       children: [
         SkillChart(
           skills: skills.entries
-              .map((e) => {'name': e.key, 'value': e.value})
+             .map((e) => {'name': e.key, 'value': e.value})
               .toList(),
         ),
       ],

@@ -54,16 +54,20 @@ def get_dashboard_data(db: Session, student_id: str):
     student = db.query(User).filter(User.id == student_id).first()
 
     student_profile = None
-    enrollment = None
+    enrollments = []
+    enrolled_course_ids = []
+    enrollment = None  # most recent enrollment, used for fallback progress display
     if student:
         student_profile = db.query(Student).filter(Student.user_id == student.id).first()
         if student_profile:
-            enrollment = (
+            enrollments = (
                 db.query(Enrollment)
                 .filter(Enrollment.student_id == student_profile.id)
                 .order_by(Enrollment.created_at.desc())
-                .first()
+                .all()
             )
+            enrolled_course_ids = [e.course_id for e in enrollments]
+            enrollment = enrollments[0] if enrollments else None
 
     attendance_status = "Present"
     if student_profile:
@@ -76,16 +80,9 @@ def get_dashboard_data(db: Session, student_id: str):
             .first()
         )
         if today_attendance is None:
-            db.add(
-                Attendance(
-                    student_id=student_profile.id,
-                    attendance_date=date.today(),
-                    status="Present",
-                )
-            )
-            db.commit()
+            attendance_status = "Not Marked"
         else:
-            attendance_status = today_attendance.status or "Present"
+            attendance_status = today_attendance.status or "Not Marked"
 
     # Study hours for today
     today_hours = 0.0
@@ -111,8 +108,21 @@ def get_dashboard_data(db: Session, student_id: str):
             .all()
         }
 
-    # Assignments and progress
-    total_assignments = db.query(Assignment).filter(Assignment.status == "Open").count()
+    # ── Assignments scoped to THIS student's enrolled courses only ──────
+    # A student with no enrollments should see zero assignments — not
+    # every "Open" assignment in the entire system.
+    if enrolled_course_ids:
+        total_assignments = (
+            db.query(Assignment)
+            .filter(
+                Assignment.status == "Open",
+                Assignment.course_id.in_(enrolled_course_ids),
+            )
+            .count()
+        )
+    else:
+        total_assignments = 0
+
     done_assignments = len(submitted_assignment_ids)
 
     progress = 0
@@ -126,14 +136,22 @@ def get_dashboard_data(db: Session, student_id: str):
     if progress > 100:
         progress = 100
 
-    # ── Pending list: Open assignments this student has NOT submitted ───
+    # ── Pending list: Open assignments in THIS student's courses
+    #    that they have NOT submitted ────────────────────────────────────
+    if enrolled_course_ids:
+        open_assignments = (
+            db.query(Assignment)
+            .filter(
+                Assignment.status == "Open",
+                Assignment.course_id.in_(enrolled_course_ids),
+            )
+            .order_by(Assignment.due_date)
+            .all()
+        )
+    else:
+        open_assignments = []
+
     assignment_list = []
-    open_assignments = (
-        db.query(Assignment)
-        .filter(Assignment.status == "Open")
-        .order_by(Assignment.due_date)
-        .all()
-    )
     for assignment in open_assignments:
         if assignment.id in submitted_assignment_ids:
             continue  # already submitted — not "pending" anymore
@@ -156,7 +174,7 @@ def get_dashboard_data(db: Session, student_id: str):
         "student_name": student.name if student else "Student",
         "weekly_streak": weekly_streak,
         "xp": student.total_xp if student else 0,
-        "courses": 4,
+        "courses": len(enrollments),
         "continue_course": continue_course,
         "course_progress": progress,
         "course_progress_text": f"{progress}% Completed",

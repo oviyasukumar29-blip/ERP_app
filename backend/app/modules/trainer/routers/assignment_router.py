@@ -2,9 +2,10 @@
 
 import uuid
 from typing import List, Optional, Any
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import httpx
 import os
 
@@ -14,12 +15,12 @@ from app.modules.student.models.assignment import Assignment, AssignmentSubmissi
 router = APIRouter(tags=["assignments"])
 
 
-# ── Schemas ────────────────────────────────────────────────────────────────────
+# ── Schemas ───────────────────────────────────────────────────
 
 class QuestionSchema(BaseModel):
     question: str
-    model_answer: str = ""   # trainer's expected answer for AI grading
-    marks: int = 10          # marks for this question
+    model_answer: str = ""
+    marks: int = 10
 
 
 class AssignmentCreate(BaseModel):
@@ -29,7 +30,7 @@ class AssignmentCreate(BaseModel):
     description: str = ""
     subject: str = "General"
     due_date: str = ""
-    assignment_type: str = "written"   # written | quiz | file
+    assignment_type: str = "written"
     questions: List[QuestionSchema] = []
     quiz_link: Optional[str] = None
     total_marks: int = 100
@@ -54,9 +55,9 @@ class AssignmentOut(BaseModel):
 
 
 class SubmissionCreate(BaseModel):
-    answers: List[str] = []     # for written — one answer per question
-    notes: str = ""             # for quiz/file — optional note
-    file_url: Optional[str] = None  # for file upload
+    answers: List[str] = []
+    notes: str = ""
+    file_url: Optional[str] = None
 
 
 class SubmissionOut(BaseModel):
@@ -99,11 +100,10 @@ class StudentAssignmentOut(BaseModel):
     answers: Optional[List[Any]]
 
 
-# ── Trainer: Create assignment ─────────────────────────────────────────────────
+# ── Trainer: Create assignment ────────────────────────────────
 
 @router.post("/trainer/assignments", response_model=AssignmentOut)
 def create_assignment(payload: AssignmentCreate, db: Session = Depends(get_db)):
-    """Trainer creates assignment — visible to ALL students immediately."""
     assignment = Assignment(
         trainer_id      = uuid.UUID(payload.trainer_id),
         course_id       = uuid.UUID(payload.course_id) if payload.course_id else None,
@@ -123,7 +123,7 @@ def create_assignment(payload: AssignmentCreate, db: Session = Depends(get_db)):
     return _assignment_out(assignment)
 
 
-# ── Trainer: Get their assignments ────────────────────────────────────────────
+# ── Trainer: Get their assignments ───────────────────────────
 
 @router.get("/trainer/assignments/{trainer_id}", response_model=List[AssignmentOut])
 def get_trainer_assignments(trainer_id: str, db: Session = Depends(get_db)):
@@ -133,9 +133,10 @@ def get_trainer_assignments(trainer_id: str, db: Session = Depends(get_db)):
     return [_assignment_out(a) for a in assignments]
 
 
-# ── Trainer: View submissions for an assignment ───────────────────────────────
+# ── Trainer: View submissions for an assignment ───────────────
 
-@router.get("/trainer/assignments/{assignment_id}/submissions", response_model=List[SubmissionOut])
+@router.get("/trainer/assignments/{assignment_id}/submissions",
+            response_model=List[SubmissionOut])
 def get_submissions(assignment_id: str, db: Session = Depends(get_db)):
     submissions = db.query(AssignmentSubmission).filter(
         AssignmentSubmission.assignment_id == uuid.UUID(assignment_id)
@@ -143,10 +144,14 @@ def get_submissions(assignment_id: str, db: Session = Depends(get_db)):
     return [_submission_out(s) for s in submissions]
 
 
-# ── Trainer: Manual grade ─────────────────────────────────────────────────────
+# ── Trainer: Manual grade ─────────────────────────────────────
 
 @router.post("/trainer/grade/{submission_id}", response_model=SubmissionOut)
-def grade_submission(submission_id: str, payload: GradeRequest, db: Session = Depends(get_db)):
+def grade_submission(
+    submission_id: str,
+    payload: GradeRequest,
+    db: Session = Depends(get_db),
+):
     sub = db.query(AssignmentSubmission).filter(
         AssignmentSubmission.id == uuid.UUID(submission_id)
     ).first()
@@ -161,24 +166,22 @@ def grade_submission(submission_id: str, payload: GradeRequest, db: Session = De
     return _submission_out(sub)
 
 
-# ── Student: Get all assignments with submission status ───────────────────────
+# ── Student: Get all assignments with submission status ───────
 
-@router.get("/student/my-assignments/{student_id}", response_model=List[StudentAssignmentOut])
+@router.get("/student/my-assignments/{student_id}",
+            response_model=List[StudentAssignmentOut])
 def get_student_assignments(student_id: str, db: Session = Depends(get_db)):
     try:
         sid = uuid.UUID(student_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid student_id")
 
-    # Get the course IDs this student is enrolled in
     from app.modules.student.models.student_course import StudentCourse
     enrolled = db.query(StudentCourse).filter(
         StudentCourse.student_id == sid
     ).all()
     enrolled_course_ids = [e.course_id for e in enrolled]
 
-    # Only fetch assignments belonging to enrolled courses
-    # Also include assignments with no course_id (general assignments)
     from sqlalchemy import or_
     assignments = db.query(Assignment).filter(
         Assignment.status == "Open",
@@ -216,9 +219,10 @@ def get_student_assignments(student_id: str, db: Session = Depends(get_db)):
     return result
 
 
-# ── Student: Submit assignment ────────────────────────────────────────────────
+# ── Student: Submit assignment + auto-update progress ─────────
 
-@router.post("/student/submit-assignment/{assignment_id}", response_model=SubmissionOut)
+@router.post("/student/submit-assignment/{assignment_id}",
+             response_model=SubmissionOut)
 async def submit_assignment(
     assignment_id: str,
     student_id: str,
@@ -258,7 +262,7 @@ async def submit_assignment(
             auto_grade    = result.get("grade")
             auto_feedback = result.get("feedback")
         except Exception:
-            pass  # If AI fails, submission still saves without grade
+            pass
 
     sub = AssignmentSubmission(
         assignment_id = aid,
@@ -274,27 +278,59 @@ async def submit_assignment(
     db.add(sub)
     db.commit()
     db.refresh(sub)
+
+    # ── Auto-update enrollments.progress ─────────────────────
+    # progress % = submitted assignments / total assignments × 100
+    if assignment.course_id:
+        try:
+            counts = db.execute(text("""
+                SELECT
+                    COUNT(a.id)                                                AS total,
+                    COUNT(asub.id) FILTER (WHERE asub.status IN ('Submitted','Graded')) AS submitted
+                FROM assignments a
+                LEFT JOIN assignment_submissions asub
+                       ON asub.assignment_id = a.id AND asub.student_id = :sid
+                WHERE a.course_id = :cid
+                  AND a.status    = 'Open'
+            """), {"sid": sid, "cid": assignment.course_id}).fetchone()
+
+            total     = counts.total     or 0
+            submitted = counts.submitted or 0
+            new_progress = round((submitted / total) * 100) if total > 0 else 0
+
+            db.execute(text("""
+                UPDATE enrollments
+                SET progress = :progress
+                WHERE course_id  = :cid
+                  AND student_id = (
+                      SELECT id FROM students WHERE user_id = :user_id LIMIT 1
+                  )
+            """), {
+                "progress": new_progress,
+                "cid":      assignment.course_id,
+                "user_id":  sid,
+            })
+            db.commit()
+
+            print(f"✅ Progress updated: student={sid} course={assignment.course_id} "
+                  f"{new_progress}% ({submitted}/{total})")
+        except Exception as e:
+            print(f"⚠️ Progress update failed (submission saved): {e}")
+
     return _submission_out(sub)
 
 
-# ── AI Grading ────────────────────────────────────────────────────────────────
+# ── AI Grading ────────────────────────────────────────────────
 
 async def _ai_grade(questions: list, answers: list, total_marks: int) -> dict:
-    """
-    Uses Claude API to auto-grade written answers.
-    Set ANTHROPIC_API_KEY in your environment.
-    """
     api_key = os.getenv("ANTHROPIC_API_KEY", "")
     if not api_key:
         return {}
 
-    # Build prompt
     qa_pairs = []
-    marks_per_q = []
     for i, q in enumerate(questions):
         student_answer = answers[i] if i < len(answers) else "(no answer)"
         marks = q.get("marks", 10)
-        marks_per_q.append(marks)
         qa_pairs.append(
             f"Q{i+1} [{marks} marks]: {q.get('question', '')}\n"
             f"Model Answer: {q.get('model_answer', '')}\n"
@@ -305,15 +341,9 @@ async def _ai_grade(questions: list, answers: list, total_marks: int) -> dict:
 
 {chr(10).join(qa_pairs)}
 
-For each question, award marks out of the question's total based on correctness and completeness.
-Then provide:
-1. Total marks awarded out of {total_marks}
-2. A letter grade (A, B, C, D, F)
-3. Brief constructive feedback (2-3 sentences)
-
-Respond in this exact JSON format:
-{{"marks": <number>, "grade": "<letter>", "feedback": "<feedback text>"}}
-Only respond with the JSON, nothing else."""
+Award marks based on correctness and completeness.
+Respond in this exact JSON format only:
+{{"marks": <number>, "grade": "<letter>", "feedback": "<2-3 sentence feedback>"}}"""
 
     async with httpx.AsyncClient() as client:
         resp = await client.post(
@@ -339,7 +369,7 @@ Only respond with the JSON, nothing else."""
     return json.loads(text)
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────
 
 def _assignment_out(a: Assignment) -> AssignmentOut:
     return AssignmentOut(

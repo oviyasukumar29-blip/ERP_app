@@ -17,30 +17,34 @@ class AuthService {
   };
 
   Future<bool> login(String email, String password) async {
-    try {
-      final body = jsonEncode({'username_or_email': email, 'password': password});
+    final body = jsonEncode({'username_or_email': email, 'password': password});
 
-      for (final role in ['student', 'trainer', 'parent', 'admin']) {
-        try {
-          final resp = await http.post(
-            Uri.parse('$_host/auth/$role/login'),
-            headers: _headers,
-            body: body,
-          ).timeout(const Duration(seconds: 6));
+    for (final role in ['student', 'trainer', 'parent', 'admin']) {
+      try {
+        final resp = await http.post(
+          Uri.parse('$_host/auth/$role/login'),
+          headers: _headers,
+          body: body,
+        ).timeout(const Duration(seconds: 15));
 
-          if (resp.statusCode == 200) {
-            final data = jsonDecode(resp.body) as Map<String, dynamic>;
-            await _saveSession(data);
-            return true;
-          }
-        } catch (e) {
-          // try next role
+        if (resp.statusCode == 200) {
+          final data = jsonDecode(resp.body) as Map<String, dynamic>;
+          // Confirm role matches what we tried — avoids saving wrong role
+          // if backend returns a different role string
+          await _saveSession(data);
+          return true;
         }
+        // 401 = wrong role, keep trying
+        // anything else = real error, stop
+        if (resp.statusCode != 401) {
+          return false;
+        }
+      } on Exception {
+        // network/timeout — stop, don't silently try next role
+        return false;
       }
-      return false;
-    } catch (e) {
-      return false;
     }
+    return false;
   }
 
   Future<void> _saveSession(Map<String, dynamic> data) async {
@@ -53,12 +57,6 @@ class AuthService {
     await prefs.setString('user_id',      data['id']?.toString() ?? '');
   }
 
-  /// Returns null on success, or an error message string on failure.
-  ///
-  /// When [user.role] is 'parent', pass [studentUsername] and
-  /// [studentPassword] — the student account this parent should be
-  /// linked to. The backend verifies those credentials and creates the
-  /// parent-student link server-side as part of the same signup call.
   Future<String?> signup(
     UserModel user, {
     String? studentUsername,
@@ -81,21 +79,16 @@ class AuthService {
         Uri.parse('$_host/auth/${user.role}/signup'),
         headers: _headers,
         body: body,
-      ).timeout(const Duration(seconds: 6));
+      ).timeout(const Duration(seconds: 15));
 
       if (resp.statusCode == 200 || resp.statusCode == 201) {
         final data = jsonDecode(resp.body) as Map<String, dynamic>;
         await _saveSession(data);
-        // If this signup created a parent account that links to a student,
-        // persist the linked student's username/name locally so the
-        // Parent UI can show the linked child immediately (uses mock
-        // service until backend endpoints are wired up).
         if (user.role == 'parent') {
           final prefs = await SharedPreferences.getInstance();
           if (studentUsername != null && studentUsername.isNotEmpty) {
             await prefs.setString('linked_student_username', studentUsername);
           }
-          // Backend may return linked student details; persist when present
           if (data['linked_student_name'] != null) {
             await prefs.setString('linked_student_name', data['linked_student_name'].toString());
           }
@@ -103,10 +96,9 @@ class AuthService {
             await prefs.setString('linked_student_id', data['linked_student_id'].toString());
           }
         }
-        return null; // success
+        return null;
       }
 
-      // Try to read the actual error message from the backend response
       try {
         final data = jsonDecode(resp.body) as Map<String, dynamic>;
         final msg = data['detail'] ?? data['message'] ?? data['error'];

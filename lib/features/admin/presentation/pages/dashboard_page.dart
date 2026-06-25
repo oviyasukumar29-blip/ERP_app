@@ -112,7 +112,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     );
   }
 
-  // ─── Hero highlight card (decorative, identity now lives in the top bar) ───
+  // ─── Hero highlight card ──────────────────────────────────────────────────
 
   Widget _buildHeader() {
     final dateStr = DateFormat('EEEE, d MMM').format(DateTime.now());
@@ -230,17 +230,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         children: [
           const _SectionHeader(title: "📊 Branch Overview", action: ""),
           const SizedBox(height: 10),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: cards.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-              childAspectRatio: 1.5,
-            ),
-            itemBuilder: (_, i) => _KpiCard(data: cards[i]),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 600;
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: cards.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: isCompact ? 1 : 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: isCompact ? 2.2 : 1.5,
+                ),
+                itemBuilder: (_, i) => _KpiCard(data: cards[i]),
+              );
+            },
           ),
         ],
       ),
@@ -412,8 +417,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 }
 
 // ─────────────────────────────────────────────────────────────
-// TOP BAR — mirrors the student page's _TopBar: avatar, brand +
-// greeting, a role badge (instead of the XP pill), and logout.
+// TOP BAR
 // ─────────────────────────────────────────────────────────────
 class _AdminTopBar extends StatelessWidget {
   final String adminName;
@@ -536,9 +540,7 @@ class _AdminTopBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────
-// DESIGN TOKENS — matches the cartoon/Duolingo-style theme used
-// across the app (same palette + GoogleFonts.fredoka as the
-// student dashboard).
+// DESIGN TOKENS
 // ─────────────────────────────────────────────────────────────
 class _AT {
   static const green = Color(0xFF46A800);

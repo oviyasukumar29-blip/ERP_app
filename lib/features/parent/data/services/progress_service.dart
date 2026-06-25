@@ -1,7 +1,12 @@
 // features/parent/data/services/progress_service.dart
 // ─────────────────────────────────────────────────────────────
-// Fetches real course progress for a child from the backend.
+// Wired to real backend.
 // Endpoint: GET /parent/{parentId}/children/{childId}/progress
+//
+// getMarks()           → built from course progress (real)
+// getOverallProgress() → average of all course completions (real)
+// getSkillGraph()      → from quiz results by course category (real)
+// getAiWeeklySummary() → generated from real progress data (real)
 // ─────────────────────────────────────────────────────────────
 
 import 'dart:convert';
@@ -21,7 +26,7 @@ class ProgressService {
     return prefs.getString('user_id');
   }
 
-  // ── Fetch real enrolled courses with progress ─────────────
+  // ── Core fetch: per-course progress array ────────────────
   Future<List<CourseProgress>> getCourseProgress(String childId) async {
     final parentId = await _getParentId();
     if (parentId == null) return [];
@@ -33,56 +38,95 @@ class ProgressService {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      return data.map((json) => CourseProgress(
-            courseId: json['course_id'] as String,
-            courseTitle: json['course_title'] as String,
-            progress: (json['progress'] as num).toInt(),
-            status: json['status'] as String,
-            totalAssignments: (json['total_assignments'] as num).toInt(),
-            submittedAssignments: (json['submitted_assignments'] as num).toInt(),
-            totalQuizzes: (json['total_quizzes'] as num).toInt(),
-            submittedQuizzes: (json['submitted_quizzes'] as num).toInt(),
-          )).toList();
+      return data
+          .map((json) => CourseProgress(
+                courseId: json['course_id'] as String,
+                courseTitle: json['course_title'] as String,
+                progress: (json['progress'] as num).toInt(),
+                status: json['status'] as String,
+                totalAssignments:
+                    (json['total_assignments'] as num).toInt(),
+                submittedAssignments:
+                    (json['submitted_assignments'] as num).toInt(),
+                totalQuizzes: (json['total_quizzes'] as num).toInt(),
+                submittedQuizzes:
+                    (json['submitted_quizzes'] as num).toInt(),
+              ))
+          .toList();
     } else {
       throw Exception('Failed to load progress: ${response.statusCode}');
     }
   }
 
-  // ── Overall progress = average across all courses ─────────
+  // ── Marks list — one ProgressMark per enrolled course ────
+  // Used by progress_page.dart MarksChart + SubjectsTab
+  Future<List<ProgressMark>> getMarks(String childId) async {
+    final courses = await getCourseProgress(childId);
+    return courses
+        .map((c) => ProgressMark(
+              subject: c.courseTitle,
+              score: c.progress,
+              maxScore: 100,
+              date: DateTime.now(),
+            ))
+        .toList();
+  }
+
+  // ── Overall progress = average completion across courses ─
   Future<num> getOverallProgress(String childId) async {
     final courses = await getCourseProgress(childId);
     if (courses.isEmpty) return 0;
-    final avg = courses.fold<num>(0, (sum, c) => sum + c.progress) / courses.length;
+    final avg =
+        courses.fold<num>(0, (sum, c) => sum + c.progress) / courses.length;
     return avg.round();
   }
 
-  // ── Skill graph — still mock until skill table exists ─────
+  // ── Skill graph — derived from assignment/quiz completion
+  // Each course contributes two skill dimensions:
+  //   • "<course> Theory"  = quiz submission rate
+  //   • "<course> Practice" = assignment submission rate
   Future<Map<String, num>> getSkillGraph(String childId) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return {
-      "Coding": 82,
-      "Robotics": 75,
-      "Communication": 68,
-      "Creativity": 80,
-      "Leadership": 60,
-    };
-  }
-
-  // ── AI weekly summary — still mock until AI endpoint exists
-  Future<String> getAiWeeklySummary(String childId) async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    return "Summary will appear here once AI reporting is enabled.";
-  }
-
-  // ── Marks — built from real course progress data ──────────
-  Future<List<ProgressMark>> getMarks(String childId) async {
     final courses = await getCourseProgress(childId);
-    return courses.map((c) => ProgressMark(
-          subject: c.courseTitle,
-          score: c.progress,
-          maxScore: 100,
-          date: DateTime.now(),
-        )).toList();
+    if (courses.isEmpty) return {};
+
+    final Map<String, num> skills = {};
+    for (final c in courses) {
+      final quizScore = c.totalQuizzes > 0
+          ? (c.submittedQuizzes / c.totalQuizzes * 100).round()
+          : 0;
+      final assignScore = c.totalAssignments > 0
+          ? (c.submittedAssignments / c.totalAssignments * 100).round()
+          : 0;
+
+      // Use short course name to keep the chart readable
+      final name = c.courseTitle.length > 14
+          ? c.courseTitle.substring(0, 14)
+          : c.courseTitle;
+      skills['$name (Quiz)']       = quizScore;
+      skills['$name (Assignment)'] = assignScore;
+    }
+    return skills;
+  }
+
+  // ── AI weekly summary — generated from real data ─────────
+  Future<String> getAiWeeklySummary(String childId) async {
+    final courses = await getCourseProgress(childId);
+    if (courses.isEmpty) {
+      return "No course data available yet. Summary will appear once your child is enrolled.";
+    }
+
+    final overall = courses.isEmpty
+        ? 0
+        : (courses.fold<num>(0, (s, c) => s + c.progress) / courses.length)
+            .round();
+
+    final best = courses.reduce((a, b) => a.progress > b.progress ? a : b);
+    final pending = courses.fold<int>(
+        0, (s, c) => s + (c.totalAssignments - c.submittedAssignments));
+
+    return "Overall course completion is $overall%. "
+        "Strongest progress is in ${best.courseTitle} at ${best.progress}%. "
+        "${pending > 0 ? '$pending assignment${pending > 1 ? 's' : ''} still pending across all courses.' : 'All assignments are submitted — great work!'}";
   }
 }
 

@@ -1,79 +1,93 @@
 // features/parent/data/services/fees_service.dart
 // ─────────────────────────────────────────────────────────────
-// Fee invoices, EMI schedule, and payment history for a child.
-// MOCK MODE — see parent_api_service.dart header for swap notes.
+// Wired to real backend.
+// Endpoint: GET /parent/children/{childId}/fees?parent_id=...
 // ─────────────────────────────────────────────────────────────
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/child_model.dart';
 
 class FeesService {
-  Future<List<FeeInvoice>> getInvoices(String childId) async {
-    await Future.delayed(const Duration(milliseconds: 250));
-    final now = DateTime.now();
-    return [
-      FeeInvoice(
-        id: 'inv_1',
-        title: 'Term 1 — Course Fee',
-        amount: 15000,
-        status: 'paid',
-        dueDate: DateTime(now.year, now.month - 2, 5),
-        paidDate: DateTime(now.year, now.month - 2, 3),
-      ),
-      FeeInvoice(
-        id: 'inv_2',
-        title: 'Term 2 — Course Fee',
-        amount: 15000,
-        status: 'paid',
-        dueDate: DateTime(now.year, now.month - 1, 5),
-        paidDate: DateTime(now.year, now.month - 1, 4),
-      ),
-      FeeInvoice(
-        id: 'inv_3',
-        title: 'Term 3 — Course Fee',
-        amount: 15000,
-        status: 'pending',
-        dueDate: DateTime(now.year, now.month, 28),
-      ),
-      FeeInvoice(
-        id: 'inv_4',
-        title: 'Robotics Kit — One-time',
-        amount: 4500,
-        status: 'paid',
-        dueDate: DateTime(now.year, now.month - 3, 1),
-        paidDate: DateTime(now.year, now.month - 3, 1),
-      ),
-    ];
+  static const _host = 'https://shout-crisping-icing.ngrok-free.dev';
+  static const _headers = {
+    'Content-Type': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
+
+  Future<String?> _getParentId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
   }
 
-  /// EMI-style breakdown if the course was enrolled with installments.
+  // ── All fee invoices ─────────────────────────────────────
+  Future<List<FeeInvoice>> getInvoices(String childId) async {
+    final parentId = await _getParentId();
+    if (parentId == null) return [];
+
+    final response = await http.get(
+      Uri.parse('$_host/parent/children/$childId/fees?parent_id=$parentId'),
+      headers: _headers,
+    ).timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final invoices = body['invoices'] as List<dynamic>;
+      return invoices
+          .map((i) => FeeInvoice(
+                id: i['id'] as String,
+                title: i['title'] as String,
+                amount: (i['amount'] as num).toDouble(),
+                status: i['status'] as String,
+                dueDate: i['dueDate'] != null
+                    ? DateTime.parse(i['dueDate'] as String)
+                    : DateTime.now(),
+                paidDate: i['paidDate'] != null
+                    ? DateTime.parse(i['paidDate'] as String)
+                    : null,
+              ))
+          .toList();
+    } else {
+      throw Exception('Failed to load invoices: ${response.statusCode}');
+    }
+  }
+
+  // ── EMI / term-only invoices ─────────────────────────────
   Future<List<FeeInvoice>> getEmiSchedule(String childId) async {
     final invoices = await getInvoices(childId);
     return invoices.where((i) => i.title.contains('Term')).toList();
   }
 
+  // ── Fee summary (total_due, total_paid, next_due_date) ───
   Future<Map<String, dynamic>> getFeeSummary(String childId) async {
-    final invoices = await getInvoices(childId);
-    final totalDue = invoices
-        .where((i) => i.status != 'paid')
-        .fold<num>(0, (sum, i) => sum + i.amount);
-    final totalPaid = invoices
-        .where((i) => i.status == 'paid')
-        .fold<num>(0, (sum, i) => sum + i.amount);
+    final parentId = await _getParentId();
+    if (parentId == null) {
+      return {"total_due": 0, "total_paid": 0, "next_due_date": null, "status": "pending"};
+    }
 
-    return {
-      "total_due": totalDue,
-      "total_paid": totalPaid,
-      "next_due_date": invoices
-          .where((i) => i.status != 'paid')
-          .map((i) => i.dueDate)
-          .fold<DateTime?>(null, (earliest, d) =>
-              earliest == null || d.isBefore(earliest) ? d : earliest),
-      "status": totalDue == 0 ? "paid" : "pending",
-    };
+    final response = await http.get(
+      Uri.parse('$_host/parent/children/$childId/fees?parent_id=$parentId'),
+      headers: _headers,
+    ).timeout(const Duration(seconds: 10));
+
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      final summary = Map<String, dynamic>.from(body['summary'] as Map);
+
+      // Parse next_due_date string → DateTime so FeesStatusCard gets the type it expects
+      if (summary['next_due_date'] != null) {
+        summary['next_due_date'] =
+            DateTime.tryParse(summary['next_due_date'] as String);
+      }
+      return summary;
+    } else {
+      throw Exception('Failed to load fee summary: ${response.statusCode}');
+    }
   }
 
+  // ── Pay invoice (stub — wire to gateway later) ───────────
   Future<bool> payInvoice(String invoiceId) async {
-    // Wire to real payment gateway integration later.
     await Future.delayed(const Duration(milliseconds: 600));
     return true;
   }

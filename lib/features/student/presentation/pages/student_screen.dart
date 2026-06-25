@@ -460,7 +460,12 @@ class _StudentScreenState extends State<StudentScreen> {
         ),
         bottomNavigationBar: _AppleNavBar(
           currentIndex: _current,
-          onTap: (i) => setState(() => _current = i),
+          onTap: (i) {
+            setState(() => _current = i);
+            if (i == 0) {
+              _loadDashboard();
+            }
+          },
         ),
       ),
     );
